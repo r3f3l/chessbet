@@ -67,7 +67,7 @@
             <div class="casino-panel p-6 sm:p-8 rounded-2xl relative">
                 
                 <div id="status" class="text-center text-sm font-black text-yellow-500 mb-6 uppercase tracking-widest animate-pulse">
-                    CONNECTING TO LICHESS...
+                    SYNCING CASINO...
                 </div>
                 
                 <!-- 2 PLAYER PROFILES -->
@@ -90,12 +90,12 @@
                     <button class="bet-btn group p-4 rounded-xl flex flex-col items-center shadow-lg" data-group="main" data-bet="White Win" data-decimal="2.00">
                         <span class="chess-icon text-5xl text-white drop-shadow-md">♔</span>
                         <span class="font-bold text-amber-100 mt-2 uppercase">White</span>
-                        <span class="text-yellow-500 text-sm font-black mt-1">2.00</span>
+                        <span class="text-yellow-500 text-sm font-black mt-1">1:1</span>
                     </button>
                     <button class="bet-btn group p-4 rounded-xl flex flex-col items-center shadow-lg" data-group="main" data-bet="Black Win" data-decimal="2.00">
                         <span class="chess-icon text-5xl text-gray-400 drop-shadow-md">♚</span>
                         <span class="font-bold text-amber-100 mt-2 uppercase">Black</span>
-                        <span class="text-yellow-500 text-sm font-black mt-1">2.00</span>
+                        <span class="text-yellow-500 text-sm font-black mt-1">1:1</span>
                     </button>
                 </div>
 
@@ -110,39 +110,39 @@
                     <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Queen Mate" data-decimal="2.00">
                         <span class="chess-icon text-3xl text-amber-100">♕</span>
                         <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Queen Mate</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">2.00</span>
+                        <span class="text-lg font-black text-yellow-500 mt-1">1:1</span>
                     </button>
                     <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Rook Mate" data-decimal="4.00">
                         <span class="chess-icon text-3xl text-amber-100">♖</span>
                         <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Rook Mate</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">4.00</span>
+                        <span class="text-lg font-black text-yellow-500 mt-1">1:3</span>
                     </button>
                     <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Bishop Mate" data-decimal="7.00">
                         <span class="chess-icon text-3xl text-amber-100">♗</span>
                         <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Bishop Mate</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">7.00</span>
+                        <span class="text-lg font-black text-yellow-500 mt-1">1:6</span>
                     </button>
                     <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Knight Mate" data-decimal="7.00">
                         <span class="chess-icon text-3xl text-amber-100">♘</span>
                         <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Knight Mate</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">7.00</span>
+                        <span class="text-lg font-black text-yellow-500 mt-1">1:6</span>
                     </button>
                     <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Pawn Mate" data-decimal="11.00">
                         <span class="chess-icon text-3xl text-amber-100">♙</span>
                         <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Pawn Mate</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">11.00</span>
+                        <span class="text-lg font-black text-yellow-500 mt-1">1:10</span>
                     </button>
                     <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Timeout Mate" data-decimal="3.00">
                         <span class="text-3xl text-amber-100">⏱️</span>
                         <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Timeout</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">3.00</span>
+                        <span class="text-lg font-black text-yellow-500 mt-1">1:2</span>
                     </button>
                 </div>
                 
                 <!-- PAYMENT MODULE -->
                 <div id="payment-module" class="bg-black/80 p-5 rounded-xl border border-yellow-800/50 hidden">
                     <div class="flex justify-between items-center mb-4">
-                        <span class="text-xs font-black text-yellow-600 uppercase">Total Odds: <span id="total-odds" class="text-white text-lg">0.00</span></span>
+                        <span class="text-xs font-black text-yellow-600 uppercase">Total Multiplier: <span id="total-odds" class="text-white text-lg">0.00x</span></span>
                         <span class="text-xs font-black text-yellow-600 uppercase">To Win: <span id="potential-win" class="text-green-400 text-lg">$0.00</span></span>
                     </div>
                     <input type="number" id="stake" min="1" placeholder="Enter Stake ($)" class="w-full p-4 bg-[#0a2a18] text-2xl text-white font-black outline-none border-2 border-yellow-800 focus:border-yellow-500 rounded-xl transition-colors mb-4 text-center">
@@ -169,12 +169,13 @@
 
         </div>
 
-        <!-- RIGHT COLUMN: LICHESS TV -->
+        <!-- RIGHT COLUMN: NATIVE LICHESS TV -->
         <div class="flex flex-col sticky top-6">
             <div class="bg-gradient-to-b from-yellow-500 to-yellow-700 text-black text-center font-black text-xs py-3 rounded-t-xl uppercase tracking-widest border-x-4 border-t-4 border-yellow-600 shadow-md">
                 📺 Lichess TV Broadcast
             </div>
-            <iframe id="game-frame" src="" class="w-full aspect-[400/444] rounded-b-xl border-x-4 border-b-4 border-yellow-600 bg-black shadow-2xl" allowtransparency="true" frameborder="0"></iframe>
+            <!-- Używamy natywnego źródła TV, aby Lichess automatycznie przełączał gry. Zero problemów z ładowaniem! -->
+            <iframe id="game-frame" src="https://lichess.org/tv/frame?theme=brown&bg=dark" class="w-full aspect-[400/444] rounded-b-xl border-x-4 border-b-4 border-yellow-600 bg-black shadow-2xl" allowtransparency="true" frameborder="0"></iframe>
         </div>
         
     </main>
@@ -188,7 +189,7 @@
         
         function updateBalance(newAmount) {
             balance = newAmount;
-            localStorage.setItem('chessbet_balance', balance);
+            localStorage.setItem('chessbet_balance', balance.toFixed(2));
             document.getElementById('wallet-balance').textContent = `$${balance.toFixed(2)}`;
         }
 
@@ -221,7 +222,6 @@
                     bgClass = "bg-red-900/20 border-red-800/50";
                 }
 
-                // Parse bet names safely
                 const betNames = bet.bets.map(b => b.type).join(' + ');
 
                 container.innerHTML += `
@@ -250,91 +250,85 @@
         renderHistory();
 
         // ---------------------------------------------------------
-        // 2. LICHESS API & TV LOGIC
+        // 2. LICHESS API (BACKGROUND SYNC ONLY)
         // ---------------------------------------------------------
         let currentLiveId = null;
 
         async function fetchGameData() {
             try {
-                // Fetch the main channels list
                 const res = await fetch('https://lichess.org/api/tv/channels?_=' + Date.now());
-                if (!res.ok) throw new Error("API Limit");
+                if (!res.ok) throw new Error("API Fetch failed");
                 const data = await res.json();
                 
-                // Prioritize blitz, fallback to whatever is playing
-                const channelKey = ['blitz', 'topRated', 'bullet', 'rapid', 'classical'].find(k => data[k]) || Object.keys(data)[0];
-                const game = data[channelKey]; 
+                // Ponieważ natywna ramka (TV) priorytetuje "best" (Top Rated), skrypt nasłuchuje tego kanału.
+                const game = data.best || data.blitz || Object.values(data)[0];
 
                 if (game && game.gameId !== currentLiveId) {
                     
-                    // A new game is on TV. Let's settle the previous one!
                     if (currentLiveId !== null) {
                         settleGame(currentLiveId);
                     }
 
                     currentLiveId = game.gameId;
                     
-                    // Update TV Iframe
-                    document.getElementById('game-frame').src = `https://lichess.org/embed/${game.gameId}?theme=brown&bg=dark`;
-                    
                     document.getElementById('status').textContent = "BETTING OPEN";
                     document.getElementById('status').className = "text-center text-sm font-black text-green-400 mb-6 uppercase tracking-widest";
 
-                    // The channels API provides the featured user's name. 
-                    // We use this name to fetch their currently active game to get BOTH profiles!
-                    const featuredUser = game.user.name;
-                    fetchPlayerProfiles(featuredUser);
+                    // Wykorzystujemy info bezpośrednio z API kanałów, żeby nie robić 404
+                    if (game.color === 'white') {
+                        document.getElementById('white-name').textContent = game.user.name;
+                        document.getElementById('white-rating').textContent = "RATING: " + game.rating;
+                        document.getElementById('black-name').textContent = "Opponent";
+                        document.getElementById('black-rating').textContent = "RATING: ---";
+                    } else {
+                        document.getElementById('black-name').textContent = game.user.name;
+                        document.getElementById('black-rating').textContent = "RATING: " + game.rating;
+                        document.getElementById('white-name').textContent = "Opponent";
+                        document.getElementById('white-rating').textContent = "RATING: ---";
+                    }
+
+                    // Próbujemy dociągnąć drugiego gracza "miękko"
+                    fetchOpponentProfileSafely(game.gameId);
                 }
             } catch (e) {
-                // Silent fail to avoid crashing the loop on CORS/429
+                // Skrypt milczy by nie psuć widoku.
             }
-            setTimeout(fetchGameData, 6000); // Poll every 6s safely
+            setTimeout(fetchGameData, 5000); 
         }
 
-        async function fetchPlayerProfiles(username) {
+        async function fetchOpponentProfileSafely(gameId) {
             try {
-                // Safe endpoint for ONGOING games to get both player profiles without 404 errors
-                const res = await fetch(`https://lichess.org/api/user/${username}/current-game`);
+                const res = await fetch(`https://lichess.org/game/export/${gameId}?tags=true&clocks=false&evals=false&moves=false`, {
+                    headers: { 'Accept': 'application/json' }
+                });
                 if(res.ok) {
                     const gameData = await res.json();
                     document.getElementById('white-name').textContent = gameData.players?.white?.user?.name || 'Anonymous';
                     document.getElementById('white-rating').textContent = "RATING: " + (gameData.players?.white?.rating || '---');
-                    
                     document.getElementById('black-name').textContent = gameData.players?.black?.user?.name || 'Anonymous';
                     document.getElementById('black-rating').textContent = "RATING: " + (gameData.players?.black?.rating || '---');
-                } else {
-                    throw new Error("Game endpoint failed");
                 }
             } catch (e) {
-                // Fallback to displaying just the featured user if current-game fetch fails
-                document.getElementById('white-name').textContent = username;
-                document.getElementById('white-rating').textContent = "RATING: ---";
-                document.getElementById('black-name').textContent = "Opponent";
-                document.getElementById('black-rating').textContent = "RATING: ---";
+                // Jeśli API zablokuje eksport, imiona zostaną te podane na początku (featured + opponent)
             }
         }
 
         async function settleGame(endedGameId, retries = 3) {
             try {
-                // Fetch the exported game data to see how it ended
-                const res = await fetch(`https://lichess.org/game/export/${endedGameId}`, {
+                const res = await fetch(`https://lichess.org/game/export/${endedGameId}?tags=true&clocks=false&evals=false&moves=true`, {
                     headers: { 'Accept': 'application/json' }
                 });
                 
                 if (res.status === 404 && retries > 0) {
-                    // Game just ended, Lichess might need a few seconds to index it. Retry.
                     setTimeout(() => settleGame(endedGameId, retries - 1), 4000);
                     return;
                 }
 
                 if (res.ok) {
                     const game = await res.json();
-                    
-                    // Determine Actual Winner
                     const actualWinner = game.winner || 'draw'; 
-                    
-                    // Determine Actual Execution Method for Side Bets
                     let actualMethod = 'Unknown';
+                    
                     if (game.status === 'outoftime') actualMethod = 'Timeout Mate';
                     else if (game.status === 'mate') {
                         const moves = game.moves ? game.moves.split(' ') : [];
@@ -353,13 +347,11 @@
                     let newlyWon = 0;
                     let processedAny = false;
 
-                    // Resolve all pending tickets for this game
                     betsHistory.forEach(ticket => {
                         if (ticket.gameId === endedGameId && ticket.status === 'pending') {
                             processedAny = true;
                             let ticketWon = true;
 
-                            // DRAW = HOUSE WINS (loss for player)
                             if (actualWinner === 'draw') {
                                 ticketWon = false;
                             } else {
@@ -390,7 +382,7 @@
                     }
                 }
             } catch(e) {
-                console.error("Failed to settle game", endedGameId);
+                // Silent catch
             }
         }
 
@@ -408,7 +400,6 @@
             btn.addEventListener('click', () => {
                 const group = btn.getAttribute('data-group');
                 
-                // Toggle selection logic
                 if (selections[group] === btn) {
                     selections[group] = null;
                     btn.classList.remove('glow-casino-active');
@@ -436,7 +427,7 @@
 
             if (betsCount > 0) {
                 paymentModule.classList.remove('hidden');
-                totalOddsEl.textContent = totalOdds.toFixed(2);
+                totalOddsEl.textContent = totalOdds.toFixed(2) + "x";
                 calculateWin();
             } else {
                 paymentModule.classList.add('hidden');
@@ -450,7 +441,7 @@
         }
 
         document.getElementById('pay-btn').onclick = () => {
-            if (!currentLiveId) return alert("Please wait for a live game to load.");
+            if (!currentLiveId) return alert("Please wait for a live game to sync.");
             
             const stake = parseFloat(stakeInput.value);
             if (!stake || isNaN(stake) || stake <= 0) return alert("Enter a valid stake!");
@@ -468,11 +459,9 @@
 
             if (currentBets.length === 0) return;
 
-            // Deduct balance
             updateBalance(balance - stake);
             const totalOdds = parseFloat(totalOddsEl.textContent);
 
-            // Create Ticket
             const bet = {
                 id: Math.random().toString(36).substr(2, 6).toUpperCase(),
                 gameId: currentLiveId,
@@ -485,14 +474,13 @@
             betsHistory.push(bet);
             saveHistory();
             
-            // Clear selection
             selections = { main: null, side: null };
             buttons.forEach(btn => btn.classList.remove('glow-casino-active'));
             stakeInput.value = '';
             updateSlip();
         };
 
-        // Start TV Feed
+        // Start TV Sync
         fetchGameData();
 
     </script>
