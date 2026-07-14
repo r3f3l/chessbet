@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHESSBET CASINO - Live & Side Bets</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <style>
         body { 
             background-color: #051e11; 
@@ -47,6 +48,16 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #b45309; border-radius: 10px; }
+        
+        .royal-glow {
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border {
+            0% { border-color: rgba(218, 165, 32, 0.4); }
+            50% { border-color: rgba(255, 215, 0, 1); }
+            100% { border-color: rgba(218, 165, 32, 0.4); }
+        }
     </style>
 </head>
 <body class="p-4 md:p-6 min-h-screen">
@@ -61,7 +72,6 @@
 
     <main class="max-w-[1400px] mx-auto grid lg:grid-cols-[1fr_400px] gap-8 items-start">
         
-        <!-- LEFT COLUMN: BETTING & PROFILES -->
         <div class="flex flex-col gap-6">
             
             <div class="casino-panel p-6 sm:p-8 rounded-2xl relative">
@@ -70,7 +80,6 @@
                     SYNCING CASINO...
                 </div>
                 
-                <!-- 2 PLAYER PROFILES -->
                 <div class="grid grid-cols-2 gap-4 mb-8">
                     <div class="bg-black/80 p-4 rounded-xl border border-yellow-800/50 shadow-inner flex flex-col items-center text-center">
                         <span class="text-[10px] text-gray-400 font-bold tracking-widest mb-1">WHITE PLAYER ♔</span>
@@ -84,7 +93,6 @@
                     </div>
                 </div>
 
-                <!-- MAIN BETS -->
                 <h3 class="text-center font-bold text-yellow-500 uppercase tracking-[0.2em] mb-4 text-xs">Game Winner</h3>
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <button class="bet-btn group p-4 rounded-xl flex flex-col items-center shadow-lg" data-group="main" data-bet="White Win" data-decimal="2.00">
@@ -99,7 +107,6 @@
                     </button>
                 </div>
 
-                <!-- SIDE BETS -->
                 <div class="relative flex items-center py-2 mb-4">
                     <div class="flex-grow border-t-2 border-yellow-900/40"></div>
                     <span class="flex-shrink-0 mx-4 text-yellow-600 text-xs font-black uppercase tracking-[0.2em]">Execution Method (Side Bets)</span>
@@ -137,9 +144,16 @@
                         <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Timeout</span>
                         <span class="text-lg font-black text-yellow-500 mt-1">1:2</span>
                     </button>
+                    
+                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center col-span-3 sm:col-span-3 bg-yellow-900/40 royal-glow" data-group="side" data-bet="Royal Fork" data-decimal="100.00">
+                        <div class="flex items-center gap-2">
+                            <span class="chess-icon text-3xl text-amber-100">♘👑</span>
+                        </div>
+                        <span class="text-[10px] font-black text-yellow-300 mt-2 uppercase tracking-widest">Royal Fork (Any Point in Game)</span>
+                        <span class="text-xl font-black text-yellow-400 mt-1">1:100</span>
+                    </button>
                 </div>
                 
-                <!-- PAYMENT MODULE -->
                 <div id="payment-module" class="bg-black/80 p-5 rounded-xl border border-yellow-800/50 hidden">
                     <div class="flex justify-between items-center mb-4">
                         <span class="text-xs font-black text-yellow-600 uppercase">Total Multiplier: <span id="total-odds" class="text-white text-lg">0.00x</span></span>
@@ -156,31 +170,118 @@
                 </p>
             </div>
 
-            <!-- BETTING HISTORY -->
             <div class="casino-panel p-6 rounded-2xl">
                 <h2 class="text-yellow-500 font-black uppercase tracking-widest mb-4 flex justify-between items-center border-b border-yellow-800/50 pb-2">
                     <span>🎟️ Active & Past Bets</span>
                     <button id="clear-history" class="text-[10px] bg-red-900/50 hover:bg-red-800 px-3 py-1 rounded text-red-200 uppercase font-bold transition-colors border border-red-800">Clear History</button>
                 </h2>
                 <div id="bets-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2">
-                    <!-- Injected bets -->
-                </div>
+                    </div>
             </div>
 
         </div>
 
-        <!-- RIGHT COLUMN: NATIVE LICHESS TV -->
         <div class="flex flex-col sticky top-6">
             <div class="bg-gradient-to-b from-yellow-500 to-yellow-700 text-black text-center font-black text-xs py-3 rounded-t-xl uppercase tracking-widest border-x-4 border-t-4 border-yellow-600 shadow-md">
                 📺 Lichess TV Broadcast
             </div>
-            <!-- Używamy natywnego źródła TV, aby Lichess automatycznie przełączał gry. Zero problemów z ładowaniem! -->
             <iframe id="game-frame" src="https://lichess.org/tv/frame?theme=brown&bg=dark" class="w-full aspect-[400/444] rounded-b-xl border-x-4 border-b-4 border-yellow-600 bg-black shadow-2xl" allowtransparency="true" frameborder="0"></iframe>
         </div>
         
     </main>
 
     <script>
+        // ---------------------------------------------------------
+        // 0. ROYAL FORK DETECTION ENGINE (Powered by chess.js)
+        // ---------------------------------------------------------
+        
+        // Funkcja weryfikująca czy ścieżka dla figur dalekosiężnych (Goniec, Wieża, Hetman) jest czysta
+        function isPathClear(board, r1, c1, r2, c2) {
+            const dr = Math.sign(r2 - r1);
+            const dc = Math.sign(c2 - c1);
+            let r = r1 + dr;
+            let c = c1 + dc;
+            while (r !== r2 || c !== c2) {
+                if (board[r][c] !== null) return false;
+                r += dr;
+                c += dc;
+            }
+            return true;
+        }
+
+        // Główny silnik weryfikacji
+        function checkRoyalForkOccurred(pgnMovesStr) {
+            if (typeof Chess === 'undefined' || !pgnMovesStr) return false;
+            
+            const game = new Chess();
+            const moves = pgnMovesStr.split(' ');
+            let royalForkFound = false;
+
+            for (let move of moves) {
+                if (!move) continue;
+                const moveResult = game.move(move);
+                if (!moveResult) continue;
+
+                // Sprawdzamy sytuacje tylko gdy jest Szach (król atakowany)
+                if (game.in_check()) {
+                    const attackerSq = moveResult.to;
+                    const attackerPiece = moveResult.piece; // 'n', 'b', 'r', 'q', 'p'
+                    const attackerColor = moveResult.color;
+                    const opponentColor = attackerColor === 'w' ? 'b' : 'w';
+                    
+                    const board = game.board(); 
+                    const queenSquares = [];
+                    
+                    // Szukamy hetmana/hetmanów przeciwnika na planszy
+                    for (let r = 0; r < 8; r++) {
+                        for (let c = 0; c < 8; c++) {
+                            const p = board[r][c];
+                            if (p && p.type === 'q' && p.color === opponentColor) {
+                                queenSquares.push({r, c});
+                            }
+                        }
+                    }
+
+                    // Obliczamy współrzędne w macierzy szachownicy dla atakującej figury
+                    const cA = attackerSq.charCodeAt(0) - 97; 
+                    const rA = 8 - parseInt(attackerSq[1]); 
+
+                    // Weryfikujemy czy figura atakująca Króla atakuje jednocześnie Hetmana
+                    for (let q of queenSquares) {
+                        const df = Math.abs(cA - q.c);
+                        const dr = Math.abs(rA - q.r);
+                        
+                        let attacksQueen = false;
+                        
+                        if (attackerPiece === 'n') { // Skoczek
+                            attacksQueen = (df === 1 && dr === 2) || (df === 2 && dr === 1);
+                        } else if (attackerPiece === 'p') { // Pion
+                            const direction = attackerColor === 'w' ? -1 : 1; 
+                            attacksQueen = (df === 1 && (q.r - rA) === direction);
+                        } else { // Figury dalekosiężne (Wieża, Goniec, Hetman)
+                            if (attackerPiece === 'r' || attackerPiece === 'q') {
+                                if (df === 0 || dr === 0) {
+                                    if (isPathClear(board, rA, cA, q.r, q.c)) attacksQueen = true;
+                                }
+                            }
+                            if (attackerPiece === 'b' || attackerPiece === 'q') {
+                                if (df === dr) {
+                                    if (isPathClear(board, rA, cA, q.r, q.c)) attacksQueen = true;
+                                }
+                            }
+                        }
+                        
+                        if (attacksQueen) {
+                            royalForkFound = true;
+                            break;
+                        }
+                    }
+                }
+                if (royalForkFound) break; // Zatrzymujemy, jeśli znalazł Royal Fork
+            }
+            return royalForkFound;
+        }
+
         // ---------------------------------------------------------
         // 1. WALLET & HISTORY SYSTEM
         // ---------------------------------------------------------
@@ -250,7 +351,7 @@
         renderHistory();
 
         // ---------------------------------------------------------
-        // 2. LICHESS API (BACKGROUND SYNC ONLY)
+        // 2. LICHESS API (BACKGROUND SYNC)
         // ---------------------------------------------------------
         let currentLiveId = null;
 
@@ -260,7 +361,6 @@
                 if (!res.ok) throw new Error("API Fetch failed");
                 const data = await res.json();
                 
-                // Ponieważ natywna ramka (TV) priorytetuje "best" (Top Rated), skrypt nasłuchuje tego kanału.
                 const game = data.best || data.blitz || Object.values(data)[0];
 
                 if (game && game.gameId !== currentLiveId) {
@@ -274,7 +374,6 @@
                     document.getElementById('status').textContent = "BETTING OPEN";
                     document.getElementById('status').className = "text-center text-sm font-black text-green-400 mb-6 uppercase tracking-widest";
 
-                    // Wykorzystujemy info bezpośrednio z API kanałów, żeby nie robić 404
                     if (game.color === 'white') {
                         document.getElementById('white-name').textContent = game.user.name;
                         document.getElementById('white-rating').textContent = "RATING: " + game.rating;
@@ -287,11 +386,10 @@
                         document.getElementById('white-rating').textContent = "RATING: ---";
                     }
 
-                    // Próbujemy dociągnąć drugiego gracza "miękko"
                     fetchOpponentProfileSafely(game.gameId);
                 }
             } catch (e) {
-                // Skrypt milczy by nie psuć widoku.
+                // Silent Error Handling
             }
             setTimeout(fetchGameData, 5000); 
         }
@@ -308,9 +406,7 @@
                     document.getElementById('black-name').textContent = gameData.players?.black?.user?.name || 'Anonymous';
                     document.getElementById('black-rating').textContent = "RATING: " + (gameData.players?.black?.rating || '---');
                 }
-            } catch (e) {
-                // Jeśli API zablokuje eksport, imiona zostaną te podane na początku (featured + opponent)
-            }
+            } catch (e) {}
         }
 
         async function settleGame(endedGameId, retries = 3) {
@@ -329,6 +425,7 @@
                     const actualWinner = game.winner || 'draw'; 
                     let actualMethod = 'Unknown';
                     
+                    // Rozliczenie standardowych zakończeń
                     if (game.status === 'outoftime') actualMethod = 'Timeout Mate';
                     else if (game.status === 'mate') {
                         const moves = game.moves ? game.moves.split(' ') : [];
@@ -343,6 +440,9 @@
                     } else if (game.status === 'resign') {
                         actualMethod = 'Resignation';
                     }
+
+                    // --- DETEKCJA ROYAL FORK W TLE ---
+                    const hasRoyalFork = checkRoyalForkOccurred(game.moves);
 
                     let newlyWon = 0;
                     let processedAny = false;
@@ -360,7 +460,12 @@
                                         if (b.type === 'White Win' && actualWinner !== 'white') ticketWon = false;
                                         if (b.type === 'Black Win' && actualWinner !== 'black') ticketWon = false;
                                     } else if (b.group === 'side') {
-                                        if (b.type !== actualMethod) ticketWon = false;
+                                        // Specjalna logika weryfikacyjna dla Royal Fork
+                                        if (b.type === 'Royal Fork') {
+                                            if (!hasRoyalFork) ticketWon = false;
+                                        } else {
+                                            if (b.type !== actualMethod) ticketWon = false;
+                                        }
                                     }
                                 });
                             }
@@ -381,9 +486,7 @@
                         saveHistory(); 
                     }
                 }
-            } catch(e) {
-                // Silent catch
-            }
+            } catch(e) {}
         }
 
         // ---------------------------------------------------------
