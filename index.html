@@ -259,6 +259,9 @@
             let lastPlayedId = null; 
             let activeTickets = []; 
 
+            // Bezpieczny limit odpytywania Lichess API (6 sekund)
+            const API_DELAY = 6000; 
+
             function getLoadingHtml(text) {
                 return `
                     <div class="relative w-28 h-28 mb-8 mx-auto">
@@ -275,33 +278,35 @@
                 `;
             }
 
+            // Centralna, bezpieczna funkcja uderzająca w API
+            async function fetchCurrentTvGame() {
+                // Generuje nowy timestamp co 6 sekund, by ominąć silny cache, ale chronić API
+                const timeBucket = Math.floor(Date.now() / API_DELAY); 
+                const res = await fetch(`https://lichess.org/api/tv/channels?_=${timeBucket}`);
+                
+                if (!res.ok) throw new Error("HTTP error " + res.status);
+                
+                const data = await res.json();
+                const channel = data["Top Rated"] || data["Blitz"] || data["Bullet"] || Object.values(data)[0];
+                return channel ? channel.gameId : null;
+            }
+
             // --- 1. STATE 1: INITIALIZE TABLE ---
             async function initTable() {
                 lockOverlay.classList.remove('hidden');
                 lockContent.innerHTML = getLoadingHtml('Looking for an active game on Lichess TV...');
                 
                 try {
-                    const channelsRes = await fetch(`https://lichess.org/api/tv/channels?_t=${Date.now()}`);
-                    if (!channelsRes.ok) throw new Error("TV API failed with status: " + channelsRes.status);
-                    
-                    const channelsData = await channelsRes.json();
-                    
-                    // Znaleziony błąd: API zwraca JSON w formacie camelCase (topRated, blitz, bullet).
-                    const channel = channelsData.topRated || channelsData.blitz || channelsData.bullet || Object.values(channelsData)[0];
-                    
-                    if (!channel || !channel.gameId) {
-                        console.error("No valid game found in channels payload:", channelsData);
-                        throw new Error("No TV game found");
-                    }
-                    
-                    const fetchedId = channel.gameId;
+                    const fetchedId = await fetchCurrentTvGame();
+                    if (!fetchedId) throw new Error("No game found on channels");
 
                     if (fetchedId === lastPlayedId) {
                         lockContent.innerHTML = getLoadingHtml('Waiting for Lichess to rotate to a new game...');
-                        setTimeout(initTable, 4000);
+                        setTimeout(initTable, API_DELAY);
                         return;
                     }
 
+                    // Mamy nową, bezpieczną grę
                     currentLiveId = fetchedId;
                     lastPlayedId = fetchedId;
                     
@@ -314,14 +319,15 @@
                     activeTickets = [];
                     
                     document.getElementById('dev-force-win').classList.remove('hidden');
-                    
                     lockOverlay.classList.add('hidden');
+                    
+                    // Uruchamiamy nasłuch na TV
                     startLiveMonitor();
 
                 } catch (error) {
-                    console.error("Initialization Error:", error);
-                    lockContent.innerHTML = getLoadingHtml('<span class="text-red-500">API Connection lost. Retrying...</span>');
-                    setTimeout(initTable, 4000);
+                    console.error("Init Error:", error);
+                    lockContent.innerHTML = getLoadingHtml('<span class="text-red-500">API Connection lost (possible rate limit). Retrying...</span>');
+                    setTimeout(initTable, API_DELAY);
                 }
             }
 
@@ -333,31 +339,24 @@
                     if (!currentLiveId) return;
                     
                     try {
-                        // Lichess rzuca statusem 404 Not Found w przypadku gier wciąż trwających!
-                        // Gdy gra się skończy, status to 200 OK + payload JSON.
-                        const res = await fetch(`https://lichess.org/game/export/${currentLiveId}?_t=${Date.now()}`, {
-                            headers: { 'Accept': 'application/json' }
-                        });
+                        // SPRAWDZAMY TYLKO BEZPIECZNY KANAŁ TV. ZERO ZAPYTAŃ DO TRWAJĄCEJ GRY.
+                        const fetchedId = await fetchCurrentTvGame();
                         
-                        if (res.status === 200) {
-                            const gameData = await res.json();
-                            if (gameData.status && gameData.status !== 'started' && gameData.status !== 'created') {
-                                clearInterval(apiPollInterval);
-                                triggerGameEnd(gameData);
-                            }
-                        } else if (res.status === 404) {
-                            // 404 - Gra cały czas trwa, ignorujemy i czekamy na kolejny ping.
+                        if (fetchedId && fetchedId !== currentLiveId) {
+                            clearInterval(apiPollInterval);
+                            triggerGameEnd(currentLiveId);
                         }
                     } catch(e) {
-                        // Błędy sieciowe (CORS, zerwane łącze) - ponawiamy po prostu
+                        // Jeśli w trakcie padnie połączenie (rate limit), ignorujemy błąd i czekamy.
+                        console.warn("Monitor warn:", e);
                     }
-                }, 4000); // Check co 4 sekundy
+                }, API_DELAY);
             }
 
             // Dev force win listener
             document.getElementById('dev-force-win').addEventListener('click', () => {
                 clearInterval(apiPollInterval);
-                lastPlayedId = null; // Clear so we can re-enter this game immediately after test
+                lastPlayedId = null; 
                 
                 lockOverlay.classList.remove('hidden');
                 lockContent.innerHTML = `
@@ -377,21 +376,45 @@
             });
 
             // --- 3. STATE 3: SETTLE BETS ---
-            function triggerGameEnd(gameData) {
+            async function triggerGameEnd(gameId) {
                 lockOverlay.classList.remove('hidden');
-                lockContent.innerHTML = `
-                    <span class="text-7xl mb-4 text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">✅</span>
-                    <h2 class="text-4xl font-black text-green-500 tracking-[0.2em] uppercase text-center drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">WE HAVE A RESULT!</h2>
-                    <p class="text-amber-200 mt-2 font-bold text-lg uppercase tracking-widest text-center animate-pulse">Dealer is settling bets...</p>
-                `;
+                lockContent.innerHTML = getLoadingHtml('Fetching final result from the arbiter...');
                 
-                if(!paymentModal.classList.contains('hidden') && paymentProcessing.classList.contains('hidden')) {
-                    paymentModal.classList.add('hidden');
-                }
+                try {
+                    // Gra zakończona i usunięta z Lichess TV, endpoint jest w pełni legalny
+                    const res = await fetch(`https://lichess.org/game/export/${gameId}?_t=${Date.now()}`, {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    
+                    if (res.status === 200) {
+                        const gameData = await res.json();
+                        
+                        if (gameData.status === 'started' || gameData.status === 'created') {
+                            setTimeout(() => triggerGameEnd(gameId), API_DELAY);
+                            return;
+                        }
+                        
+                        lockContent.innerHTML = `
+                            <span class="text-7xl mb-4 text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">✅</span>
+                            <h2 class="text-4xl font-black text-green-500 tracking-[0.2em] uppercase text-center drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">WE HAVE A RESULT!</h2>
+                            <p class="text-amber-200 mt-2 font-bold text-lg uppercase tracking-widest text-center animate-pulse">Dealer is settling bets...</p>
+                        `;
+                        
+                        if(!paymentModal.classList.contains('hidden') && paymentProcessing.classList.contains('hidden')) {
+                            paymentModal.classList.add('hidden');
+                        }
 
-                setTimeout(() => {
-                    evaluateResults(gameData);
-                }, 1500);
+                        setTimeout(() => {
+                            evaluateResults(gameData);
+                        }, 1500);
+                        
+                    } else {
+                        // 429 Rate limit po końcu gry? Ponawiamy za kolejne 6 sekund.
+                        setTimeout(() => triggerGameEnd(gameId), API_DELAY);
+                    }
+                } catch(e) {
+                    setTimeout(() => triggerGameEnd(gameId), API_DELAY);
+                }
             }
 
             function evaluateResults(game) {
