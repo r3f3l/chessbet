@@ -69,7 +69,7 @@
                 </div>
             </div>
 
-            <!-- API MODULE (Timer removed) -->
+            <!-- API MODULE -->
             <div class="flex flex-col sm:flex-row justify-between items-center bg-[#061a10] border-2 border-yellow-500 rounded-xl p-4 mb-6 shadow-inner relative overflow-hidden">
                 <div class="flex flex-col mb-2 sm:mb-0">
                     <div class="flex items-center gap-2">
@@ -303,14 +303,32 @@
                     let fetchedGameId = null;
                     const topRated = data["Top Rated"] || data.top;
                     
-                    if (topRated && topRated.gameId) {
-                        fetchedGameId = topRated.gameId;
-                    } else {
-                        const fallback = data["Blitz"];
-                        if (fallback && fallback.gameId) fetchedGameId = fallback.gameId;
-                    }
+                    if (topRated && topRated.gameId) fetchedGameId = topRated.gameId;
+                    else if (data["Blitz"] && data["Blitz"].gameId) fetchedGameId = data["Blitz"].gameId;
                     
                     if (fetchedGameId && fetchedGameId !== currentGameId) {
+                        
+                        // We must check if the Lichess TV game is ACTUALLY in progress, 
+                        // to prevent an instant game-over loop if Lichess TV hasn't updated its feed yet.
+                        try {
+                            const statusRes = await fetch(`https://lichess.org/game/export/${fetchedGameId}?_t=${Date.now()}`, {
+                                headers: { 'Accept': 'application/json' }
+                            });
+                            if (statusRes.ok) {
+                                const gameData = await statusRes.json();
+                                if (gameData.status && gameData.status !== 'started' && gameData.status !== 'created') {
+                                    // Game is already finished, Lichess TV is just lagging behind.
+                                    currentGameId = fetchedGameId; 
+                                    document.getElementById('api-status-text').textContent = "Previous game ended. Waiting for a new table...";
+                                    setTimeout(fetchNewGameAndStart, 3000);
+                                    return;
+                                }
+                            }
+                        } catch(e) {
+                            // Silent catch, fallback to proceeding
+                        }
+
+                        // The game is fresh and live!
                         currentGameId = fetchedGameId;
                         trackedGameIdEl.textContent = "#" + currentGameId.toUpperCase();
                         
@@ -498,7 +516,8 @@
 
             nextGameBtn.addEventListener('click', () => {
                 resultModal.classList.add('hidden');
-                currentGameId = null; 
+                // DO NOT reset currentGameId here. We must remember it so fetchNewGameAndStart 
+                // knows it should wait for a genuinely new table to appear on Lichess TV.
                 fetchNewGameAndStart();
             });
 
