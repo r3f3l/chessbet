@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHESSBET CASINO - Make Chess Great Again!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Tło - Butelkowa zieleń */
+        body {
+            background-color: #0b3b24; /* Klasyczna butelkowa zieleń */
+            background-image: radial-gradient(circle at 50% 0%, #115e3a 0%, #0b3b24 60%, #051e11 100%);
+        }
+
+        /* Krzyczący styl Las Vegas / Trump */
+        .vegas-logo {
+            font-family: 'Times New Roman', Times, serif;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #FFF7D6 0%, #FFD700 25%, #B8860B 50%, #FFD700 75%, #FFF7D6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 6px 0px #4A0E00) 
+                    drop-shadow(0px 10px 15px rgba(0,0,0,0.8)) 
+                    drop-shadow(0px 0px 30px rgba(255, 215, 0, 0.6));
+            letter-spacing: 3px;
+        }
+
+        .casino-panel {
+            background-color: rgba(4, 26, 15, 0.85);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(218, 165, 32, 0.15);
+        }
+
+        /* Aktywny przycisk - styl kasynowego żetonu */
+        .glow-casino-active {
+            background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 100%) !important;
+            border-color: #fbbf24 !important;
+            box-shadow: 0 0 25px rgba(251, 191, 36, 0.5), inset 0 0 15px rgba(251, 191, 36, 0.3) !important;
+            transform: scale(1.03);
+        }
+
+        .chess-icon { font-family: 'Times New Roman', Times, serif; }
+    </style>
+</head>
+<body class="text-amber-50 min-h-screen font-sans selection:bg-yellow-500 selection:text-black pb-20">
+    
+    <header class="text-center py-10 bg-[#06180e] border-b-8 border-double border-yellow-500 shadow-[0_10px_30px_rgba(255,215,0,0.2)] relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
+        <div class="relative z-10 flex flex-col items-center justify-center gap-2">
+            <div class="text-yellow-400 text-2xl tracking-[0.3em] font-black flex items-center gap-4 drop-shadow-md">
+                <span>⭐</span><span>⭐</span><span>⭐</span>
+                <span>HUGE PAYOUTS</span>
+                <span>⭐</span><span>⭐</span><span>⭐</span>
+            </div>
+            
+            <h1 class="vegas-logo text-5xl sm:text-7xl font-black mt-2 mb-4">
+                👑 CHESSBET CASINO 👑
+            </h1>
+            
+            <p class="text-yellow-500 text-lg sm:text-xl uppercase tracking-widest font-black border-y-2 border-yellow-600/50 py-2 px-8 bg-black/40">
+                "Potężne kursy. Nikt nie robi tego lepiej, uwierz mi!"
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto mt-12 p-4 flex flex-col items-center relative z-10">
+        
+        <div class="w-full flex flex-col items-center mb-12">
+            <span class="text-sm font-black text-white bg-red-600 px-6 py-2 rounded-t-xl border-x-2 border-t-2 border-yellow-500 shadow-[0_0_15px_rgba(220,38,38,0.8)] flex items-center gap-2 uppercase tracking-widest animate-pulse">
+                <span class="w-3 h-3 rounded-full bg-white"></span> NA ŻYWO Z LICHESS TV
+            </span>
+            <div class="relative p-2 bg-gradient-to-b from-yellow-400 via-yellow-600 to-yellow-800 rounded-b-2xl rounded-t-none shadow-2xl">
+                <iframe 
+                    src="https://lichess.org/tv/frame?theme=brown&bg=dark"
+                    style="width: 440px; height: 480px;"
+                    allowtransparency="true"
+                    frameborder="0"
+                    class="relative bg-[#06180e]">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="casino-panel w-full max-w-3xl rounded-3xl p-8 border-2 border-yellow-600/60 relative">
+            
+            <div class="absolute top-4 left-4 text-yellow-600 opacity-50 text-2xl">♠️</div>
+            <div class="absolute top-4 right-4 text-yellow-600 opacity-50 text-2xl">♥️</div>
+            
+            <div class="flex items-center justify-center mb-8 border-b-2 border-yellow-800/50 pb-6">
+                <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 tracking-wider uppercase">
+                    🎫 Stół Zakładów VIP
+                </h2>
+            </div>
+            
+            <h3 class="text-center font-bold text-yellow-500 uppercase tracking-[0.2em] mb-4 text-sm">Zwycięzca Partii</h3>
+            <div class="grid grid-cols-2 gap-6 mb-10 px-2 sm:px-8">
+                <button class="bet-btn group bg-[#0d4a2a] hover:bg-[#136138] transition-all duration-300 p-6 rounded-2xl flex flex-col items-center justify-between border-2 border-yellow-700/50 h-44 shadow-lg" data-group="main" data-bet="White Win" data-label="1:1" data-decimal="2.00">
+                    <span class="chess-icon text-6xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">♔</span>
+                    <span class="text-lg font-bold text-amber-100 mt-2 uppercase">Białe</span>
+                    <span class="text-3xl font-black text-yellow-400 mt-1 drop-shadow-md">1:1</span>
+                </button>
+                <button class="bet-btn group bg-[#0d4a2a] hover:bg-[#136138] transition-all duration-300 p-6 rounded-2xl flex flex-col items-center justify-between border-2 border-yellow-700/50 h-44 shadow-lg" data-group="main" data-bet="Black Win" data-label="1:1" data-decimal="2.00">
+                    <span class="chess-icon text-6xl text-gray-900 drop-shadow-[0_2px_1px_rgba(255,255,255,0.3)]">♚</span>
+                    <span class="text-lg font-bold text-amber-100 mt-2 uppercase">Czarne</span>
+                    <span class="text-3xl font-black text-yellow-400 mt-1 drop-shadow-md">1:1</span>
+                </button>
+            </div>
+
+            <div class="relative flex items-center py-6 mb-2">
+                <div class="flex-grow border-t-2 border-yellow-900/40"></div>
+                <span class="flex-shrink-0 mx-6 text-yellow-600 text-sm font-black uppercase tracking-[0.2em]">Metoda Egzekucji</span>
+                <div class="flex-grow border-t-2 border-yellow-900/40"></div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] transition-all duration-200 p-5 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-40 shadow-inner" data-group="side" data-bet="Queen Mate" data-label="1:1" data-decimal="2.00">
+                    <span class="chess-icon text-5xl text-amber-100">♕</span>
+                    <span class="text-xs font-bold text-amber-200 mt-3 uppercase tracking-wide">Queen Mate</span>
+                    <span class="text-2xl font-black text-yellow-500 mt-1">1:1</span>
+                </button>
+                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] transition-all duration-200 p-5 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-40 shadow-inner" data-group="side" data-bet="Rook Mate" data-label="1:3" data-decimal="4.00">
+                    <span class="chess-icon text-5xl text-amber-100">♖</span>
+                    <span class="text-xs font-bold text-amber-200 mt-3 uppercase tracking-wide">Rook Mate</span>
+                    <span class="text-2xl font-black text-yellow-500 mt-1">1:3</span>
+                </button>
+                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] transition-all duration-200 p-5 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-40 shadow-inner" data-group="side" data-bet="Bishop Mate" data-label="1:6" data-decimal="7.00">
+                    <span class="chess-icon text-5xl text-amber-100">♗</span>
+                    <span class="text-xs font-bold text-amber-200 mt-3 uppercase tracking-wide">Bishop Mate</span>
+                    <span class="text-2xl font-black text-yellow-500 mt-1">1:6</span>
+                </button>
+                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] transition-all duration-200 p-5 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-40 shadow-inner" data-group="side" data-bet="Knight Mate" data-label="1:6" data-decimal="7.00">
+                    <span class="chess-icon text-5xl text-amber-100">♘</span>
+                    <span class="text-xs font-bold text-amber-200 mt-3 uppercase tracking-wide">Knight Mate</span>
+                    <span class="text-2xl font-black text-yellow-500 mt-1">1:6</span>
+                </button>
+                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] transition-all duration-200 p-5 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-40 shadow-inner" data-group="side" data-bet="Pawn Mate" data-label="1:10" data-decimal="11.00">
+                    <span class="chess-icon text-5xl text-amber-100">♙</span>
+                    <span class="text-xs font-bold text-amber-200 mt-3 uppercase tracking-wide">Pawn Mate</span>
+                    <span class="text-2xl font-black text-yellow-500 mt-1">1:10</span>
+                </button>
+                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] transition-all duration-200 p-5 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-40 shadow-inner" data-group="side" data-bet="Timeout Mate" data-label="1:2" data-decimal="3.00">
+                    <span class="text-5xl text-amber-100">⏱️</span>
+                    <span class="text-xs font-bold text-amber-200 mt-3 uppercase tracking-wide">Timeout</span>
+                    <span class="text-2xl font-black text-yellow-500 mt-1">1:2</span>
+                </button>
+            </div>
+            
+            <div id="payment-module" class="mt-12 p-8 bg-[#03140b] rounded-2xl border-2 border-yellow-600 shadow-[0_0_30px_rgba(218,165,32,0.1)] hidden relative">
+                <h3 class="text-2xl font-black text-yellow-500 mb-6 border-b-2 border-yellow-800 pb-4 text-center uppercase tracking-widest">
+                    💰 Twój Złoty Kupon 💰
+                </h3>
+                
+                <ul id="selected-bets-list" class="space-y-3 mb-6 text-base text-amber-100 font-bold">
+                    </ul>
+
+                <div class="flex items-center justify-between mb-8 bg-[#062213] p-5 rounded-xl border border-yellow-700/50">
+                    <span class="text-amber-300 font-black uppercase tracking-widest">Łączny Kurs AKO:</span>
+                    <span id="total-odds" class="text-4xl font-black text-yellow-400 drop-shadow-md">0.00</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-end">
+                    <div>
+                        <label for="stake" class="block text-sm font-black text-yellow-600 uppercase tracking-widest mb-2">Kwota zakładu (PLN)</label>
+                        <input type="number" id="stake" min="1" placeholder="Wpisz stawkę..." class="w-full bg-[#0a3a21] border-2 border-yellow-700 rounded-xl p-4 text-2xl text-white font-bold focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500 transition-all text-center placeholder-yellow-800/50">
+                    </div>
+                    <div class="bg-gradient-to-br from-[#115e3a] to-[#0b3b24] p-4 rounded-xl border-2 border-yellow-500 text-center shadow-lg">
+                        <span class="block text-xs text-amber-200 font-black uppercase tracking-widest mb-1">DO WYGRANIA</span>
+                        <span id="potential-win" class="text-3xl font-black text-green-400 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">0.00 PLN</span>
+                    </div>
+                </div>
+
+                <p id="error-msg" class="text-red-300 text-sm hidden font-bold text-center bg-red-900/60 py-3 mt-6 rounded-lg border border-red-700 uppercase tracking-wide"></p>
+
+                <button id="pay-btn" class="w-full mt-8 bg-gradient-to-b from-yellow-300 via-yellow-500 to-yellow-700 hover:from-yellow-200 hover:to-yellow-600 text-black font-black text-xl py-5 rounded-xl shadow-[0_5px_15px_rgba(255,215,0,0.4)] transition-all transform hover:scale-[1.02] active:scale-95 uppercase tracking-[0.1em] border-2 border-yellow-200">
+                    🎲 Obstaw i rozbij bank!
+                </button>
+            </div>
+
+            <div id="active-tickets-section" class="mt-12 pt-8 border-t-2 border-yellow-900/50 hidden">
+                <h3 class="text-center font-black text-yellow-600 uppercase tracking-[0.2em] mb-6">🎟️ Twoje Aktywne Kupony VIP</h3>
+                <div id="tickets-container" class="space-y-4"></div>
+            </div>
+        </div>
+    </main>
+
+    <div id="payment-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
+        <div class="bg-[#06180e] border-4 border-yellow-600 rounded-2xl w-full max-w-md p-8 shadow-[0_0_50px_rgba(218,165,32,0.3)] relative">
+            <button id="close-modal" class="absolute top-4 right-5 text-yellow-600 hover:text-yellow-400 text-2xl font-black">✕</button>
+            
+            <div class="text-center mb-8 border-b-2 border-yellow-800/50 pb-6">
+                <span class="text-yellow-600 font-black text-3xl mb-2 block">🏦</span>
+                <h3 class="text-2xl font-black text-amber-100 uppercase tracking-widest">Kasa Kasyna</h3>
+                <p class="text-lg text-yellow-500 font-bold mt-2">Do zapłaty: <span id="modal-amount" class="text-3xl font-black text-white">0.00</span> PLN</p>
+            </div>
+
+            <div class="flex gap-2 mb-6 bg-black p-1.5 rounded-xl border border-yellow-900/50">
+                <button id="tab-blik" class="w-1/2 py-3 rounded-lg text-sm font-black bg-gradient-to-b from-yellow-500 to-yellow-700 text-black uppercase tracking-wider">BLIK</button>
+                <button id="tab-card" class="w-1/2 py-3 rounded-lg text-sm font-black text-yellow-700 hover:text-yellow-500 uppercase tracking-wider">Karta VIP</button>
+            </div>
+
+            <div id="form-blik" class="space-y-6">
+                <div>
+                    <label class="block text-center text-sm text-amber-200 font-black uppercase mb-3 tracking-widest">Wprowadź kod BLIK</label>
+                    <input type="text" id="blik-code" maxlength="6" placeholder="000 000" class="w-full bg-[#0a2a18] border-2 border-yellow-600 rounded-xl p-5 text-center text-4xl tracking-[0.3em] font-black text-white focus:outline-none focus:border-yellow-400 shadow-inner">
+                </div>
+                <button id="submit-blik" class="w-full bg-pink-600 hover:bg-pink-500 py-5 rounded-xl text-white text-lg font-black tracking-widest transition-colors uppercase border-b-4 border-pink-800 active:border-b-0 active:translate-y-1">
+                    Autoryzuj Płatność
+                </button>
+            </div>
+
+            <div id="form-card" class="space-y-5 hidden">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs text-amber-200 font-black uppercase mb-1 tracking-wider">Numer Złotej Karty</label>
+                        <input type="text" placeholder="4242 4242 4242 4242" class="w-full bg-[#0a2a18] border border-yellow-600 rounded-lg p-4 text-white font-mono text-lg focus:outline-none focus:border-yellow-400">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-amber-200 font-black uppercase mb-1 tracking-wider">Ważność</label>
+                            <input type="text" placeholder="MM/RR" class="w-full bg-[#0a2a18] border border-yellow-600 rounded-lg p-4 text-white font-mono text-center text-lg focus:outline-none focus:border-yellow-400">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-amber-200 font-black uppercase mb-1 tracking-wider">CVV / CVC</label>
+                            <input type="password" placeholder="***" maxlength="3" class="w-full bg-[#0a2a18] border border-yellow-600 rounded-lg p-4 text-white font-mono text-center text-lg focus:outline-none focus:border-yellow-400">
+                        </div>
+                    </div>
+                </div>
+                <button id="submit-card" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 py-5 rounded-xl text-black text-lg font-black tracking-widest transition-colors uppercase border-b-4 border-yellow-800 active:border-b-0 active:translate-y-1">
+                    Płać Kartą VIP
+                </button>
+            </div>
+
+            <div id="payment-processing" class="hidden absolute inset-0 bg-[#06180e] rounded-2xl flex flex-col items-center justify-center p-6 text-center border-4 border-yellow-500">
+                <div class="text-6xl mb-6 animate-spin">🎲</div>
+                <h4 class="text-2xl font-black text-yellow-400 mb-3 uppercase tracking-widest">Krupier przelicza żetony...</h4>
+                <p id="processing-details" class="text-amber-200 font-bold">Potwierdź transakcję w swoim banku.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const buttons = document.querySelectorAll('.bet-btn');
+            const paymentModule = document.getElementById('payment-module');
+            const betsList = document.getElementById('selected-bets-list');
+            const totalOddsEl = document.getElementById('total-odds');
+            const stakeInput = document.getElementById('stake');
+            const potentialWinEl = document.getElementById('potential-win');
+            const payBtn = document.getElementById('pay-btn');
+            const errorMsg = document.getElementById('error-msg');
+            const activeTicketsSection = document.getElementById('active-tickets-section');
+            const ticketsContainer = document.getElementById('tickets-container');
+
+            const paymentModal = document.getElementById('payment-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const modalAmount = document.getElementById('modal-amount');
+            const tabBlik = document.getElementById('tab-blik');
+            const tabCard = document.getElementById('tab-card');
+            const formBlik = document.getElementById('form-blik');
+            const formCard = document.getElementById('form-card');
+            const submitBlik = document.getElementById('submit-blik');
+            const submitCard = document.getElementById('submit-card');
+            const paymentProcessing = document.getElementById('payment-processing');
+            const processingDetails = document.getElementById('processing-details');
+            const blikCodeInput = document.getElementById('blik-code');
+
+            let selections = { main: null, side: null };
+
+            // Kolory klas bazowych i aktywnych (Theme Kasyno)
+            const baseClasses = ['bg-[#0d4a2a]', 'bg-[#0a3a21]', 'border-yellow-700/50', 'border-yellow-800/40'];
+            
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const group = btn.getAttribute('data-group');
+                    
+                    if (selections[group] === btn) {
+                        selections[group] = null;
+                        btn.classList.remove('glow-casino-active');
+                    } else {
+                        if (selections[group]) {
+                            selections[group].classList.remove('glow-casino-active');
+                        }
+                        selections[group] = btn;
+                        btn.classList.add('glow-casino-active');
+                    }
+                    updateSlip();
+                });
+            });
+
+            stakeInput.addEventListener('input', () => {
+                errorMsg.classList.add('hidden');
+                calculateWin();
+            });
+
+            function updateSlip() {
+                betsList.innerHTML = '';
+                let totalOdds = 1.0;
+                let betsCount = 0;
+
+                Object.values(selections).forEach(btn => {
+                    if (btn) {
+                        betsCount++;
+                        const betName = btn.getAttribute('data-bet');
+                        const betLabel = btn.getAttribute('data-label');
+                        const betDecimal = parseFloat(btn.getAttribute('data-decimal'));
+                        
+                        totalOdds *= betDecimal;
+
+                        const li = document.createElement('li');
+                        li.className = "flex justify-between items-center bg-[#0a2a18] p-4 rounded-xl border border-yellow-700/50 shadow-inner";
+                        li.innerHTML = `
+                            <span class="flex items-center gap-2 uppercase tracking-wide text-sm">
+                                <span class="text-xl">✔️</span> ${betName}
+                            </span> 
+                            <span class="font-black text-yellow-400 bg-black px-3 py-1.5 rounded-lg border border-yellow-800 text-sm">${betLabel} (x${betDecimal.toFixed(2)})</span>
+                        `;
+                        betsList.appendChild(li);
+                    }
+                });
+
+                if (betsCount > 0) {
+                    paymentModule.classList.remove('hidden');
+                    totalOddsEl.textContent = totalOdds.toFixed(2);
+                    calculateWin();
+                } else {
+                    paymentModule.classList.add('hidden');
+                }
+            }
+
+            function calculateWin() {
+                const stake = parseFloat(stakeInput.value) || 0;
+                const totalOdds = parseFloat(totalOddsEl.textContent) || 0;
+                const win = stake * totalOdds;
+                potentialWinEl.textContent = win.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " PLN";
+            }
+
+            payBtn.addEventListener('click', () => {
+                const stake = parseFloat(stakeInput.value) || 0;
+                if (stake <= 0) {
+                    errorMsg.textContent = "⚠️ Nie bądź mięczak! Rzuć na stół chociaż złotówkę!";
+                    errorMsg.classList.remove('hidden');
+                    return;
+                }
+                errorMsg.classList.add('hidden');
+                modalAmount.textContent = stake.toFixed(2);
+                paymentModal.classList.remove('hidden');
+                blikCodeInput.value = '';
+            });
+
+            closeModalBtn.addEventListener('click', () => {
+                paymentModal.classList.add('hidden');
+            });
+
+            tabBlik.addEventListener('click', () => {
+                tabBlik.className = "w-1/2 py-3 rounded-lg text-sm font-black bg-gradient-to-b from-yellow-500 to-yellow-700 text-black uppercase tracking-wider";
+                tabCard.className = "w-1/2 py-3 rounded-lg text-sm font-black text-yellow-700 hover:text-yellow-500 uppercase tracking-wider";
+                formBlik.classList.remove('hidden');
+                formCard.classList.add('hidden');
+            });
+
+            tabCard.addEventListener('click', () => {
+                tabCard.className = "w-1/2 py-3 rounded-lg text-sm font-black bg-gradient-to-b from-yellow-500 to-yellow-700 text-black uppercase tracking-wider";
+                tabBlik.className = "w-1/2 py-3 rounded-lg text-sm font-black text-yellow-700 hover:text-yellow-500 uppercase tracking-wider";
+                formCard.classList.remove('hidden');
+                formBlik.classList.add('hidden');
+            });
+
+            blikCodeInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            });
+
+            submitBlik.addEventListener('click', () => {
+                if (blikCodeInput.value.length < 6) {
+                    alert("Wpisz poprawny kod, szefie!");
+                    return;
+                }
+                startSimulatedPayment("BLIK");
+            });
+
+            submitCard.addEventListener('click', () => {
+                startSimulatedPayment("KARTA");
+            });
+
+            function startSimulatedPayment(metoda) {
+                paymentProcessing.classList.remove('hidden');
+                processingDetails.textContent = metoda === "BLIK" 
+                    ? "Czekamy na autoryzację z banku..." 
+                    : "Łączymy się z systemem Visa/Mastercard...";
+
+                setTimeout(() => {
+                    createActiveTicket();
+                    paymentProcessing.classList.add('hidden');
+                    paymentModal.classList.add('hidden');
+                    resetCart();
+                }, 2500); 
+            }
+
+            function createActiveTicket() {
+                const ticketId = Math.random().toString(36).substr(2, 6).toUpperCase();
+                const stake = parseFloat(stakeInput.value) || 0;
+                const totalOdds = parseFloat(totalOddsEl.textContent) || 0;
+                const win = stake * totalOdds;
+                
+                let eventsHtml = '';
+                Object.values(selections).forEach(btn => {
+                    if (btn) {
+                        const betName = btn.getAttribute('data-bet');
+                        eventsHtml += `<div class="text-sm font-bold text-amber-200">💎 ${betName.toUpperCase()}</div>`;
+                    }
+                });
+
+                const ticketDiv = document.createElement('div');
+                ticketDiv.className = "bg-gradient-to-r from-[#0d4a2a] to-[#0a2a18] border-2 border-yellow-600 p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-[0_5px_15px_rgba(0,0,0,0.5)] relative overflow-hidden";
+                ticketDiv.innerHTML = `
+                    <div class="absolute -right-4 -top-4 text-8xl opacity-10 text-yellow-500">🏆</div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-xs font-black bg-yellow-500 text-black px-3 py-1 rounded-sm uppercase tracking-widest">AKTYWNY</span>
+                            <span class="text-xs text-yellow-600 font-mono font-bold border-b border-yellow-800 pb-0.5">ID: ${ticketId}</span>
+                        </div>
+                        <div class="space-y-1">
+                            ${eventsHtml}
+                        </div>
+                    </div>
+                    <div class="relative z-10 text-right flex flex-row sm:flex-col justify-between sm:justify-end w-full sm:w-auto border-t sm:border-t-0 border-yellow-800/50 pt-4 sm:pt-0 gap-2 sm:gap-0">
+                        <span class="text-xs font-bold text-yellow-700 uppercase tracking-widest">Wpłacono: <span class="text-white text-sm">${stake.toFixed(2)} PLN</span></span>
+                        <span class="text-lg font-black text-green-400 sm:mt-1 drop-shadow-md">Do wyjęcia: ${win.toFixed(2)} PLN</span>
+                    </div>
+                `;
+
+                ticketsContainer.prepend(ticketDiv);
+                activeTicketsSection.classList.remove('hidden');
+            }
+
+            function resetCart() {
+                selections = { main: null, side: null };
+                buttons.forEach(btn => btn.classList.remove('glow-casino-active'));
+                stakeInput.value = '';
+                updateSlip();
+            }
+        });
+    </script>
+</body>
+</html>
