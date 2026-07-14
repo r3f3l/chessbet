@@ -2,30 +2,73 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CHESSBET CASINO - Safe Mode</title>
+    <title>CHESSBET CASINO</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-white p-10">
-    <h1 class="text-center text-4xl font-bold mb-10 text-yellow-500">👑 KASJNO - TRYB TESTOWY 👑</h1>
-    
-    <div id="ui-test" class="max-w-2xl mx-auto bg-slate-800 p-8 rounded-xl border border-yellow-500">
-        <h2 class="text-xl mb-4">Jeśli to widzisz, UI działa poprawnie!</h2>
-        <div id="status" class="bg-red-900 p-4 rounded mb-4">Status: Symulacja aktywna</div>
-        <button onclick="testLog()" class="w-full bg-yellow-600 p-4 rounded text-black font-bold">Sprawdź czy działa przycisk</button>
+<body class="bg-slate-900 text-white p-4">
+    <!-- PANEL DEBUGOWANIA - TU ZOBACZYSZ BŁĘDY -->
+    <div id="debug-log" class="max-w-2xl mx-auto bg-black p-4 rounded mb-4 border border-red-500 text-red-400 font-mono text-xs">
+        System: Gotowy...
+    </div>
+
+    <div class="max-w-2xl mx-auto bg-slate-800 p-6 rounded-2xl border-2 border-yellow-500">
+        <h1 class="text-2xl font-bold text-center text-yellow-500 mb-6">CHESSBET CASINO</h1>
+        
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-black p-3 rounded">White: <span id="p-white" class="font-bold">---</span></div>
+            <div class="bg-black p-3 rounded">Black: <span id="p-black" class="font-bold">---</span></div>
+        </div>
+
+        <div class="flex gap-4">
+            <button class="bet-btn flex-1 bg-green-700 py-3 rounded font-bold" data-side="white">Bet White</button>
+            <button class="bet-btn flex-1 bg-green-700 py-3 rounded font-bold" data-side="black">Bet Black</button>
+        </div>
+
+        <input type="number" id="stake" placeholder="Amount ($)" class="w-full mt-4 p-3 bg-black rounded border border-yellow-500">
+        <button id="submit" class="w-full mt-2 bg-yellow-600 text-black font-bold p-3 rounded uppercase">Place Bet</button>
+        <p class="text-[10px] text-red-400 mt-2 text-center font-bold">NOTE: DRAW/STALEMATE = HOUSE WINS</p>
     </div>
 
     <script>
-        function testLog() {
-            alert("Przycisk działa! Problem leży w połączeniu z API Lichess.");
+        const log = (msg) => document.getElementById('debug-log').textContent = "Log: " + msg;
+
+        async function update() {
+            try {
+                log("Odpytywanie Lichess...");
+                const res = await fetch('https://lichess.org/api/tv/channels');
+                if (!res.ok) throw new Error("API nie odpowiada (kod " + res.status + ")");
+                
+                const data = await res.json();
+                const game = data.topRated || data.blitz || Object.values(data)[0];
+
+                if (!game) throw new Error("Brak gry w TV");
+
+                document.getElementById('p-white').textContent = game.players ? game.players[0].name : "---";
+                document.getElementById('p-black').textContent = game.players ? game.players[1].name : "---";
+                log("Gra pobrana: " + game.gameId);
+
+            } catch (e) {
+                log("BŁĄD: " + e.message);
+            }
+            setTimeout(update, 10000);
         }
-        
-        // Symulacja danych
-        const mockData = {
-            gameId: "test1234",
-            players: [{name: "Magnus"}, {name: "Hikaru"}]
+
+        document.querySelectorAll('.bet-btn').forEach(b => {
+            b.onclick = () => {
+                document.querySelectorAll('.bet-btn').forEach(x => x.style.borderColor = "transparent");
+                b.style.borderColor = "white";
+                b.classList.add('selected');
+            }
+        });
+
+        document.getElementById('submit').onclick = () => {
+            const side = document.querySelector('.selected')?.dataset.side;
+            const amount = document.getElementById('stake').value;
+            if(!side || !amount) alert("Wybierz stronę i stawkę!");
+            else alert("Zakład przyjęty na: " + side);
         };
 
-        console.log("Kasyno gotowe. Jeśli widzisz błędy 'CORS' w konsoli powyżej, to znaczy, że przeglądarka blokuje dostęp do Lichess.");
+        update();
     </script>
 </body>
 </html>
