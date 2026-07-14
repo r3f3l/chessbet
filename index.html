@@ -6,644 +6,204 @@
     <title>CHESSBET CASINO - Beat the Dealer!</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            background-color: #0b3b24; 
-            background-image: radial-gradient(circle at 50% 0%, #115e3a 0%, #0b3b24 60%, #051e11 100%);
-        }
-        .vegas-logo {
-            font-family: 'Times New Roman', Times, serif;
-            text-transform: uppercase;
-            background: linear-gradient(180deg, #FFF7D6 0%, #FFD700 25%, #B8860B 50%, #FFD700 75%, #FFF7D6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0px 6px 0px #4A0E00) drop-shadow(0px 10px 15px rgba(0,0,0,0.8));
-            letter-spacing: 3px;
-        }
-        .casino-panel {
-            background-color: rgba(4, 26, 15, 0.85);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(218, 165, 32, 0.15);
-        }
-        .glow-casino-active {
-            background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 100%) !important;
-            border-color: #fbbf24 !important;
-            box-shadow: 0 0 25px rgba(251, 191, 36, 0.5), inset 0 0 15px rgba(251, 191, 36, 0.3) !important;
-            transform: scale(1.03);
-        }
+        body { background-color: #0b3b24; background-image: radial-gradient(circle at 50% 0%, #115e3a 0%, #0b3b24 60%, #051e11 100%); }
+        .vegas-logo { font-family: 'Times New Roman', Times, serif; text-transform: uppercase; background: linear-gradient(180deg, #FFF7D6 0%, #FFD700 25%, #B8860B 50%, #FFD700 75%, #FFF7D6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0px 6px 0px #4A0E00) drop-shadow(0px 10px 15px rgba(0,0,0,0.8)); letter-spacing: 3px; }
+        .casino-panel { background-color: rgba(4, 26, 15, 0.85); box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(218, 165, 32, 0.15); }
+        .glow-casino-active { background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 100%) !important; border-color: #fbbf24 !important; box-shadow: 0 0 25px rgba(251, 191, 36, 0.5), inset 0 0 15px rgba(251, 191, 36, 0.3) !important; transform: scale(1.03); }
         .chess-icon { font-family: 'Times New Roman', Times, serif; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #b45309; border-radius: 10px; }
     </style>
 </head>
-<body class="text-amber-50 min-h-screen font-sans selection:bg-yellow-500 selection:text-black pb-20">
+<body class="text-amber-50 min-h-screen font-sans pb-20">
     
-    <header class="text-center py-6 bg-[#06180e] border-b-8 border-double border-yellow-500 shadow-[0_10px_30px_rgba(255,215,0,0.2)] relative overflow-hidden">
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none"></div>
-        <div class="relative z-10 flex flex-col items-center justify-center gap-1">
-            <h1 class="vegas-logo text-3xl sm:text-5xl font-black mt-1 mb-2">👑 CHESSBET CASINO 👑</h1>
-            <p class="text-yellow-500 text-xs sm:text-sm uppercase tracking-widest font-black border-y-2 border-yellow-600/50 py-1.5 px-6 bg-black/40">
-                Real Lichess API. Full synchronization.
-            </p>
-        </div>
+    <header class="text-center py-6 bg-[#06180e] border-b-8 border-double border-yellow-500 relative overflow-hidden">
+        <h1 class="vegas-logo text-3xl sm:text-5xl font-black mt-1 mb-2">👑 CHESSBET CASINO 👑</h1>
     </header>
 
-    <main class="max-w-[1400px] mx-auto mt-6 p-4 flex flex-col lg:flex-row gap-8 items-start relative z-10">
+    <main class="max-w-[1400px] mx-auto mt-6 p-4 flex flex-col lg:flex-row gap-8 items-start">
         
-        <div class="w-full lg:w-2/3 casino-panel rounded-3xl p-6 sm:p-8 border-2 border-yellow-600/60 relative overflow-hidden">
-            
-            <div id="lock-overlay" class="absolute inset-0 bg-[#06180e]/95 z-30 flex flex-col items-center justify-center backdrop-blur-md transition-opacity duration-500">
-                <div id="lock-content" class="text-center flex flex-col items-center justify-center w-full px-4">
-                    </div>
+        <div class="w-full lg:w-2/3 casino-panel rounded-3xl p-6 sm:p-8 border-2 border-yellow-600/60 relative">
+            <div id="lock-overlay" class="absolute inset-0 bg-[#06180e]/95 z-30 flex flex-col items-center justify-center backdrop-blur-md hidden">
+                 <h2 id="loading-text" class="text-2xl font-black text-yellow-500 animate-pulse">Initializing Casino...</h2>
             </div>
 
-            <div class="flex flex-col sm:flex-row justify-between items-center bg-[#061a10] border-2 border-yellow-500 rounded-xl p-4 mb-6 shadow-inner relative overflow-hidden">
-                <div class="flex flex-col mb-2 sm:mb-0">
-                    <div class="flex items-center gap-2">
-                        <span class="text-xl animate-pulse">📡</span>
-                        <span class="text-yellow-500 font-black uppercase tracking-widest text-sm">API Status:</span>
-                    </div>
-                    <span class="text-xs text-amber-200/50 font-mono mt-1">GAME: <span id="tracked-game-id" class="text-white font-bold">---</span></span>
+            <div id="player-profile" class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-[#061a10] border-2 border-yellow-500 rounded-xl p-4">
+                    <span class="text-[10px] text-yellow-600 font-black uppercase">White (♔)</span>
+                    <div id="white-player" class="font-bold text-white truncate">Waiting...</div>
                 </div>
-                <div class="bg-black px-6 py-2 rounded-lg border border-yellow-700/50 flex flex-col items-center z-10">
-                    <span class="text-[10px] text-yellow-600 font-black uppercase tracking-widest mb-1">Betting Status</span>
-                    <span id="timer-display" class="text-3xl font-black text-green-400 drop-shadow-[0_0_15px_rgba(74,222,128,0.6)] font-mono uppercase tracking-widest">
-                        OPEN
-                    </span>
+                <div class="bg-[#061a10] border-2 border-yellow-500 rounded-xl p-4">
+                    <span class="text-[10px] text-yellow-600 font-black uppercase">Black (♚)</span>
+                    <div id="black-player" class="font-bold text-white truncate">Waiting...</div>
                 </div>
             </div>
 
-            <div class="flex items-center justify-center mb-6 border-b-2 border-yellow-800/50 pb-4">
-                <h2 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 tracking-wider uppercase">
-                    🎫 VIP Betting Table
-                </h2>
-            </div>
-            
-            <h3 class="text-center font-bold text-yellow-500 uppercase tracking-[0.2em] mb-4 text-xs">Game Winner</h3>
+            <h2 class="text-center text-xl font-black text-yellow-500 mb-6 uppercase">Place Your Bets</h2>
             <div class="grid grid-cols-2 gap-4 mb-8">
-                <button class="bet-btn group bg-[#0d4a2a] hover:bg-[#136138] p-4 rounded-2xl flex flex-col items-center justify-between border-2 border-yellow-700/50 h-32 shadow-lg transition-all" data-group="main" data-bet="White Win" data-label="1:1" data-decimal="2.00">
-                    <span class="chess-icon text-5xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">♔</span>
-                    <span class="text-sm font-bold text-amber-100 mt-2 uppercase">White</span>
+                <button class="bet-btn group bg-[#0d4a2a] hover:bg-[#136138] p-4 rounded-2xl border-2 border-yellow-700/50 flex flex-col items-center" data-group="main" data-bet="White Win" data-decimal="2.00">
+                    <span class="text-3xl">♔</span> <span>White Win</span>
                 </button>
-                <button class="bet-btn group bg-[#0d4a2a] hover:bg-[#136138] p-4 rounded-2xl flex flex-col items-center justify-between border-2 border-yellow-700/50 h-32 shadow-lg transition-all" data-group="main" data-bet="Black Win" data-label="1:1" data-decimal="2.00">
-                    <span class="chess-icon text-5xl text-gray-900 drop-shadow-[0_2px_1px_rgba(255,255,255,0.3)]">♚</span>
-                    <span class="text-sm font-bold text-amber-100 mt-2 uppercase">Black</span>
+                <button class="bet-btn group bg-[#0d4a2a] hover:bg-[#136138] p-4 rounded-2xl border-2 border-yellow-700/50 flex flex-col items-center" data-group="main" data-bet="Black Win" data-decimal="2.00">
+                    <span class="text-3xl">♚</span> <span>Black Win</span>
                 </button>
             </div>
+            <p class="text-center text-red-400 text-xs font-bold mb-4 uppercase italic">* Note: Draw/Stalemate = House Wins</p>
 
-            <div class="relative flex items-center py-2 mb-4">
-                <div class="flex-grow border-t-2 border-yellow-900/40"></div>
-                <span class="flex-shrink-0 mx-4 text-yellow-600 text-xs font-black uppercase tracking-[0.2em]">Execution Method</span>
-                <div class="flex-grow border-t-2 border-yellow-900/40"></div>
-            </div>
-
-            <div class="grid grid-cols-3 gap-3">
-                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] p-3 rounded-xl flex flex-col items-center justify-center border-2 border-yellow-800/40 shadow-inner transition-colors" data-group="side" data-bet="Queen Mate" data-label="1:1" data-decimal="2.00">
-                    <span class="chess-icon text-3xl text-amber-100">♕</span>
-                    <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Queen Mate</span>
-                    <span class="text-lg font-black text-yellow-500 mt-1">1:1</span>
-                </button>
-                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] p-3 rounded-xl flex flex-col items-center justify-center border-2 border-yellow-800/40 shadow-inner transition-colors" data-group="side" data-bet="Rook Mate" data-label="1:3" data-decimal="4.00">
-                    <span class="chess-icon text-3xl text-amber-100">♖</span>
-                    <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Rook Mate</span>
-                    <span class="text-lg font-black text-yellow-500 mt-1">1:3</span>
-                </button>
-                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] p-3 rounded-xl flex flex-col items-center justify-center border-2 border-yellow-800/40 shadow-inner transition-colors" data-group="side" data-bet="Bishop Mate" data-label="1:6" data-decimal="7.00">
-                    <span class="chess-icon text-3xl text-amber-100">♗</span>
-                    <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Bishop Mate</span>
-                    <span class="text-lg font-black text-yellow-500 mt-1">1:6</span>
-                </button>
-                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] p-3 rounded-xl flex flex-col items-center justify-center border-2 border-yellow-800/40 shadow-inner transition-colors" data-group="side" data-bet="Knight Mate" data-label="1:6" data-decimal="7.00">
-                    <span class="chess-icon text-3xl text-amber-100">♘</span>
-                    <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Knight Mate</span>
-                    <span class="text-lg font-black text-yellow-500 mt-1">1:6</span>
-                </button>
-                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] p-3 rounded-xl flex flex-col items-center justify-center border-2 border-yellow-800/40 shadow-inner transition-colors" data-group="side" data-bet="Pawn Mate" data-label="1:10" data-decimal="11.00">
-                    <span class="chess-icon text-3xl text-amber-100">♙</span>
-                    <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Pawn Mate</span>
-                    <span class="text-lg font-black text-yellow-500 mt-1">1:10</span>
-                </button>
-                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] p-3 rounded-xl flex flex-col items-center justify-center border-2 border-yellow-800/40 shadow-inner transition-colors" data-group="side" data-bet="Timeout Mate" data-label="1:2" data-decimal="3.00">
-                    <span class="text-3xl text-amber-100">⏱️</span>
-                    <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Timeout</span>
-                    <span class="text-lg font-black text-yellow-500 mt-1">1:2</span>
-                </button>
-            </div>
-            
             <div id="payment-module" class="mt-8 p-5 bg-[#03140b] rounded-2xl border-2 border-yellow-600 hidden">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end mb-4">
-                    <div>
-                        <label class="block text-xs font-black text-yellow-600 uppercase mb-1">Stake ($)</label>
-                        <input type="number" id="stake" min="1" placeholder="Enter..." class="w-full bg-[#0a3a21] border-2 border-yellow-700 rounded-xl p-3 text-xl text-white font-bold focus:outline-none focus:border-yellow-400 text-center">
-                    </div>
-                    <div class="bg-gradient-to-br from-[#115e3a] to-[#0b3b24] p-3 rounded-xl border-2 border-yellow-500 text-center">
-                        <span class="block text-[10px] text-amber-200 font-black uppercase mb-1">POTENTIAL WIN (Odds: <span id="total-odds">0.00</span>)</span>
-                        <span id="potential-win" class="text-2xl font-black text-green-400 drop-shadow-md">$0.00</span>
-                    </div>
-                </div>
-                <button id="pay-btn" class="w-full bg-gradient-to-b from-yellow-300 via-yellow-500 to-yellow-700 hover:to-yellow-600 text-black font-black text-lg py-3 rounded-xl uppercase shadow-lg border-2 border-yellow-200 active:scale-95 transition-transform">
-                    🎲 Place Bet & Pay!
-                </button>
+                <input type="number" id="stake" min="1" placeholder="Stake ($)" class="w-full bg-[#0a3a21] border-2 border-yellow-700 rounded-xl p-3 text-white font-bold mb-4">
+                <button id="pay-btn" class="w-full bg-yellow-500 text-black font-black py-3 rounded-xl uppercase">Place Bet</button>
             </div>
-
             <div id="active-tickets-section" class="mt-8 pt-6 border-t-2 border-yellow-900/50 hidden">
-                <h3 class="text-center font-black text-yellow-600 uppercase tracking-[0.2em] mb-4 text-xs">🎟️ Active Bets for this game</h3>
                 <div id="tickets-container" class="space-y-3"></div>
             </div>
         </div>
 
-        <div class="w-full lg:w-1/3 flex flex-col items-center lg:sticky lg:top-8 z-10">
-            <div class="w-full max-w-[440px] flex flex-col items-center">
-                <span class="text-xs font-black text-white bg-red-600 px-6 py-2 rounded-t-xl border-x-2 border-t-2 border-yellow-500 shadow-[0_0_15px_rgba(220,38,38,0.8)] flex items-center gap-2 uppercase tracking-widest animate-pulse w-full justify-center">
-                    <span class="w-2 h-2 rounded-full bg-white"></span> LIVE BROADCAST
-                </span>
-                <div class="w-full relative p-2 bg-gradient-to-b from-yellow-400 via-yellow-600 to-yellow-800 rounded-b-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] aspect-[400/444]">
-                    <iframe id="lichess-iframe" src="" class="w-full h-full relative bg-[#06180e] rounded-b-xl" allowtransparency="true" frameborder="0"></iframe>
-                </div>
-            </div>
-            
-            <button id="dev-force-win" class="mt-8 bg-red-900/60 hover:bg-red-800 text-red-200 text-xs px-4 py-2 rounded-lg border border-red-700/50 transition-colors hidden opacity-50 hover:opacity-100">
-                ⏩ (Dev Test) Force Game End Now
-            </button>
+        <div class="w-full lg:w-1/3 flex flex-col items-center lg:sticky lg:top-8">
+            <iframe id="lichess-iframe" src="" class="w-full h-full aspect-[400/444] bg-[#06180e] rounded-2xl border-4 border-yellow-600"></iframe>
         </div>
     </main>
 
-    <div id="payment-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
-        <div class="bg-[#06180e] border-4 border-yellow-600 rounded-2xl w-full max-w-sm p-6 shadow-2xl relative">
-            <button id="close-modal" class="absolute top-3 right-4 text-yellow-600 hover:text-yellow-400 text-xl font-black">✕</button>
-            <div class="text-center mb-4 border-b-2 border-yellow-800/50 pb-4">
-                <h3 class="text-xl font-black text-amber-100 uppercase tracking-widest">Casino Cashier</h3>
-                <p class="text-lg text-yellow-500 font-bold mt-1">To pay: <span id="modal-amount" class="text-2xl font-black text-white">0.00</span> $</p>
-            </div>
-            <div id="form-blik" class="space-y-4">
-                <input type="text" id="blik-code" maxlength="6" placeholder="AUTH CODE" class="w-full bg-[#0a2a18] border-2 border-yellow-600 rounded-xl p-4 text-center text-3xl tracking-[0.3em] font-black text-white focus:outline-none focus:border-yellow-400">
-                <button id="submit-blik" class="w-full bg-pink-600 hover:bg-pink-500 py-4 rounded-xl text-white font-black tracking-widest uppercase border-b-4 border-pink-800 active:border-b-0 active:translate-y-1">Authorize</button>
-            </div>
-            <div id="payment-processing" class="hidden absolute inset-0 bg-[#06180e] rounded-xl flex flex-col items-center justify-center p-6 text-center border-4 border-yellow-500 z-10">
-                <div class="text-5xl mb-4 animate-spin">🎲</div>
-                <h4 class="text-lg font-black text-yellow-400 uppercase tracking-widest">Processing...</h4>
-            </div>
-        </div>
-    </div>
-
-    <div id="result-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center p-4 z-[60] hidden backdrop-blur-md">
-        <div class="bg-gradient-to-b from-[#0a2a18] to-[#04140a] border-4 border-yellow-500 rounded-3xl w-full max-w-2xl p-6 sm:p-8 shadow-[0_0_100px_rgba(255,215,0,0.4)] relative text-center overflow-hidden max-h-[90vh] flex flex-col">
-            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 pointer-events-none"></div>
-            
-            <div class="relative z-10 flex-shrink-0">
-                <h2 id="result-title" class="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 uppercase tracking-widest mb-2 drop-shadow-lg">
-                    MATCH RESULT
-                </h2>
-                
-                <div class="my-4 bg-black/60 p-4 rounded-2xl border-2 border-yellow-700/50 inline-block w-full">
-                    <p class="text-amber-200 text-xs uppercase tracking-widest font-bold mb-1">Lichess TV Status:</p>
-                    <p id="result-winner" class="text-2xl font-black text-white uppercase tracking-widest mb-1">Winner: ---</p>
-                    <p id="result-method" class="text-lg font-bold text-yellow-500 uppercase tracking-widest">Method: ---</p>
-                </div>
-            </div>
-
-            <div class="relative z-10 flex-grow overflow-y-auto w-full bg-black/50 border border-yellow-900/50 rounded-xl p-4 mb-4">
-                <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-700 pb-2">Your Bet Details</h3>
-                <div id="modal-bets-list" class="space-y-3 text-left">
-                    </div>
-            </div>
-
-            <div class="relative z-10 flex-shrink-0">
-                <div id="payout-box" class="mb-6">
-                    <p class="text-sm font-black text-gray-400 uppercase tracking-widest mb-1">Your total balance:</p>
-                    <p id="result-payout" class="text-4xl sm:text-5xl font-black text-green-400 drop-shadow-[0_0_20px_rgba(74,222,128,0.5)]">
-                        $0.00
-                    </p>
-                </div>
-
-                <button id="next-game-btn" class="w-full sm:w-auto bg-gradient-to-b from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 text-black font-black text-xl py-4 px-12 rounded-xl shadow-[0_0_30px_rgba(255,215,0,0.6)] uppercase tracking-widest border-2 border-yellow-200 transition-transform hover:scale-105 active:scale-95">
-                    🎰 Find Next Game
-                </button>
-            </div>
+    <div id="result-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-[60] hidden">
+        <div class="bg-[#06180e] border-4 border-yellow-500 rounded-2xl w-full max-w-lg p-8 text-center">
+            <h2 id="result-title" class="text-3xl font-black mb-4">GAME RESULT</h2>
+            <div id="modal-bets-list" class="space-y-2 mb-6"></div>
+            <p id="result-payout" class="text-2xl font-black mb-6">Payout: $0.00</p>
+            <button id="next-game-btn" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl uppercase">Find Next Game</button>
         </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const buttons = document.querySelectorAll('.bet-btn');
-            const totalOddsEl = document.getElementById('total-odds');
-            const stakeInput = document.getElementById('stake');
-            const potentialWinEl = document.getElementById('potential-win');
-            const payBtn = document.getElementById('pay-btn');
-            
-            const ticketsContainer = document.getElementById('tickets-container');
-            const activeTicketsSection = document.getElementById('active-tickets-section');
+            // UI References
             const lockOverlay = document.getElementById('lock-overlay');
-            const lockContent = document.getElementById('lock-content');
-            
-            const trackedGameIdEl = document.getElementById('tracked-game-id');
+            const loadingText = document.getElementById('loading-text');
+            const whitePlayerEl = document.getElementById('white-player');
+            const blackPlayerEl = document.getElementById('black-player');
             const lichessIframe = document.getElementById('lichess-iframe');
             
-            const paymentModal = document.getElementById('payment-modal');
-            const closeModalBtn = document.getElementById('close-modal');
-            const blikCodeInput = document.getElementById('blik-code');
-            const submitBlik = document.getElementById('submit-blik');
-            const paymentProcessing = document.getElementById('payment-processing');
-
-            const resultModal = document.getElementById('result-modal');
-            const resultTitle = document.getElementById('result-title');
-            const resultWinner = document.getElementById('result-winner');
-            const resultMethod = document.getElementById('result-method');
-            const resultPayout = document.getElementById('result-payout');
-            const modalBetsList = document.getElementById('modal-bets-list');
-            const nextGameBtn = document.getElementById('next-game-btn');
-
-            let selections = { main: null, side: null };
-            let apiPollInterval = null;
-            
             let currentLiveId = null;
-            let lastPlayedId = null; 
-            let activeTickets = []; 
+            let activeTickets = [];
 
-            // Bezpieczny limit odpytywania Lichess API (6 sekund)
-            const API_DELAY = 6000; 
-
-            function getLoadingHtml(text) {
-                return `
-                    <div class="relative w-28 h-28 mb-8 mx-auto">
-                        <div class="absolute inset-0 rounded-full border-4 border-yellow-900/50"></div>
-                        <div class="absolute inset-0 rounded-full border-4 border-yellow-400 border-t-transparent animate-spin shadow-[0_0_40px_rgba(255,215,0,0.3)]"></div>
-                        <div class="absolute inset-0 flex items-center justify-center text-5xl">🎲</div>
-                    </div>
-                    <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 tracking-[0.2em] uppercase drop-shadow-md text-center">
-                        Dealer is preparing...
-                    </h2>
-                    <p class="text-yellow-600/80 mt-4 font-bold text-sm uppercase tracking-widest text-center animate-pulse">
-                        ${text}
-                    </p>
-                `;
-            }
-
-            // Centralna, bezpieczna funkcja uderzająca w API
+            // --- 1. CORE LOGIC ---
             async function fetchCurrentTvGame() {
-                // Generuje nowy timestamp co 6 sekund, by ominąć silny cache, ale chronić API
-                const timeBucket = Math.floor(Date.now() / API_DELAY); 
-                const res = await fetch(`https://lichess.org/api/tv/channels?_=${timeBucket}`);
-                
-                if (!res.ok) throw new Error("HTTP error " + res.status);
-                
-                const data = await res.json();
-                const channel = data["Top Rated"] || data["Blitz"] || data["Bullet"] || Object.values(data)[0];
-                return channel ? channel.gameId : null;
+                try {
+                    const res = await fetch(`https://lichess.org/api/tv/channels?_=${Date.now()}`);
+                    const data = await res.json();
+                    const channel = data.topRated || data.blitz || Object.values(data)[0];
+                    return channel ? channel.gameId : null;
+                } catch(e) { return null; }
             }
 
-            // --- 1. STATE 1: INITIALIZE TABLE ---
+            async function fetchGameMetadata(gameId) {
+                try {
+                    const res = await fetch(`https://lichess.org/game/export/${gameId}?tags=true`);
+                    return await res.json();
+                } catch(e) { return null; }
+            }
+
             async function initTable() {
                 lockOverlay.classList.remove('hidden');
-                lockContent.innerHTML = getLoadingHtml('Looking for an active game on Lichess TV...');
+                loadingText.textContent = "Scanning Lichess TV...";
                 
-                try {
-                    const fetchedId = await fetchCurrentTvGame();
-                    if (!fetchedId) throw new Error("No game found on channels");
-
-                    if (fetchedId === lastPlayedId) {
-                        lockContent.innerHTML = getLoadingHtml('Waiting for Lichess to rotate to a new game...');
-                        setTimeout(initTable, API_DELAY);
-                        return;
-                    }
-
-                    // Mamy nową, bezpieczną grę
-                    currentLiveId = fetchedId;
-                    lastPlayedId = fetchedId;
-                    
-                    trackedGameIdEl.textContent = "#" + currentLiveId.toUpperCase();
-                    lichessIframe.src = `https://lichess.org/embed/${currentLiveId}?theme=brown&bg=dark`;
-                    
-                    resetCart();
-                    ticketsContainer.innerHTML = '';
-                    activeTicketsSection.classList.add('hidden');
-                    activeTickets = [];
-                    
-                    document.getElementById('dev-force-win').classList.remove('hidden');
-                    lockOverlay.classList.add('hidden');
-                    
-                    // Uruchamiamy nasłuch na TV
-                    startLiveMonitor();
-
-                } catch (error) {
-                    console.error("Init Error:", error);
-                    lockContent.innerHTML = getLoadingHtml('<span class="text-red-500">API Connection lost (possible rate limit). Retrying...</span>');
-                    setTimeout(initTable, API_DELAY);
+                const gameId = await fetchCurrentTvGame();
+                if (!gameId) {
+                    loadingText.textContent = "Waiting for game...";
+                    setTimeout(initTable, 6000);
+                    return;
                 }
+
+                currentLiveId = gameId;
+                const meta = await fetchGameMetadata(gameId);
+                
+                if (meta && meta.players) {
+                    whitePlayerEl.textContent = `${meta.players.white.user?.name || 'Anonymous'} (${meta.players.white.rating})`;
+                    blackPlayerEl.textContent = `${meta.players.black.user?.name || 'Anonymous'} (${meta.players.black.rating})`;
+                }
+
+                lichessIframe.src = `https://lichess.org/embed/${gameId}?theme=brown&bg=dark`;
+                lockOverlay.classList.add('hidden');
+                startMonitor();
             }
 
-            // --- 2. STATE 2: MONITOR LIVE GAME ---
-            function startLiveMonitor() {
-                clearInterval(apiPollInterval);
-                
-                apiPollInterval = setInterval(async () => {
-                    if (!currentLiveId) return;
-                    
-                    try {
-                        // SPRAWDZAMY TYLKO BEZPIECZNY KANAŁ TV. ZERO ZAPYTAŃ DO TRWAJĄCEJ GRY.
-                        const fetchedId = await fetchCurrentTvGame();
-                        
-                        if (fetchedId && fetchedId !== currentLiveId) {
-                            clearInterval(apiPollInterval);
-                            triggerGameEnd(currentLiveId);
-                        }
-                    } catch(e) {
-                        // Jeśli w trakcie padnie połączenie (rate limit), ignorujemy błąd i czekamy.
-                        console.warn("Monitor warn:", e);
+            function startMonitor() {
+                const interval = setInterval(async () => {
+                    const gameId = await fetchCurrentTvGame();
+                    if (gameId !== currentLiveId) {
+                        clearInterval(interval);
+                        finalizeGame(currentLiveId);
                     }
-                }, API_DELAY);
+                }, 8000);
             }
 
-            // Dev force win listener
-            document.getElementById('dev-force-win').addEventListener('click', () => {
-                clearInterval(apiPollInterval);
-                lastPlayedId = null; 
-                
+            async function finalizeGame(gameId) {
+                loadingText.textContent = "Calculating Payouts...";
                 lockOverlay.classList.remove('hidden');
-                lockContent.innerHTML = `
-                    <span class="text-7xl mb-4 text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">✅</span>
-                    <h2 class="text-4xl font-black text-green-500 tracking-[0.2em] uppercase text-center drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">DEV TEST TRIGGERED!</h2>
-                    <p class="text-amber-200 mt-2 font-bold text-lg uppercase tracking-widest text-center animate-pulse">Dealer is settling bets...</p>
-                `;
                 
-                setTimeout(() => {
-                    evaluateResults({
-                        id: currentLiveId,
-                        status: 'mate',
-                        winner: 'white',
-                        moves: 'e4 e5 Qh5#' 
-                    });
-                }, 1000);
-            });
+                const meta = await fetchGameMetadata(gameId);
+                if (!meta) { setTimeout(initTable, 5000); return; }
 
-            // --- 3. STATE 3: SETTLE BETS ---
-            async function triggerGameEnd(gameId) {
-                lockOverlay.classList.remove('hidden');
-                lockContent.innerHTML = getLoadingHtml('Fetching final result from the arbiter...');
-                
-                try {
-                    // Gra zakończona i usunięta z Lichess TV, endpoint jest w pełni legalny
-                    const res = await fetch(`https://lichess.org/game/export/${gameId}?_t=${Date.now()}`, {
-                        headers: { 'Accept': 'application/json' }
-                    });
-                    
-                    if (res.status === 200) {
-                        const gameData = await res.json();
-                        
-                        if (gameData.status === 'started' || gameData.status === 'created') {
-                            setTimeout(() => triggerGameEnd(gameId), API_DELAY);
-                            return;
-                        }
-                        
-                        lockContent.innerHTML = `
-                            <span class="text-7xl mb-4 text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">✅</span>
-                            <h2 class="text-4xl font-black text-green-500 tracking-[0.2em] uppercase text-center drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">WE HAVE A RESULT!</h2>
-                            <p class="text-amber-200 mt-2 font-bold text-lg uppercase tracking-widest text-center animate-pulse">Dealer is settling bets...</p>
-                        `;
-                        
-                        if(!paymentModal.classList.contains('hidden') && paymentProcessing.classList.contains('hidden')) {
-                            paymentModal.classList.add('hidden');
-                        }
+                // LOGIKA: Draw/Stalemate = House Wins
+                const isDraw = (meta.status === 'draw' || meta.status === 'stalemate');
+                const winner = isDraw ? 'none' : meta.winner;
 
-                        setTimeout(() => {
-                            evaluateResults(gameData);
-                        }, 1500);
-                        
-                    } else {
-                        // 429 Rate limit po końcu gry? Ponawiamy za kolejne 6 sekund.
-                        setTimeout(() => triggerGameEnd(gameId), API_DELAY);
-                    }
-                } catch(e) {
-                    setTimeout(() => triggerGameEnd(gameId), API_DELAY);
-                }
+                // Processing logic remains similar but with draw-loss enforced
+                showResult(winner, meta);
             }
 
-            function evaluateResults(game) {
-                let actualWinner = game.winner; 
-                let actualMethod = 'Unknown';
+            function showResult(winner, meta) {
+                const resultModal = document.getElementById('result-modal');
+                const modalBetsList = document.getElementById('modal-bets-list');
+                const payoutText = document.getElementById('result-payout');
                 
-                if (game.status === 'outoftime') actualMethod = 'Timeout Mate';
-                else if (game.status === 'mate') {
-                    const moves = game.moves ? game.moves.split(' ') : [];
-                    const lastMove = moves[moves.length - 1] || '';
-                    if (lastMove.includes('Q') || lastMove.includes('=Q')) actualMethod = 'Queen Mate';
-                    else if (lastMove.includes('R') || lastMove.includes('=R')) actualMethod = 'Rook Mate';
-                    else if (lastMove.includes('B') || lastMove.includes('=B')) actualMethod = 'Bishop Mate';
-                    else if (lastMove.includes('N') || lastMove.includes('=N')) actualMethod = 'Knight Mate';
-                    else if (lastMove.match(/^[a-h]/)) actualMethod = 'Pawn Mate'; 
-                } else if (game.status === 'draw' || game.status === 'stalemate') {
-                    actualMethod = 'Draw';
-                    actualWinner = 'Draw';
-                } else if (game.status === 'resign') {
-                    actualMethod = 'Resignation';
-                }
-
                 let totalPayout = 0;
                 let wonAny = false;
-                let modalBetsHtml = '';
 
-                if (activeTickets.length === 0) {
-                    modalBetsHtml = '<p class="text-center text-gray-500 font-bold py-4">You haven\'t placed any bets on this game.</p>';
-                }
-
-                activeTickets.forEach(ticket => {
-                    if (ticket.gameId !== game.id) return;
-
-                    let ticketWon = true;
-                    
-                    ticket.bets.forEach(bet => {
-                        if (bet.group === 'main') {
-                            if (bet.type === 'White Win' && actualWinner !== 'white') ticketWon = false;
-                            if (bet.type === 'Black Win' && actualWinner !== 'black') ticketWon = false;
-                        } else if (bet.group === 'side') {
-                            if (bet.type !== actualMethod) ticketWon = false;
-                        }
-                    });
-
-                    const betNames = ticket.bets.map(b => b.type).join(' + ');
-                    
-                    if (ticketWon) {
-                        totalPayout += ticket.win;
-                        wonAny = true;
-                        
-                        modalBetsHtml += `
-                            <div class="bg-green-900/30 border border-green-500 p-3 rounded-lg flex justify-between items-center">
-                                <div>
-                                    <span class="text-[10px] bg-green-500 text-black px-2 py-0.5 rounded font-black mr-2">WON</span>
-                                    <span class="text-green-300 font-bold">${betNames}</span>
-                                </div>
-                                <span class="text-green-400 font-black text-lg">+$${ticket.win.toFixed(2)}</span>
-                            </div>`;
-                            
-                        ticket.element.classList.replace('border-yellow-600', 'border-green-500');
-                        ticket.element.classList.add('bg-green-900/30');
-                        ticket.element.querySelector('.status-badge').textContent = 'WON';
-                        ticket.element.querySelector('.status-badge').className = "status-badge text-[10px] sm:text-xs font-black bg-green-500 text-black px-2 py-1 rounded-sm uppercase";
-                    } else {
-                        modalBetsHtml += `
-                            <div class="bg-red-950/40 border border-red-800 p-3 rounded-lg flex justify-between items-center opacity-80">
-                                <div>
-                                    <span class="text-[10px] bg-red-800 text-red-200 px-2 py-0.5 rounded font-black mr-2">LOST</span>
-                                    <span class="text-red-300 font-bold">${betNames}</span>
-                                </div>
-                                <span class="text-red-500 font-bold">-$${ticket.stake.toFixed(2)}</span>
-                            </div>`;
-
-                        ticket.element.classList.replace('border-yellow-600', 'border-red-800');
-                        ticket.element.classList.add('bg-red-950/40', 'opacity-50');
-                        ticket.element.querySelector('.status-badge').textContent = 'LOST';
-                        ticket.element.querySelector('.status-badge').className = "status-badge text-[10px] sm:text-xs font-black bg-red-900 text-red-200 px-2 py-1 rounded-sm uppercase";
+                activeTickets.forEach(t => {
+                    let won = false;
+                    // Logic: If draw, you cannot win
+                    if (winner !== 'none') {
+                        t.bets.forEach(b => {
+                            if (b.type === 'White Win' && winner === 'white') won = true;
+                            if (b.type === 'Black Win' && winner === 'black') won = true;
+                        });
                     }
+                    
+                    if (won) { totalPayout += t.win; wonAny = true; }
+                    modalBetsList.innerHTML += `<div class="${won ? 'text-green-500' : 'text-red-500'} font-bold">${t.bets.map(b=>b.type).join(' + ')}: ${won ? '+'+t.win : '-'+t.stake}</div>`;
                 });
 
-                modalBetsList.innerHTML = modalBetsHtml;
-                showResultModal(actualWinner, actualMethod, totalPayout, wonAny, activeTickets.length);
-            }
-
-            function showResultModal(winner, method, payout, wonAny, ticketCount) {
-                const winnerText = winner === 'white' ? 'WHITE' : (winner === 'black' ? 'BLACK' : 'DRAW');
-                
-                resultWinner.textContent = `Winner: ${winnerText}`;
-                resultMethod.textContent = `Method: ${method}`;
-                
-                if (ticketCount === 0) {
-                    resultTitle.textContent = "GAME OVER";
-                    resultTitle.className = "text-4xl sm:text-5xl font-black text-gray-400 uppercase tracking-widest mb-2";
-                    resultPayout.textContent = "$0.00";
-                    resultPayout.className = "text-3xl font-bold text-gray-500";
-                } else if (wonAny) {
-                    resultTitle.textContent = "💰 YOU BROKE THE BANK! 💰";
-                    resultTitle.className = "text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-yellow-400 uppercase tracking-widest mb-2 drop-shadow-lg";
-                    resultPayout.textContent = `+ $${payout.toFixed(2)}`;
-                    resultPayout.className = "text-4xl sm:text-5xl font-black text-green-400 drop-shadow-[0_0_20px_rgba(74,222,128,0.8)]";
-                } else {
-                    resultTitle.textContent = "💸 CASINO WINS 💸";
-                    resultTitle.className = "text-4xl sm:text-5xl font-black text-red-500 uppercase tracking-widest mb-2 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]";
-                    resultPayout.textContent = "- $0.00";
-                    resultPayout.className = "text-4xl sm:text-5xl font-black text-red-600";
-                }
-
+                payoutText.textContent = wonAny ? `Profit: $${totalPayout.toFixed(2)}` : "Result: House Wins";
                 resultModal.classList.remove('hidden');
             }
 
-            // Restart Loop
-            nextGameBtn.addEventListener('click', () => {
-                resultModal.classList.add('hidden');
+            document.getElementById('next-game-btn').onclick = () => {
+                document.getElementById('result-modal').classList.add('hidden');
                 initTable();
-            });
+            };
 
-            // --- TICKET AND PAYMENT LOGIC ---
-            buttons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const group = btn.getAttribute('data-group');
-                    if (selections[group] === btn) {
-                        selections[group] = null;
-                        btn.classList.remove('glow-casino-active');
-                    } else {
-                        if (selections[group]) selections[group].classList.remove('glow-casino-active');
-                        selections[group] = btn;
-                        btn.classList.add('glow-casino-active');
-                    }
-                    updateSlip();
-                });
-            });
+            // Payment Logic
+            document.getElementById('pay-btn').onclick = () => {
+                const stake = parseFloat(document.getElementById('stake').value);
+                const odds = parseFloat(document.getElementById('total-odds').textContent);
+                const win = stake * odds;
+                const bets = [];
+                document.querySelectorAll('.glow-casino-active').forEach(b => bets.push({type: b.getAttribute('data-bet')}));
+                
+                activeTickets.push({bets, stake, win, gameId: currentLiveId});
+                document.getElementById('active-tickets-section').classList.remove('hidden');
+                document.getElementById('tickets-container').innerHTML += `<div class="bg-gray-800 p-2 text-white">Ticket ${bets.map(b=>b.type).join(', ')} - Stake: $${stake}</div>`;
+            };
 
-            stakeInput.addEventListener('input', calculateWin);
-
-            function updateSlip() {
-                let totalOdds = 1.0;
-                let betsCount = 0;
-                Object.values(selections).forEach(btn => {
-                    if (btn) {
-                        betsCount++;
-                        totalOdds *= parseFloat(btn.getAttribute('data-decimal'));
-                    }
-                });
-
-                if (betsCount > 0) {
-                    document.getElementById('payment-module').classList.remove('hidden');
-                    totalOddsEl.textContent = totalOdds.toFixed(2);
-                    calculateWin();
-                } else {
-                    document.getElementById('payment-module').classList.add('hidden');
+            // Toggle Bet
+            document.querySelectorAll('.bet-btn').forEach(btn => {
+                btn.onclick = () => {
+                    btn.classList.toggle('glow-casino-active');
+                    let odds = 1.0;
+                    document.querySelectorAll('.glow-casino-active').forEach(b => odds *= parseFloat(b.getAttribute('data-decimal')));
+                    document.getElementById('total-odds').textContent = odds.toFixed(2);
+                    document.getElementById('payment-module').classList.toggle('hidden', document.querySelectorAll('.glow-casino-active').length === 0);
                 }
-            }
-
-            function calculateWin() {
-                const stake = parseFloat(stakeInput.value) || 0;
-                const totalOdds = parseFloat(totalOddsEl.textContent) || 0;
-                potentialWinEl.textContent = "$" + (stake * totalOdds).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            }
-
-            payBtn.addEventListener('click', () => {
-                const stake = parseFloat(stakeInput.value) || 0;
-                if (stake <= 0) return alert("Enter stake!");
-                document.getElementById('modal-amount').textContent = stake.toFixed(2);
-                paymentModal.classList.remove('hidden');
-                blikCodeInput.value = '';
             });
 
-            closeModalBtn.addEventListener('click', () => paymentModal.classList.add('hidden'));
-            blikCodeInput.addEventListener('input', (e) => e.target.value = e.target.value.replace(/[^0-9]/g, ''));
-
-            submitBlik.addEventListener('click', () => {
-                if (blikCodeInput.value.length < 6) return;
-                
-                paymentProcessing.classList.remove('hidden');
-                setTimeout(() => {
-                    createActiveTicket();
-                    paymentProcessing.classList.add('hidden');
-                    paymentModal.classList.add('hidden');
-                    resetCart();
-                }, 1000); 
-            });
-
-            function createActiveTicket() {
-                const ticketId = Math.random().toString(36).substr(2, 6).toUpperCase();
-                const stake = parseFloat(stakeInput.value) || 0;
-                const win = stake * parseFloat(totalOddsEl.textContent);
-                
-                let currentBets = [];
-                let eventsHtml = '';
-                
-                Object.values(selections).forEach(btn => {
-                    if (btn) {
-                        const type = btn.getAttribute('data-bet');
-                        const group = btn.getAttribute('data-group');
-                        currentBets.push({ type, group });
-                        eventsHtml += `<div class="text-xs sm:text-sm font-bold text-amber-200">💎 ${type.toUpperCase()}</div>`;
-                    }
-                });
-
-                const ticketDiv = document.createElement('div');
-                ticketDiv.className = "bg-gradient-to-r from-[#0d4a2a] to-[#0a2a18] border-2 border-yellow-600 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-lg transition-all mb-3";
-                ticketDiv.innerHTML = `
-                    <div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="status-badge text-[10px] sm:text-xs font-black bg-yellow-500 text-black px-2 py-1 rounded-sm uppercase tracking-widest">IN PLAY</span>
-                            <span class="text-[10px] sm:text-xs text-yellow-600 font-mono font-bold">ID: ${ticketId}</span>
-                        </div>
-                        <div class="space-y-1">${eventsHtml}</div>
-                    </div>
-                    <div class="text-right w-full sm:w-auto border-t sm:border-t-0 border-yellow-800/50 pt-2 sm:pt-0 flex flex-row sm:flex-col justify-between sm:justify-end items-center sm:items-end">
-                        <span class="text-[10px] sm:text-xs font-bold text-yellow-700 uppercase">Stake: <span class="text-white">$${stake.toFixed(2)}</span></span>
-                        <span class="text-sm sm:text-base font-black text-green-400">Win: $${win.toFixed(2)}</span>
-                    </div>
-                `;
-                
-                ticketsContainer.prepend(ticketDiv);
-                activeTicketsSection.classList.remove('hidden');
-
-                activeTickets.push({ id: ticketId, gameId: currentLiveId, bets: currentBets, stake: stake, win: win, element: ticketDiv });
-            }
-
-            function resetCart() {
-                selections = { main: null, side: null };
-                buttons.forEach(btn => btn.classList.remove('glow-casino-active'));
-                stakeInput.value = '';
-                updateSlip();
-            }
-
-            // Start immediately
             initTable();
         });
     </script>
