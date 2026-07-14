@@ -95,15 +95,28 @@
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4 mb-8">
-                    <div class="bg-black/80 p-4 rounded-xl border border-yellow-800/50 shadow-inner flex flex-col items-center text-center">
+                    <div class="bg-black/80 p-4 rounded-xl border border-yellow-800/50 shadow-inner flex flex-col items-center text-center relative">
                         <span class="text-[10px] text-gray-400 font-bold tracking-widest mb-1">WHITE PLAYER ♔</span>
                         <span id="white-name" class="font-bold text-lg text-white truncate w-full">---</span>
-                        <span id="white-rating" class="text-sm text-yellow-500 font-mono mt-1">---</span>
+                        
+                        <div class="flex items-center gap-2 mt-1 bg-[#051e11] px-2 py-0.5 rounded border border-yellow-900/50 shadow-sm">
+                            <span id="white-flag" class="text-sm drop-shadow-md">🏳️</span>
+                            <span id="white-country" class="text-[10px] text-gray-300 font-bold uppercase tracking-widest">INT</span>
+                        </div>
+                        
+                        <span id="white-rating" class="text-sm text-yellow-500 font-mono mt-2">---</span>
                     </div>
-                    <div class="bg-black/80 p-4 rounded-xl border border-yellow-800/50 shadow-inner flex flex-col items-center text-center">
+
+                    <div class="bg-black/80 p-4 rounded-xl border border-yellow-800/50 shadow-inner flex flex-col items-center text-center relative">
                         <span class="text-[10px] text-gray-400 font-bold tracking-widest mb-1">BLACK PLAYER ♚</span>
                         <span id="black-name" class="font-bold text-lg text-white truncate w-full">---</span>
-                        <span id="black-rating" class="text-sm text-yellow-500 font-mono mt-1">---</span>
+                        
+                        <div class="flex items-center gap-2 mt-1 bg-[#051e11] px-2 py-0.5 rounded border border-yellow-900/50 shadow-sm">
+                            <span id="black-flag" class="text-sm drop-shadow-md">🏳️</span>
+                            <span id="black-country" class="text-[10px] text-gray-300 font-bold uppercase tracking-widest">INT</span>
+                        </div>
+                        
+                        <span id="black-rating" class="text-sm text-yellow-500 font-mono mt-2">---</span>
                     </div>
                 </div>
 
@@ -272,6 +285,18 @@
         }
 
         // ---------------------------------------------------------
+        // COUNTRY CODE TO EMOJI FLAG CONVERTER
+        // ---------------------------------------------------------
+        function getFlagEmoji(countryCode) {
+            if (!countryCode) return '🏳️';
+            const codePoints = countryCode
+                .toUpperCase()
+                .split('')
+                .map(char => 127397 + char.charCodeAt());
+            return String.fromCodePoint(...codePoints);
+        }
+
+        // ---------------------------------------------------------
         // ROYAL FORK DETECTION ENGINE 
         // ---------------------------------------------------------
         function isPathClear(board, r1, c1, r2, c2) {
@@ -429,6 +454,31 @@
         // ---------------------------------------------------------
         let currentLiveId = null;
 
+        // Fetch detailed profile for country data
+        async function fetchPlayerProfile(username, colorStr) {
+            try {
+                if (!username || username === 'Anonymous' || username === 'Opponent') return;
+                const res = await fetch(`https://lichess.org/api/user/${username}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const countryCode = data.profile && data.profile.country ? data.profile.country : null;
+                    
+                    const flagEl = document.getElementById(`${colorStr}-flag`);
+                    const countryEl = document.getElementById(`${colorStr}-country`);
+                    
+                    if (countryCode) {
+                        flagEl.textContent = getFlagEmoji(countryCode);
+                        countryEl.textContent = countryCode;
+                    } else {
+                        flagEl.textContent = '🏳️';
+                        countryEl.textContent = 'INT';
+                    }
+                }
+            } catch (e) {
+                // Silent catch
+            }
+        }
+
         async function fetchGameData() {
             try {
                 const res = await fetch('https://lichess.org/api/tv/channels?_=' + Date.now());
@@ -442,6 +492,12 @@
                     currentLiveId = game.gameId;
                     document.getElementById('status').textContent = "BETTING OPEN";
                     document.getElementById('status').className = "text-center text-sm font-black text-green-400 mb-6 uppercase tracking-widest";
+
+                    // Reset flags for new game
+                    document.getElementById('white-flag').textContent = '🏳️';
+                    document.getElementById('white-country').textContent = '...';
+                    document.getElementById('black-flag').textContent = '🏳️';
+                    document.getElementById('black-country').textContent = '...';
 
                     if (game.color === 'white') {
                         document.getElementById('white-name').textContent = game.user.name;
@@ -468,10 +524,19 @@
                 });
                 if(res.ok) {
                     const gameData = await res.json();
-                    document.getElementById('white-name').textContent = gameData.players?.white?.user?.name || 'Anonymous';
+                    
+                    const wName = gameData.players?.white?.user?.name || 'Anonymous';
+                    const bName = gameData.players?.black?.user?.name || 'Anonymous';
+
+                    document.getElementById('white-name').textContent = wName;
                     document.getElementById('white-rating').textContent = "RATING: " + (gameData.players?.white?.rating || '---');
-                    document.getElementById('black-name').textContent = gameData.players?.black?.user?.name || 'Anonymous';
+                    
+                    document.getElementById('black-name').textContent = bName;
                     document.getElementById('black-rating').textContent = "RATING: " + (gameData.players?.black?.rating || '---');
+
+                    // Fetch flags
+                    if (wName !== 'Anonymous') fetchPlayerProfile(wName, 'white');
+                    if (bName !== 'Anonymous') fetchPlayerProfile(bName, 'black');
                 }
             } catch (e) {}
         }
