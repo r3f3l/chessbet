@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHESSBET CASINO - Ograj Krupiera!</title>
+    <title>CHESSBET CASINO - Beat the Dealer!</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -30,12 +30,6 @@
             transform: scale(1.03);
         }
         .chess-icon { font-family: 'Times New Roman', Times, serif; }
-        @keyframes timerBlink {
-            0% { color: #f87171; text-shadow: 0 0 20px #ef4444; transform: scale(1); }
-            50% { color: #ffffff; text-shadow: 0 0 10px #ffffff; transform: scale(1.05); }
-            100% { color: #f87171; text-shadow: 0 0 20px #ef4444; transform: scale(1); }
-        }
-        .timer-danger { animation: timerBlink 1s infinite; }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #b45309; border-radius: 10px; }
@@ -48,17 +42,17 @@
         <div class="relative z-10 flex flex-col items-center justify-center gap-1">
             <h1 class="vegas-logo text-3xl sm:text-5xl font-black mt-1 mb-2">👑 CHESSBET CASINO 👑</h1>
             <p class="text-yellow-500 text-xs sm:text-sm uppercase tracking-widest font-black border-y-2 border-yellow-600/50 py-1.5 px-6 bg-black/40">
-                Prawdziwe API Lichessa. Pełna synchronizacja.
+                Real Lichess API. Full synchronization.
             </p>
         </div>
     </header>
 
     <main class="max-w-[1400px] mx-auto mt-6 p-4 flex flex-col lg:flex-row gap-8 items-start relative z-10">
         
-        <!-- LEWA KOLUMNA: ZAKŁADY -->
+        <!-- LEFT COLUMN: BETTING -->
         <div class="w-full lg:w-2/3 casino-panel rounded-3xl p-6 sm:p-8 border-2 border-yellow-600/60 relative overflow-hidden">
             
-            <!-- EKRAN OCZEKIWANIA -->
+            <!-- WAITING SCREEN -->
             <div id="lock-overlay" class="absolute inset-0 bg-[#06180e]/95 z-30 flex flex-col items-center justify-center backdrop-blur-md transition-opacity duration-500">
                 <div id="lock-content" class="text-center flex flex-col items-center justify-center w-full px-4">
                     <div class="relative w-28 h-28 mb-8">
@@ -67,55 +61,52 @@
                         <div class="absolute inset-0 flex items-center justify-center text-5xl">🎲</div>
                     </div>
                     <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 tracking-[0.2em] uppercase drop-shadow-md">
-                        Krupier tasuje karty...
+                        Dealer is shuffling the cards...
                     </h2>
                     <p id="api-status-text" class="text-yellow-600/80 mt-4 font-bold text-sm uppercase tracking-widest text-center animate-pulse">
-                        Wyszukiwanie nowej partii w sieci
+                        Searching for a new game on the network
                     </p>
                 </div>
             </div>
 
-            <!-- MODUŁ TIMERA I API -->
+            <!-- API MODULE (Timer removed) -->
             <div class="flex flex-col sm:flex-row justify-between items-center bg-[#061a10] border-2 border-yellow-500 rounded-xl p-4 mb-6 shadow-inner relative overflow-hidden">
-                <div class="absolute w-full h-1 bg-yellow-900 bottom-0 left-0">
-                    <div id="timer-bar" class="h-full bg-yellow-400 transition-all duration-1000 ease-linear" style="width: 100%;"></div>
-                </div>
                 <div class="flex flex-col mb-2 sm:mb-0">
                     <div class="flex items-center gap-2">
                         <span class="text-xl animate-pulse">📡</span>
-                        <span class="text-yellow-500 font-black uppercase tracking-widest text-sm">Status API:</span>
+                        <span class="text-yellow-500 font-black uppercase tracking-widest text-sm">API Status:</span>
                     </div>
-                    <span class="text-xs text-amber-200/50 font-mono mt-1">GRA: <span id="tracked-game-id" class="text-white font-bold">---</span></span>
+                    <span class="text-xs text-amber-200/50 font-mono mt-1">GAME: <span id="tracked-game-id" class="text-white font-bold">---</span></span>
                 </div>
                 <div class="bg-black px-6 py-2 rounded-lg border border-yellow-700/50 flex flex-col items-center z-10">
-                    <span class="text-[10px] text-yellow-600 font-black uppercase tracking-widest mb-1">Czas na obstawienie</span>
-                    <span id="timer-display" class="text-4xl font-black text-green-400 drop-shadow-[0_0_15px_rgba(74,222,128,0.6)] font-mono">
-                        00:30
+                    <span class="text-[10px] text-yellow-600 font-black uppercase tracking-widest mb-1">Betting Status</span>
+                    <span id="timer-display" class="text-3xl font-black text-green-400 drop-shadow-[0_0_15px_rgba(74,222,128,0.6)] font-mono uppercase tracking-widest">
+                        OPEN
                     </span>
                 </div>
             </div>
 
             <div class="flex items-center justify-center mb-6 border-b-2 border-yellow-800/50 pb-4">
                 <h2 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 tracking-wider uppercase">
-                    🎫 Stół Zakładów VIP
+                    🎫 VIP Betting Table
                 </h2>
             </div>
             
-            <h3 class="text-center font-bold text-yellow-500 uppercase tracking-[0.2em] mb-4 text-xs">Zwycięzca Partii</h3>
+            <h3 class="text-center font-bold text-yellow-500 uppercase tracking-[0.2em] mb-4 text-xs">Game Winner</h3>
             <div class="grid grid-cols-2 gap-4 mb-8">
                 <button class="bet-btn group bg-[#0d4a2a] hover:bg-[#136138] p-4 rounded-2xl flex flex-col items-center justify-between border-2 border-yellow-700/50 h-32 shadow-lg transition-all" data-group="main" data-bet="White Win" data-label="1:1" data-decimal="2.00">
                     <span class="chess-icon text-5xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">♔</span>
-                    <span class="text-sm font-bold text-amber-100 mt-2 uppercase">Białe</span>
+                    <span class="text-sm font-bold text-amber-100 mt-2 uppercase">White</span>
                 </button>
                 <button class="bet-btn group bg-[#0d4a2a] hover:bg-[#136138] p-4 rounded-2xl flex flex-col items-center justify-between border-2 border-yellow-700/50 h-32 shadow-lg transition-all" data-group="main" data-bet="Black Win" data-label="1:1" data-decimal="2.00">
                     <span class="chess-icon text-5xl text-gray-900 drop-shadow-[0_2px_1px_rgba(255,255,255,0.3)]">♚</span>
-                    <span class="text-sm font-bold text-amber-100 mt-2 uppercase">Czarne</span>
+                    <span class="text-sm font-bold text-amber-100 mt-2 uppercase">Black</span>
                 </button>
             </div>
 
             <div class="relative flex items-center py-2 mb-4">
                 <div class="flex-grow border-t-2 border-yellow-900/40"></div>
-                <span class="flex-shrink-0 mx-4 text-yellow-600 text-xs font-black uppercase tracking-[0.2em]">Metoda Egzekucji</span>
+                <span class="flex-shrink-0 mx-4 text-yellow-600 text-xs font-black uppercase tracking-[0.2em]">Execution Method</span>
                 <div class="flex-grow border-t-2 border-yellow-900/40"></div>
             </div>
 
@@ -155,98 +146,102 @@
             <div id="payment-module" class="mt-8 p-5 bg-[#03140b] rounded-2xl border-2 border-yellow-600 hidden">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end mb-4">
                     <div>
-                        <label class="block text-xs font-black text-yellow-600 uppercase mb-1">Stawka (PLN)</label>
-                        <input type="number" id="stake" min="1" placeholder="Wpisz..." class="w-full bg-[#0a3a21] border-2 border-yellow-700 rounded-xl p-3 text-xl text-white font-bold focus:outline-none focus:border-yellow-400 text-center">
+                        <label class="block text-xs font-black text-yellow-600 uppercase mb-1">Stake ($)</label>
+                        <input type="number" id="stake" min="1" placeholder="Enter..." class="w-full bg-[#0a3a21] border-2 border-yellow-700 rounded-xl p-3 text-xl text-white font-bold focus:outline-none focus:border-yellow-400 text-center">
                     </div>
                     <div class="bg-gradient-to-br from-[#115e3a] to-[#0b3b24] p-3 rounded-xl border-2 border-yellow-500 text-center">
-                        <span class="block text-[10px] text-amber-200 font-black uppercase mb-1">DO WYGRANIA (Kurs: <span id="total-odds">0.00</span>)</span>
-                        <span id="potential-win" class="text-2xl font-black text-green-400 drop-shadow-md">0.00 PLN</span>
+                        <span class="block text-[10px] text-amber-200 font-black uppercase mb-1">POTENTIAL WIN (Odds: <span id="total-odds">0.00</span>)</span>
+                        <span id="potential-win" class="text-2xl font-black text-green-400 drop-shadow-md">$0.00</span>
                     </div>
                 </div>
                 <button id="pay-btn" class="w-full bg-gradient-to-b from-yellow-300 via-yellow-500 to-yellow-700 hover:to-yellow-600 text-black font-black text-lg py-3 rounded-xl uppercase shadow-lg border-2 border-yellow-200 active:scale-95 transition-transform">
-                    🎲 Postaw i Płać!
+                    🎲 Place Bet & Pay!
                 </button>
             </div>
 
-            <!-- AKTYWNE KUPONY -->
+            <!-- ACTIVE TICKETS -->
             <div id="active-tickets-section" class="mt-8 pt-6 border-t-2 border-yellow-900/50 hidden">
-                <h3 class="text-center font-black text-yellow-600 uppercase tracking-[0.2em] mb-4 text-xs">🎟️ Zawarte Zakłady na tę grę</h3>
+                <h3 class="text-center font-black text-yellow-600 uppercase tracking-[0.2em] mb-4 text-xs">🎟️ Active Bets for this game</h3>
                 <div id="tickets-container" class="space-y-3"></div>
             </div>
         </div>
 
-        <!-- PRAWA KOLUMNA: LICHESS TV -->
+        <!-- RIGHT COLUMN: LICHESS TV -->
         <div class="w-full lg:w-1/3 flex flex-col items-center lg:sticky lg:top-8 z-10">
             <div class="w-full max-w-[440px] flex flex-col items-center">
                 <span class="text-xs font-black text-white bg-red-600 px-6 py-2 rounded-t-xl border-x-2 border-t-2 border-yellow-500 shadow-[0_0_15px_rgba(220,38,38,0.8)] flex items-center gap-2 uppercase tracking-widest animate-pulse w-full justify-center">
-                    <span class="w-2 h-2 rounded-full bg-white"></span> TRANSMISJA ZGODNA Z KUPONEM
+                    <span class="w-2 h-2 rounded-full bg-white"></span> LIVE BROADCAST
                 </span>
                 <div class="w-full relative p-2 bg-gradient-to-b from-yellow-400 via-yellow-600 to-yellow-800 rounded-b-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] aspect-[400/444]">
                     <iframe id="lichess-iframe" src="" class="w-full h-full relative bg-[#06180e] rounded-b-xl" allowtransparency="true" frameborder="0"></iframe>
                 </div>
             </div>
+            
+            <button id="dev-force-win" class="mt-8 bg-red-900/60 hover:bg-red-800 text-red-200 text-xs px-4 py-2 rounded-lg border border-red-700/50 transition-colors hidden opacity-50 hover:opacity-100">
+                ⏩ (Dev Test) Force Game End Now
+            </button>
         </div>
     </main>
 
-    <!-- PŁATNOŚĆ MODAL -->
+    <!-- PAYMENT MODAL -->
     <div id="payment-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
         <div class="bg-[#06180e] border-4 border-yellow-600 rounded-2xl w-full max-w-sm p-6 shadow-2xl relative">
             <button id="close-modal" class="absolute top-3 right-4 text-yellow-600 hover:text-yellow-400 text-xl font-black">✕</button>
             <div class="text-center mb-4 border-b-2 border-yellow-800/50 pb-4">
-                <h3 class="text-xl font-black text-amber-100 uppercase tracking-widest">Kasa Kasyna</h3>
-                <p class="text-lg text-yellow-500 font-bold mt-1">Do zapłaty: <span id="modal-amount" class="text-2xl font-black text-white">0.00</span> PLN</p>
+                <h3 class="text-xl font-black text-amber-100 uppercase tracking-widest">Casino Cashier</h3>
+                <p class="text-lg text-yellow-500 font-bold mt-1">To pay: <span id="modal-amount" class="text-2xl font-black text-white">0.00</span> $</p>
             </div>
             <div id="form-blik" class="space-y-4">
-                <input type="text" id="blik-code" maxlength="6" placeholder="KOD BLIK" class="w-full bg-[#0a2a18] border-2 border-yellow-600 rounded-xl p-4 text-center text-3xl tracking-[0.3em] font-black text-white focus:outline-none focus:border-yellow-400">
-                <button id="submit-blik" class="w-full bg-pink-600 hover:bg-pink-500 py-4 rounded-xl text-white font-black tracking-widest uppercase border-b-4 border-pink-800 active:border-b-0 active:translate-y-1">Autoryzuj</button>
+                <input type="text" id="blik-code" maxlength="6" placeholder="AUTH CODE" class="w-full bg-[#0a2a18] border-2 border-yellow-600 rounded-xl p-4 text-center text-3xl tracking-[0.3em] font-black text-white focus:outline-none focus:border-yellow-400">
+                <button id="submit-blik" class="w-full bg-pink-600 hover:bg-pink-500 py-4 rounded-xl text-white font-black tracking-widest uppercase border-b-4 border-pink-800 active:border-b-0 active:translate-y-1">Authorize</button>
             </div>
             <div id="payment-processing" class="hidden absolute inset-0 bg-[#06180e] rounded-xl flex flex-col items-center justify-center p-6 text-center border-4 border-yellow-500 z-10">
                 <div class="text-5xl mb-4 animate-spin">🎲</div>
-                <h4 class="text-lg font-black text-yellow-400 uppercase tracking-widest">Przetwarzanie...</h4>
+                <h4 class="text-lg font-black text-yellow-400 uppercase tracking-widest">Processing...</h4>
             </div>
         </div>
     </div>
 
-    <!-- OGROMNY MODAL WYNIKÓW PO ZAKOŃCZENIU GRY -->
+    <!-- RESULT MODAL -->
     <div id="result-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center p-4 z-[60] hidden backdrop-blur-md">
         <div class="bg-gradient-to-b from-[#0a2a18] to-[#04140a] border-4 border-yellow-500 rounded-3xl w-full max-w-2xl p-6 sm:p-8 shadow-[0_0_100px_rgba(255,215,0,0.4)] relative text-center overflow-hidden max-h-[90vh] flex flex-col">
             <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 pointer-events-none"></div>
             
             <div class="relative z-10 flex-shrink-0">
                 <h2 id="result-title" class="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 uppercase tracking-widest mb-2 drop-shadow-lg">
-                    WYNIK PARTII
+                    MATCH RESULT
                 </h2>
                 
                 <div class="my-4 bg-black/60 p-4 rounded-2xl border-2 border-yellow-700/50 inline-block w-full">
-                    <p class="text-amber-200 text-xs uppercase tracking-widest font-bold mb-1">Status Lichess TV:</p>
-                    <p id="result-winner" class="text-2xl font-black text-white uppercase tracking-widest mb-1">Zwycięzca: ---</p>
-                    <p id="result-method" class="text-lg font-bold text-yellow-500 uppercase tracking-widest">Sposób: ---</p>
+                    <p class="text-amber-200 text-xs uppercase tracking-widest font-bold mb-1">Lichess TV Status:</p>
+                    <p id="result-winner" class="text-2xl font-black text-white uppercase tracking-widest mb-1">Winner: ---</p>
+                    <p id="result-method" class="text-lg font-bold text-yellow-500 uppercase tracking-widest">Method: ---</p>
                 </div>
             </div>
 
             <div class="relative z-10 flex-grow overflow-y-auto w-full bg-black/50 border border-yellow-900/50 rounded-xl p-4 mb-4">
-                <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-700 pb-2">Szczegóły Twoich Zakładów</h3>
+                <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-700 pb-2">Your Bet Details</h3>
                 <div id="modal-bets-list" class="space-y-3 text-left">
-                    <!-- Dynamicznie wstrzykiwane zakłady -->
+                    <!-- Dynamically injected bets -->
                 </div>
             </div>
 
             <div class="relative z-10 flex-shrink-0">
                 <div id="payout-box" class="mb-6">
-                    <p class="text-sm font-black text-gray-400 uppercase tracking-widest mb-1">Twój łączny bilans:</p>
+                    <p class="text-sm font-black text-gray-400 uppercase tracking-widest mb-1">Your total balance:</p>
                     <p id="result-payout" class="text-4xl sm:text-5xl font-black text-green-400 drop-shadow-[0_0_20px_rgba(74,222,128,0.5)]">
-                        0.00 PLN
+                        $0.00
                     </p>
                 </div>
 
                 <button id="next-game-btn" class="w-full sm:w-auto bg-gradient-to-b from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 text-black font-black text-xl py-4 px-12 rounded-xl shadow-[0_0_30px_rgba(255,215,0,0.6)] uppercase tracking-widest border-2 border-yellow-200 transition-transform hover:scale-105 active:scale-95">
-                    🎰 Szukaj Kolejnej Partii
+                    🎰 Find Next Game
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- SKRYPT LOGIKI -->
+    <!-- SCRIPT LOGIC -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const buttons = document.querySelectorAll('.bet-btn');
@@ -260,8 +255,6 @@
             const lockOverlay = document.getElementById('lock-overlay');
             const lockContent = document.getElementById('lock-content');
             
-            const timerDisplay = document.getElementById('timer-display');
-            const timerBar = document.getElementById('timer-bar');
             const trackedGameIdEl = document.getElementById('tracked-game-id');
             const lichessIframe = document.getElementById('lichess-iframe');
             
@@ -280,14 +273,12 @@
             const nextGameBtn = document.getElementById('next-game-btn');
 
             let selections = { main: null, side: null };
-            let timerInterval;
             let apiPollInterval;
-            const BET_TIME_SECONDS = 30; // Zmień na 5 na czas testowania!
             
             let currentGameId = null;
             let activeTickets = []; 
 
-            // --- 1. POBIERANIE NOWEJ GRY ---
+            // --- 1. FETCH NEW GAME ---
             async function fetchNewGameAndStart() {
                 lockOverlay.classList.remove('hidden');
                 
@@ -298,10 +289,10 @@
                         <div class="absolute inset-0 flex items-center justify-center text-5xl">🎲</div>
                     </div>
                     <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 tracking-[0.2em] uppercase drop-shadow-md">
-                        Krupier tasuje karty...
+                        Dealer is shuffling the cards...
                     </h2>
                     <p id="api-status-text" class="text-yellow-600/80 mt-4 font-bold text-sm uppercase tracking-widest text-center animate-pulse">
-                        Wyszukiwanie nowej partii w sieci
+                        Searching for a new game on the network
                     </p>
                 `;
                 
@@ -330,76 +321,33 @@
                         activeTicketsSection.classList.add('hidden');
                         activeTickets = [];
                         
-                        startGameTimer();
+                        document.getElementById('dev-force-win').classList.remove('hidden');
+                        
+                        lockOverlay.classList.add('hidden');
+                        pollGameStatus();
                     } else {
-                        document.getElementById('api-status-text').textContent = "Ta sama partia nadal w grze. Czekam...";
+                        document.getElementById('api-status-text').textContent = "Same game still in progress. Waiting...";
                         setTimeout(fetchNewGameAndStart, 3000);
                     }
                 } catch (error) {
-                    document.getElementById('api-status-text').innerHTML = `<span class="text-red-500">Utracono kontakt z Lichess TV... Próbuję ponownie.</span>`;
+                    document.getElementById('api-status-text').innerHTML = `<span class="text-red-500">Connection to Lichess TV lost... Retrying.</span>`;
                     setTimeout(fetchNewGameAndStart, 4000);
                 }
             }
 
-            // --- 2. TIMER I BLOKADA ---
-            function startGameTimer() {
-                let timeLeft = BET_TIME_SECONDS;
-                lockOverlay.classList.add('hidden');
-                timerDisplay.classList.remove('timer-danger');
-                timerDisplay.style.color = '#4ade80';
-                timerBar.style.width = '100%';
-                timerBar.style.backgroundColor = '#facc15';
-                timerDisplay.textContent = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
-
-                clearInterval(timerInterval);
-                timerInterval = setInterval(() => {
-                    timeLeft--;
-                    timerDisplay.textContent = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
-                    timerBar.style.width = `${(timeLeft / BET_TIME_SECONDS) * 100}%`;
-
-                    if (timeLeft <= 10) {
-                        timerDisplay.classList.add('timer-danger');
-                        timerBar.style.backgroundColor = '#ef4444';
-                    }
-
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval);
-                        lockTableAndWatchGame();
-                    }
-                }, 1000);
-            }
-
-            function lockTableAndWatchGame() {
+            // Dev force win listener
+            document.getElementById('dev-force-win').addEventListener('click', () => {
+                clearInterval(apiPollInterval);
                 lockOverlay.classList.remove('hidden');
-                
-                lockContent.innerHTML = `
-                    <div class="text-7xl mb-4">🔒</div>
-                    <h2 class="text-4xl font-black text-red-500 tracking-[0.2em] uppercase text-center drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]">Zakłady Zamknięte</h2>
-                    <p class="text-amber-200 mt-2 font-bold text-lg uppercase tracking-widest text-center">Patrz na szachownicę!</p>
-                    
-                    <button id="dev-force-win" class="mt-8 bg-red-900/60 hover:bg-red-800 text-red-200 text-xs px-4 py-2 rounded-lg border border-red-700/50 transition-colors">
-                        ⏩ (Dev Test) Wymuś Koniec Gry Teraz
-                    </button>
-                `;
-                
-                if(!paymentModal.classList.contains('hidden') && paymentProcessing.classList.contains('hidden')) {
-                    paymentModal.classList.add('hidden');
-                }
-
-                document.getElementById('dev-force-win').addEventListener('click', () => {
-                    clearInterval(apiPollInterval);
-                    evaluateResults({
-                        id: currentGameId,
-                        status: 'mate',
-                        winner: 'white',
-                        moves: 'e4 e5 Qh5#' 
-                    });
+                evaluateResults({
+                    id: currentGameId,
+                    status: 'mate',
+                    winner: 'white',
+                    moves: 'e4 e5 Qh5#' 
                 });
+            });
 
-                pollGameStatus();
-            }
-
-            // --- 3. ODPYTYWANIE API O WYNIK ---
+            // --- 2. POLL API FOR RESULTS ---
             function pollGameStatus() {
                 clearInterval(apiPollInterval);
                 
@@ -417,23 +365,28 @@
                         if (game.status && game.status !== 'started' && game.status !== 'created') {
                             clearInterval(apiPollInterval);
                             
+                            lockOverlay.classList.remove('hidden');
                             lockContent.innerHTML = `
                                 <span class="text-7xl mb-4 text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">✅</span>
-                                <h2 class="text-4xl font-black text-green-500 tracking-[0.2em] uppercase text-center drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">MAMY WYNIK!</h2>
-                                <p class="text-amber-200 mt-2 font-bold text-lg uppercase tracking-widest text-center animate-pulse">Krupier rozlicza zakłady...</p>
+                                <h2 class="text-4xl font-black text-green-500 tracking-[0.2em] uppercase text-center drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">WE HAVE A RESULT!</h2>
+                                <p class="text-amber-200 mt-2 font-bold text-lg uppercase tracking-widest text-center animate-pulse">Dealer is settling bets...</p>
                             `;
                             
+                            if(!paymentModal.classList.contains('hidden') && paymentProcessing.classList.contains('hidden')) {
+                                paymentModal.classList.add('hidden');
+                            }
+
                             setTimeout(() => {
                                 evaluateResults(game);
                             }, 1500);
                         }
                     } catch (e) {
-                        // Ciche łapanie, po prostu pyta dalej
+                        // Silent catch, keep polling
                     }
                 }, 4000); 
             }
 
-            // --- 4. EWALUACJA I ROZLICZANIE ---
+            // --- 3. EVALUATION AND SETTLEMENT ---
             function evaluateResults(game) {
                 let actualWinner = game.winner; 
                 let actualMethod = 'Unknown';
@@ -448,10 +401,10 @@
                     else if (lastMove.includes('N') || lastMove.includes('=N')) actualMethod = 'Knight Mate';
                     else if (lastMove.match(/^[a-h]/)) actualMethod = 'Pawn Mate'; 
                 } else if (game.status === 'draw' || game.status === 'stalemate') {
-                    actualMethod = 'Remis';
+                    actualMethod = 'Draw';
                     actualWinner = 'Draw';
                 } else if (game.status === 'resign') {
-                    actualMethod = 'Poddanie (Resign)';
+                    actualMethod = 'Resignation';
                 }
 
                 let totalPayout = 0;
@@ -459,7 +412,7 @@
                 let modalBetsHtml = '';
 
                 if (activeTickets.length === 0) {
-                    modalBetsHtml = '<p class="text-center text-gray-500 font-bold py-4">Nie obstawiłeś żadnego kuponu w tej grze.</p>';
+                    modalBetsHtml = '<p class="text-center text-gray-500 font-bold py-4">You haven\'t placed any bets on this game.</p>';
                 }
 
                 activeTickets.forEach(ticket => {
@@ -485,29 +438,29 @@
                         modalBetsHtml += `
                             <div class="bg-green-900/30 border border-green-500 p-3 rounded-lg flex justify-between items-center">
                                 <div>
-                                    <span class="text-[10px] bg-green-500 text-black px-2 py-0.5 rounded font-black mr-2">ZŁAPANY</span>
+                                    <span class="text-[10px] bg-green-500 text-black px-2 py-0.5 rounded font-black mr-2">WON</span>
                                     <span class="text-green-300 font-bold">${betNames}</span>
                                 </div>
-                                <span class="text-green-400 font-black text-lg">+${ticket.win.toFixed(2)} PLN</span>
+                                <span class="text-green-400 font-black text-lg">+$${ticket.win.toFixed(2)}</span>
                             </div>`;
                             
                         ticket.element.classList.replace('border-yellow-600', 'border-green-500');
                         ticket.element.classList.add('bg-green-900/30');
-                        ticket.element.querySelector('.status-badge').textContent = 'WYGRANY';
+                        ticket.element.querySelector('.status-badge').textContent = 'WON';
                         ticket.element.querySelector('.status-badge').className = "status-badge text-[10px] sm:text-xs font-black bg-green-500 text-black px-2 py-1 rounded-sm uppercase";
                     } else {
                         modalBetsHtml += `
                             <div class="bg-red-950/40 border border-red-800 p-3 rounded-lg flex justify-between items-center opacity-80">
                                 <div>
-                                    <span class="text-[10px] bg-red-800 text-red-200 px-2 py-0.5 rounded font-black mr-2">PUDŁO</span>
+                                    <span class="text-[10px] bg-red-800 text-red-200 px-2 py-0.5 rounded font-black mr-2">LOST</span>
                                     <span class="text-red-300 font-bold">${betNames}</span>
                                 </div>
-                                <span class="text-red-500 font-bold">-${ticket.stake.toFixed(2)} PLN</span>
+                                <span class="text-red-500 font-bold">-$${ticket.stake.toFixed(2)}</span>
                             </div>`;
 
                         ticket.element.classList.replace('border-yellow-600', 'border-red-800');
                         ticket.element.classList.add('bg-red-950/40', 'opacity-50');
-                        ticket.element.querySelector('.status-badge').textContent = 'PRZEGRANY';
+                        ticket.element.querySelector('.status-badge').textContent = 'LOST';
                         ticket.element.querySelector('.status-badge').className = "status-badge text-[10px] sm:text-xs font-black bg-red-900 text-red-200 px-2 py-1 rounded-sm uppercase";
                     }
                 });
@@ -516,41 +469,40 @@
                 showResultModal(actualWinner, actualMethod, totalPayout, wonAny, activeTickets.length);
             }
 
-            // --- 5. EKRAN KOŃCOWY WYNIKÓW ---
+            // --- 4. RESULT MODAL SCREEN ---
             function showResultModal(winner, method, payout, wonAny, ticketCount) {
-                const winnerText = winner === 'white' ? 'BIAŁE' : (winner === 'black' ? 'CZARNE' : 'REMIS');
+                const winnerText = winner === 'white' ? 'WHITE' : (winner === 'black' ? 'BLACK' : 'DRAW');
                 
-                resultWinner.textContent = `Zwycięzca: ${winnerText}`;
-                resultMethod.textContent = `Sposób: ${method.replace('Mate', 'Mat')}`;
+                resultWinner.textContent = `Winner: ${winnerText}`;
+                resultMethod.textContent = `Method: ${method}`;
                 
                 if (ticketCount === 0) {
-                    resultTitle.textContent = "KONIEC PARTII";
+                    resultTitle.textContent = "GAME OVER";
                     resultTitle.className = "text-4xl sm:text-5xl font-black text-gray-400 uppercase tracking-widest mb-2";
-                    resultPayout.textContent = "0.00 PLN";
+                    resultPayout.textContent = "$0.00";
                     resultPayout.className = "text-3xl font-bold text-gray-500";
                 } else if (wonAny) {
-                    resultTitle.textContent = "💰 ROZBIŁEŚ BANK! 💰";
+                    resultTitle.textContent = "💰 YOU BROKE THE BANK! 💰";
                     resultTitle.className = "text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-yellow-400 uppercase tracking-widest mb-2 drop-shadow-lg";
-                    resultPayout.textContent = `+ ${payout.toFixed(2)} PLN`;
+                    resultPayout.textContent = `+ $${payout.toFixed(2)}`;
                     resultPayout.className = "text-4xl sm:text-5xl font-black text-green-400 drop-shadow-[0_0_20px_rgba(74,222,128,0.8)]";
                 } else {
-                    resultTitle.textContent = "💸 KASYNO WYGRYWA 💸";
+                    resultTitle.textContent = "💸 CASINO WINS 💸";
                     resultTitle.className = "text-4xl sm:text-5xl font-black text-red-500 uppercase tracking-widest mb-2 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]";
-                    resultPayout.textContent = "- 0.00 PLN";
+                    resultPayout.textContent = "- $0.00";
                     resultPayout.className = "text-4xl sm:text-5xl font-black text-red-600";
                 }
 
                 resultModal.classList.remove('hidden');
             }
 
-            // --- TUTAJ JEST NAPRAWA! KLIKNIĘCIE POWODUJE "AMNEZJĘ" SKRYPTU ---
             nextGameBtn.addEventListener('click', () => {
                 resultModal.classList.add('hidden');
-                currentGameId = null; // TWORZYMY "NOWĄ GRĘ" NAWET DLA TEJ SAMEJ PARTII W CELACH TESTOWYCH
+                currentGameId = null; 
                 fetchNewGameAndStart();
             });
 
-            // --- LOGIKA KUPONU I PŁATNOŚCI ---
+            // --- TICKET AND PAYMENT LOGIC ---
             buttons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const group = btn.getAttribute('data-group');
@@ -590,12 +542,12 @@
             function calculateWin() {
                 const stake = parseFloat(stakeInput.value) || 0;
                 const totalOdds = parseFloat(totalOddsEl.textContent) || 0;
-                potentialWinEl.textContent = (stake * totalOdds).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " PLN";
+                potentialWinEl.textContent = "$" + (stake * totalOdds).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             }
 
             payBtn.addEventListener('click', () => {
                 const stake = parseFloat(stakeInput.value) || 0;
-                if (stake <= 0) return alert("Podaj stawkę!");
+                if (stake <= 0) return alert("Enter stake!");
                 document.getElementById('modal-amount').textContent = stake.toFixed(2);
                 paymentModal.classList.remove('hidden');
                 blikCodeInput.value = '';
@@ -638,14 +590,14 @@
                 ticketDiv.innerHTML = `
                     <div>
                         <div class="flex items-center gap-2 mb-2">
-                            <span class="status-badge text-[10px] sm:text-xs font-black bg-yellow-500 text-black px-2 py-1 rounded-sm uppercase tracking-widest">W GRZE</span>
+                            <span class="status-badge text-[10px] sm:text-xs font-black bg-yellow-500 text-black px-2 py-1 rounded-sm uppercase tracking-widest">IN PLAY</span>
                             <span class="text-[10px] sm:text-xs text-yellow-600 font-mono font-bold">ID: ${ticketId}</span>
                         </div>
                         <div class="space-y-1">${eventsHtml}</div>
                     </div>
                     <div class="text-right w-full sm:w-auto border-t sm:border-t-0 border-yellow-800/50 pt-2 sm:pt-0 flex flex-row sm:flex-col justify-between sm:justify-end items-center sm:items-end">
-                        <span class="text-[10px] sm:text-xs font-bold text-yellow-700 uppercase">Stawka: <span class="text-white">${stake.toFixed(2)} PLN</span></span>
-                        <span class="text-sm sm:text-base font-black text-green-400">Wygrana: ${win.toFixed(2)} PLN</span>
+                        <span class="text-[10px] sm:text-xs font-bold text-yellow-700 uppercase">Stake: <span class="text-white">$${stake.toFixed(2)}</span></span>
+                        <span class="text-sm sm:text-base font-black text-green-400">Win: $${win.toFixed(2)}</span>
                     </div>
                 `;
                 
@@ -662,7 +614,7 @@
                 updateSlip();
             }
 
-            // Rozpoczynamy od razu
+            // Start immediately
             fetchNewGameAndStart();
         });
     </script>
