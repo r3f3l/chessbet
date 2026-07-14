@@ -2,83 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CHESSBET CASINO</title>
+    <title>CHESSBET CASINO - Safe Mode</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { background-color: #051a0f; color: #fef3c7; }
-        .casino-card { background: #064e3b; border: 2px solid #d97706; }
-    </style>
 </head>
-<body class="p-4 md:p-10">
-    <h1 class="text-center text-4xl font-black text-yellow-500 mb-8">👑 CHESSBET CASINO 👑</h1>
+<body class="bg-slate-900 text-white p-10">
+    <h1 class="text-center text-4xl font-bold mb-10 text-yellow-500">👑 KASJNO - TRYB TESTOWY 👑</h1>
     
-    <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
-        <div class="casino-card p-6 rounded-2xl">
-            <div id="status" class="text-center font-bold mb-4 animate-pulse">CONNECTING TO LICHESS...</div>
-            
-            <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
-                <div class="bg-black/40 p-3 rounded">White: <span id="p-white" class="font-bold">---</span></div>
-                <div class="bg-black/40 p-3 rounded">Black: <span id="p-black" class="font-bold">---</span></div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <button class="bet-btn p-4 bg-green-700 rounded-lg border-2 border-yellow-500" data-side="white">Bet White</button>
-                <button class="bet-btn p-4 bg-green-700 rounded-lg border-2 border-yellow-500" data-side="black">Bet Black</button>
-            </div>
-            
-            <input type="number" id="stake" placeholder="Amount ($)" class="w-full mt-4 p-3 bg-black rounded border border-yellow-500 text-white">
-            <button id="submit" class="w-full mt-2 bg-yellow-600 text-black font-black p-3 rounded uppercase">Place Bet</button>
-            <p class="text-[10px] text-red-400 mt-2 text-center uppercase">Attention: Draw/Stalemate = House Wins</p>
-        </div>
-
-        <iframe id="game-frame" src="" class="w-full h-80 rounded-2xl border-4 border-yellow-600 bg-black"></iframe>
+    <div id="ui-test" class="max-w-2xl mx-auto bg-slate-800 p-8 rounded-xl border border-yellow-500">
+        <h2 class="text-xl mb-4">Jeśli to widzisz, UI działa poprawnie!</h2>
+        <div id="status" class="bg-red-900 p-4 rounded mb-4">Status: Symulacja aktywna</div>
+        <button onclick="testLog()" class="w-full bg-yellow-600 p-4 rounded text-black font-bold">Sprawdź czy działa przycisk</button>
     </div>
 
     <script>
-        let currentData = null;
-        let bets = [];
-
-        async function update() {
-            try {
-                // Odpytujemy tylko jeden bezpieczny endpoint
-                const res = await fetch('https://lichess.org/api/tv/channels');
-                const data = await res.json();
-                const game = data.topRated || Object.values(data)[0];
-
-                if (!game) return;
-
-                // Aktualizacja UI tylko jeśli gra się zmieniła
-                if (currentData?.gameId !== game.gameId) {
-                    currentData = game;
-                    document.getElementById('p-white').textContent = game.players ? game.players[0].name : "Unknown";
-                    document.getElementById('p-black').textContent = game.players ? game.players[1].name : "Unknown";
-                    document.getElementById('game-frame').src = `https://lichess.org/embed/${game.gameId}?theme=brown&bg=dark`;
-                    document.getElementById('status').textContent = "BETTING OPEN";
-                }
-            } catch (e) {
-                console.log("Waiting for data...");
-            }
-            setTimeout(update, 8000); // Wolniejsze odpytywanie = bezpieczniej
+        function testLog() {
+            alert("Przycisk działa! Problem leży w połączeniu z API Lichess.");
         }
-
-        // Prosta logika zakładów
-        document.getElementById('submit').onclick = () => {
-            const stake = document.getElementById('stake').value;
-            const side = document.querySelector('.glow-casino-active')?.dataset.side;
-            if (!side || !stake) return alert("Select side and amount!");
-            
-            bets.push({side, stake});
-            alert(`Bet on ${side} placed!`);
+        
+        // Symulacja danych
+        const mockData = {
+            gameId: "test1234",
+            players: [{name: "Magnus"}, {name: "Hikaru"}]
         };
 
-        document.querySelectorAll('.bet-btn').forEach(b => {
-            b.onclick = () => {
-                document.querySelectorAll('.bet-btn').forEach(x => x.classList.remove('glow-casino-active'));
-                b.classList.add('glow-casino-active');
-            }
-        });
-
-        update();
+        console.log("Kasyno gotowe. Jeśli widzisz błędy 'CORS' w konsoli powyżej, to znaczy, że przeglądarka blokuje dostęp do Lichess.");
     </script>
 </body>
 </html>
