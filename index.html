@@ -6,13 +6,11 @@
     <title>CHESSBET CASINO - Make Chess Great Again!</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Tło - Butelkowa zieleń */
         body {
-            background-color: #0b3b24; /* Klasyczna butelkowa zieleń */
+            background-color: #0b3b24; 
             background-image: radial-gradient(circle at 50% 0%, #115e3a 0%, #0b3b24 60%, #051e11 100%);
         }
 
-        /* Krzyczący styl Las Vegas / Trump */
         .vegas-logo {
             font-family: 'Times New Roman', Times, serif;
             text-transform: uppercase;
@@ -30,7 +28,6 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(218, 165, 32, 0.15);
         }
 
-        /* Aktywny przycisk - styl kasynowego żetonu */
         .glow-casino-active {
             background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 100%) !important;
             border-color: #fbbf24 !important;
@@ -39,205 +36,216 @@
         }
 
         .chess-icon { font-family: 'Times New Roman', Times, serif; }
+        
+        /* Animacja migania timera poniżej 10s */
+        @keyframes timerBlink {
+            0% { color: #f87171; text-shadow: 0 0 20px #ef4444; transform: scale(1); }
+            50% { color: #ffffff; text-shadow: 0 0 10px #ffffff; transform: scale(1.05); }
+            100% { color: #f87171; text-shadow: 0 0 20px #ef4444; transform: scale(1); }
+        }
+        .timer-danger {
+            animation: timerBlink 1s infinite;
+        }
     </style>
 </head>
 <body class="text-amber-50 min-h-screen font-sans selection:bg-yellow-500 selection:text-black pb-20">
     
-    <header class="text-center py-10 bg-[#06180e] border-b-8 border-double border-yellow-500 shadow-[0_10px_30px_rgba(255,215,0,0.2)] relative overflow-hidden">
+    <!-- NAGŁÓWEK -->
+    <header class="text-center py-8 bg-[#06180e] border-b-8 border-double border-yellow-500 shadow-[0_10px_30px_rgba(255,215,0,0.2)] relative overflow-hidden">
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
-        <div class="relative z-10 flex flex-col items-center justify-center gap-2">
-            <div class="text-yellow-400 text-2xl tracking-[0.3em] font-black flex items-center gap-4 drop-shadow-md">
-                <span>⭐</span><span>⭐</span><span>⭐</span>
-                <span>HUGE PAYOUTS</span>
-                <span>⭐</span><span>⭐</span><span>⭐</span>
-            </div>
-            
-            <h1 class="vegas-logo text-5xl sm:text-7xl font-black mt-2 mb-4">
+        <div class="relative z-10 flex flex-col items-center justify-center gap-1">
+            <h1 class="vegas-logo text-4xl sm:text-6xl font-black mt-2 mb-2">
                 👑 CHESSBET CASINO 👑
             </h1>
-            
-            <p class="text-yellow-500 text-lg sm:text-xl uppercase tracking-widest font-black border-y-2 border-yellow-600/50 py-2 px-8 bg-black/40">
-                "Potężne kursy. Nikt nie robi tego lepiej, uwierz mi!"
+            <p class="text-yellow-500 text-sm sm:text-lg uppercase tracking-widest font-black border-y-2 border-yellow-600/50 py-1.5 px-6 bg-black/40">
+                Wielkie emocje. Gigantyczne wypłaty.
             </p>
         </div>
     </header>
 
-    <main class="max-w-5xl mx-auto mt-12 p-4 flex flex-col items-center relative z-10">
+    <!-- GŁÓWNY KONTENER (Grid / Flexbox dla układu Side-by-Side) -->
+    <main class="max-w-[1400px] mx-auto mt-8 p-4 flex flex-col lg:flex-row gap-8 items-start relative z-10">
         
-        <div class="w-full flex flex-col items-center mb-12">
-            <span class="text-sm font-black text-white bg-red-600 px-6 py-2 rounded-t-xl border-x-2 border-t-2 border-yellow-500 shadow-[0_0_15px_rgba(220,38,38,0.8)] flex items-center gap-2 uppercase tracking-widest animate-pulse">
-                <span class="w-3 h-3 rounded-full bg-white"></span> NA ŻYWO Z LICHESS TV
-            </span>
-            <div class="relative p-2 bg-gradient-to-b from-yellow-400 via-yellow-600 to-yellow-800 rounded-b-2xl rounded-t-none shadow-2xl">
-                <iframe 
-                    src="https://lichess.org/tv/frame?theme=brown&bg=dark"
-                    style="width: 440px; height: 480px;"
-                    allowtransparency="true"
-                    frameborder="0"
-                    class="relative bg-[#06180e]">
-                </iframe>
+        <!-- LEWA KOLUMNA: GŁÓWNY PANEL ZAKŁADÓW -->
+        <div class="w-full lg:w-2/3 casino-panel rounded-3xl p-6 sm:p-8 border-2 border-yellow-600/60 relative overflow-hidden">
+            
+            <!-- NAKŁADKA BLOKUJĄCA (Pokazuje się, gdy timer osiągnie 0) -->
+            <div id="lock-overlay" class="absolute inset-0 bg-black/80 z-30 flex flex-col items-center justify-center backdrop-blur-sm hidden transition-opacity duration-300">
+                <span class="text-7xl mb-4">🔒</span>
+                <h2 class="text-4xl font-black text-red-500 tracking-[0.2em] uppercase text-center drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]">
+                    Zakłady Zamknięte
+                </h2>
+                <p class="text-amber-200 mt-3 font-bold text-xl uppercase tracking-widest">Partia w toku. Graj u krupiera.</p>
+                <button id="reset-game-btn" class="mt-8 bg-gradient-to-b from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 text-black font-black text-lg py-3 px-8 rounded-xl shadow-[0_0_20px_rgba(255,215,0,0.4)] transition-all uppercase tracking-widest border-2 border-yellow-200">
+                    Otwórz nowy stół (Test)
+                </button>
             </div>
-        </div>
 
-        <div class="casino-panel w-full max-w-3xl rounded-3xl p-8 border-2 border-yellow-600/60 relative">
-            
-            <div class="absolute top-4 left-4 text-yellow-600 opacity-50 text-2xl">♠️</div>
-            <div class="absolute top-4 right-4 text-yellow-600 opacity-50 text-2xl">♥️</div>
-            
-            <div class="flex items-center justify-center mb-8 border-b-2 border-yellow-800/50 pb-6">
-                <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 tracking-wider uppercase">
+            <!-- MODUŁ TIMERA -->
+            <div class="flex flex-col sm:flex-row justify-between items-center bg-[#061a10] border-2 border-yellow-500 rounded-xl p-4 mb-8 shadow-inner relative overflow-hidden">
+                <div class="absolute w-full h-1 bg-yellow-900 bottom-0 left-0">
+                    <div id="timer-bar" class="h-full bg-yellow-400 transition-all duration-1000 ease-linear" style="width: 100%;"></div>
+                </div>
+                <div class="flex items-center gap-3 mb-2 sm:mb-0">
+                    <span class="text-2xl animate-pulse">⏳</span>
+                    <span class="text-yellow-500 font-black uppercase tracking-widest text-sm sm:text-lg">Czas na zawarcie zakładu:</span>
+                </div>
+                <div class="bg-black px-6 py-2 rounded-lg border border-yellow-700/50">
+                    <span id="timer-display" class="text-4xl font-black text-green-400 drop-shadow-[0_0_15px_rgba(74,222,128,0.6)] font-mono">
+                        00:30
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-center mb-6 border-b-2 border-yellow-800/50 pb-4">
+                <h2 class="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 tracking-wider uppercase">
                     🎫 Stół Zakładów VIP
                 </h2>
             </div>
             
+            <!-- ZAKŁADY GŁÓWNE -->
             <h3 class="text-center font-bold text-yellow-500 uppercase tracking-[0.2em] mb-4 text-sm">Zwycięzca Partii</h3>
-            <div class="grid grid-cols-2 gap-6 mb-10 px-2 sm:px-8">
-                <button class="bet-btn group bg-[#0d4a2a] hover:bg-[#136138] transition-all duration-300 p-6 rounded-2xl flex flex-col items-center justify-between border-2 border-yellow-700/50 h-44 shadow-lg" data-group="main" data-bet="White Win" data-label="1:1" data-decimal="2.00">
-                    <span class="chess-icon text-6xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">♔</span>
-                    <span class="text-lg font-bold text-amber-100 mt-2 uppercase">Białe</span>
-                    <span class="text-3xl font-black text-yellow-400 mt-1 drop-shadow-md">1:1</span>
+            <div class="grid grid-cols-2 gap-4 sm:gap-6 mb-8 px-0 sm:px-4">
+                <button class="bet-btn group bg-[#0d4a2a] hover:bg-[#136138] transition-all duration-300 p-4 sm:p-6 rounded-2xl flex flex-col items-center justify-between border-2 border-yellow-700/50 h-36 sm:h-44 shadow-lg" data-group="main" data-bet="White Win" data-label="1:1" data-decimal="2.00">
+                    <span class="chess-icon text-5xl sm:text-6xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">♔</span>
+                    <span class="text-base sm:text-lg font-bold text-amber-100 mt-2 uppercase">Białe</span>
+                    <span class="text-2xl sm:text-3xl font-black text-yellow-400 mt-1 drop-shadow-md">1:1</span>
                 </button>
-                <button class="bet-btn group bg-[#0d4a2a] hover:bg-[#136138] transition-all duration-300 p-6 rounded-2xl flex flex-col items-center justify-between border-2 border-yellow-700/50 h-44 shadow-lg" data-group="main" data-bet="Black Win" data-label="1:1" data-decimal="2.00">
-                    <span class="chess-icon text-6xl text-gray-900 drop-shadow-[0_2px_1px_rgba(255,255,255,0.3)]">♚</span>
-                    <span class="text-lg font-bold text-amber-100 mt-2 uppercase">Czarne</span>
-                    <span class="text-3xl font-black text-yellow-400 mt-1 drop-shadow-md">1:1</span>
+                <button class="bet-btn group bg-[#0d4a2a] hover:bg-[#136138] transition-all duration-300 p-4 sm:p-6 rounded-2xl flex flex-col items-center justify-between border-2 border-yellow-700/50 h-36 sm:h-44 shadow-lg" data-group="main" data-bet="Black Win" data-label="1:1" data-decimal="2.00">
+                    <span class="chess-icon text-5xl sm:text-6xl text-gray-900 drop-shadow-[0_2px_1px_rgba(255,255,255,0.3)]">♚</span>
+                    <span class="text-base sm:text-lg font-bold text-amber-100 mt-2 uppercase">Czarne</span>
+                    <span class="text-2xl sm:text-3xl font-black text-yellow-400 mt-1 drop-shadow-md">1:1</span>
                 </button>
             </div>
 
-            <div class="relative flex items-center py-6 mb-2">
+            <!-- ZAKŁADY POBOCZNE -->
+            <div class="relative flex items-center py-4 mb-4">
                 <div class="flex-grow border-t-2 border-yellow-900/40"></div>
-                <span class="flex-shrink-0 mx-6 text-yellow-600 text-sm font-black uppercase tracking-[0.2em]">Metoda Egzekucji</span>
+                <span class="flex-shrink-0 mx-4 text-yellow-600 text-xs sm:text-sm font-black uppercase tracking-[0.2em]">Metoda Egzekucji</span>
                 <div class="flex-grow border-t-2 border-yellow-900/40"></div>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] transition-all duration-200 p-5 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-40 shadow-inner" data-group="side" data-bet="Queen Mate" data-label="1:1" data-decimal="2.00">
-                    <span class="chess-icon text-5xl text-amber-100">♕</span>
-                    <span class="text-xs font-bold text-amber-200 mt-3 uppercase tracking-wide">Queen Mate</span>
-                    <span class="text-2xl font-black text-yellow-500 mt-1">1:1</span>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+                <!-- Przyciski zakładów pobocznych -->
+                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] p-4 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-32 shadow-inner transition-colors" data-group="side" data-bet="Queen Mate" data-label="1:1" data-decimal="2.00">
+                    <span class="chess-icon text-4xl text-amber-100">♕</span>
+                    <span class="text-[10px] sm:text-xs font-bold text-amber-200 mt-2 uppercase tracking-wide">Queen Mate</span>
+                    <span class="text-xl font-black text-yellow-500 mt-1">1:1</span>
                 </button>
-                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] transition-all duration-200 p-5 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-40 shadow-inner" data-group="side" data-bet="Rook Mate" data-label="1:3" data-decimal="4.00">
-                    <span class="chess-icon text-5xl text-amber-100">♖</span>
-                    <span class="text-xs font-bold text-amber-200 mt-3 uppercase tracking-wide">Rook Mate</span>
-                    <span class="text-2xl font-black text-yellow-500 mt-1">1:3</span>
+                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] p-4 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-32 shadow-inner transition-colors" data-group="side" data-bet="Rook Mate" data-label="1:3" data-decimal="4.00">
+                    <span class="chess-icon text-4xl text-amber-100">♖</span>
+                    <span class="text-[10px] sm:text-xs font-bold text-amber-200 mt-2 uppercase tracking-wide">Rook Mate</span>
+                    <span class="text-xl font-black text-yellow-500 mt-1">1:3</span>
                 </button>
-                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] transition-all duration-200 p-5 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-40 shadow-inner" data-group="side" data-bet="Bishop Mate" data-label="1:6" data-decimal="7.00">
-                    <span class="chess-icon text-5xl text-amber-100">♗</span>
-                    <span class="text-xs font-bold text-amber-200 mt-3 uppercase tracking-wide">Bishop Mate</span>
-                    <span class="text-2xl font-black text-yellow-500 mt-1">1:6</span>
+                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] p-4 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-32 shadow-inner transition-colors" data-group="side" data-bet="Bishop Mate" data-label="1:6" data-decimal="7.00">
+                    <span class="chess-icon text-4xl text-amber-100">♗</span>
+                    <span class="text-[10px] sm:text-xs font-bold text-amber-200 mt-2 uppercase tracking-wide">Bishop Mate</span>
+                    <span class="text-xl font-black text-yellow-500 mt-1">1:6</span>
                 </button>
-                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] transition-all duration-200 p-5 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-40 shadow-inner" data-group="side" data-bet="Knight Mate" data-label="1:6" data-decimal="7.00">
-                    <span class="chess-icon text-5xl text-amber-100">♘</span>
-                    <span class="text-xs font-bold text-amber-200 mt-3 uppercase tracking-wide">Knight Mate</span>
-                    <span class="text-2xl font-black text-yellow-500 mt-1">1:6</span>
+                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] p-4 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-32 shadow-inner transition-colors" data-group="side" data-bet="Knight Mate" data-label="1:6" data-decimal="7.00">
+                    <span class="chess-icon text-4xl text-amber-100">♘</span>
+                    <span class="text-[10px] sm:text-xs font-bold text-amber-200 mt-2 uppercase tracking-wide">Knight Mate</span>
+                    <span class="text-xl font-black text-yellow-500 mt-1">1:6</span>
                 </button>
-                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] transition-all duration-200 p-5 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-40 shadow-inner" data-group="side" data-bet="Pawn Mate" data-label="1:10" data-decimal="11.00">
-                    <span class="chess-icon text-5xl text-amber-100">♙</span>
-                    <span class="text-xs font-bold text-amber-200 mt-3 uppercase tracking-wide">Pawn Mate</span>
-                    <span class="text-2xl font-black text-yellow-500 mt-1">1:10</span>
+                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] p-4 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-32 shadow-inner transition-colors" data-group="side" data-bet="Pawn Mate" data-label="1:10" data-decimal="11.00">
+                    <span class="chess-icon text-4xl text-amber-100">♙</span>
+                    <span class="text-[10px] sm:text-xs font-bold text-amber-200 mt-2 uppercase tracking-wide">Pawn Mate</span>
+                    <span class="text-xl font-black text-yellow-500 mt-1">1:10</span>
                 </button>
-                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] transition-all duration-200 p-5 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-40 shadow-inner" data-group="side" data-bet="Timeout Mate" data-label="1:2" data-decimal="3.00">
-                    <span class="text-5xl text-amber-100">⏱️</span>
-                    <span class="text-xs font-bold text-amber-200 mt-3 uppercase tracking-wide">Timeout</span>
-                    <span class="text-2xl font-black text-yellow-500 mt-1">1:2</span>
+                <button class="bet-btn group bg-[#0a3a21] hover:bg-[#0f4d2f] p-4 rounded-2xl flex flex-col items-center justify-center border-2 border-yellow-800/40 h-32 shadow-inner transition-colors" data-group="side" data-bet="Timeout Mate" data-label="1:2" data-decimal="3.00">
+                    <span class="text-4xl text-amber-100">⏱️</span>
+                    <span class="text-[10px] sm:text-xs font-bold text-amber-200 mt-2 uppercase tracking-wide">Timeout</span>
+                    <span class="text-xl font-black text-yellow-500 mt-1">1:2</span>
                 </button>
             </div>
             
-            <div id="payment-module" class="mt-12 p-8 bg-[#03140b] rounded-2xl border-2 border-yellow-600 shadow-[0_0_30px_rgba(218,165,32,0.1)] hidden relative">
-                <h3 class="text-2xl font-black text-yellow-500 mb-6 border-b-2 border-yellow-800 pb-4 text-center uppercase tracking-widest">
+            <!-- MODUŁ PŁATNOŚCI -->
+            <div id="payment-module" class="mt-10 p-6 bg-[#03140b] rounded-2xl border-2 border-yellow-600 shadow-[0_0_30px_rgba(218,165,32,0.1)] hidden relative">
+                <h3 class="text-xl sm:text-2xl font-black text-yellow-500 mb-4 border-b-2 border-yellow-800 pb-4 text-center uppercase tracking-widest">
                     💰 Twój Złoty Kupon 💰
                 </h3>
                 
-                <ul id="selected-bets-list" class="space-y-3 mb-6 text-base text-amber-100 font-bold">
-                    </ul>
+                <ul id="selected-bets-list" class="space-y-3 mb-6 text-sm sm:text-base text-amber-100 font-bold"></ul>
 
-                <div class="flex items-center justify-between mb-8 bg-[#062213] p-5 rounded-xl border border-yellow-700/50">
-                    <span class="text-amber-300 font-black uppercase tracking-widest">Łączny Kurs AKO:</span>
-                    <span id="total-odds" class="text-4xl font-black text-yellow-400 drop-shadow-md">0.00</span>
+                <div class="flex items-center justify-between mb-6 bg-[#062213] p-4 rounded-xl border border-yellow-700/50">
+                    <span class="text-amber-300 font-black uppercase tracking-widest text-xs sm:text-sm">Łączny Kurs:</span>
+                    <span id="total-odds" class="text-2xl sm:text-4xl font-black text-yellow-400 drop-shadow-md">0.00</span>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-end">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                     <div>
-                        <label for="stake" class="block text-sm font-black text-yellow-600 uppercase tracking-widest mb-2">Kwota zakładu (PLN)</label>
-                        <input type="number" id="stake" min="1" placeholder="Wpisz stawkę..." class="w-full bg-[#0a3a21] border-2 border-yellow-700 rounded-xl p-4 text-2xl text-white font-bold focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500 transition-all text-center placeholder-yellow-800/50">
+                        <label for="stake" class="block text-xs font-black text-yellow-600 uppercase tracking-widest mb-2">Kwota zakładu (PLN)</label>
+                        <input type="number" id="stake" min="1" placeholder="Stawka..." class="w-full bg-[#0a3a21] border-2 border-yellow-700 rounded-xl p-3 sm:p-4 text-xl sm:text-2xl text-white font-bold focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500 text-center">
                     </div>
-                    <div class="bg-gradient-to-br from-[#115e3a] to-[#0b3b24] p-4 rounded-xl border-2 border-yellow-500 text-center shadow-lg">
-                        <span class="block text-xs text-amber-200 font-black uppercase tracking-widest mb-1">DO WYGRANIA</span>
-                        <span id="potential-win" class="text-3xl font-black text-green-400 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">0.00 PLN</span>
+                    <div class="bg-gradient-to-br from-[#115e3a] to-[#0b3b24] p-3 sm:p-4 rounded-xl border-2 border-yellow-500 text-center shadow-lg">
+                        <span class="block text-[10px] text-amber-200 font-black uppercase tracking-widest mb-1">DO WYGRANIA</span>
+                        <span id="potential-win" class="text-xl sm:text-3xl font-black text-green-400 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">0.00 PLN</span>
                     </div>
                 </div>
 
-                <p id="error-msg" class="text-red-300 text-sm hidden font-bold text-center bg-red-900/60 py-3 mt-6 rounded-lg border border-red-700 uppercase tracking-wide"></p>
+                <p id="error-msg" class="text-red-300 text-xs sm:text-sm hidden font-bold text-center bg-red-900/60 py-3 mt-6 rounded-lg border border-red-700 uppercase tracking-wide"></p>
 
-                <button id="pay-btn" class="w-full mt-8 bg-gradient-to-b from-yellow-300 via-yellow-500 to-yellow-700 hover:from-yellow-200 hover:to-yellow-600 text-black font-black text-xl py-5 rounded-xl shadow-[0_5px_15px_rgba(255,215,0,0.4)] transition-all transform hover:scale-[1.02] active:scale-95 uppercase tracking-[0.1em] border-2 border-yellow-200">
-                    🎲 Obstaw i rozbij bank!
+                <button id="pay-btn" class="w-full mt-6 bg-gradient-to-b from-yellow-300 via-yellow-500 to-yellow-700 hover:from-yellow-200 hover:to-yellow-600 text-black font-black text-lg sm:text-xl py-4 rounded-xl shadow-[0_5px_15px_rgba(255,215,0,0.4)] transition-all transform hover:scale-[1.02] active:scale-95 uppercase tracking-[0.1em] border-2 border-yellow-200">
+                    🎲 Obstaw!
                 </button>
             </div>
 
-            <div id="active-tickets-section" class="mt-12 pt-8 border-t-2 border-yellow-900/50 hidden">
-                <h3 class="text-center font-black text-yellow-600 uppercase tracking-[0.2em] mb-6">🎟️ Twoje Aktywne Kupony VIP</h3>
+            <!-- AKTYWNE ZAKŁADY (Historia) -->
+            <div id="active-tickets-section" class="mt-10 pt-6 border-t-2 border-yellow-900/50 hidden">
+                <h3 class="text-center font-black text-yellow-600 uppercase tracking-[0.2em] mb-4 text-sm">🎟️ Kupony w grze</h3>
                 <div id="tickets-container" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <!-- PRAWA KOLUMNA: EKRAN LICHESS TV (Sticky) -->
+        <div class="w-full lg:w-1/3 flex flex-col items-center lg:sticky lg:top-8 z-10">
+            <div class="w-full max-w-[440px] flex flex-col items-center">
+                <span class="text-sm font-black text-white bg-red-600 px-6 py-2 rounded-t-xl border-x-2 border-t-2 border-yellow-500 shadow-[0_0_15px_rgba(220,38,38,0.8)] flex items-center gap-2 uppercase tracking-widest animate-pulse w-full justify-center">
+                    <span class="w-3 h-3 rounded-full bg-white"></span> TRANSMISJA NA ŻYWO
+                </span>
+                <div class="w-full relative p-2 bg-gradient-to-b from-yellow-400 via-yellow-600 to-yellow-800 rounded-b-2xl rounded-t-none shadow-[0_20px_50px_rgba(0,0,0,0.8)] aspect-[400/444]">
+                    <iframe 
+                        src="https://lichess.org/tv/frame?theme=brown&bg=dark"
+                        class="w-full h-full relative bg-[#06180e] rounded-b-xl"
+                        allowtransparency="true"
+                        frameborder="0">
+                    </iframe>
+                </div>
             </div>
         </div>
     </main>
 
+    <!-- INTERAKTYWNA BRAMKA PŁATNOŚCI (MODAL) -->
     <div id="payment-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
         <div class="bg-[#06180e] border-4 border-yellow-600 rounded-2xl w-full max-w-md p-8 shadow-[0_0_50px_rgba(218,165,32,0.3)] relative">
             <button id="close-modal" class="absolute top-4 right-5 text-yellow-600 hover:text-yellow-400 text-2xl font-black">✕</button>
-            
-            <div class="text-center mb-8 border-b-2 border-yellow-800/50 pb-6">
-                <span class="text-yellow-600 font-black text-3xl mb-2 block">🏦</span>
+            <div class="text-center mb-6 border-b-2 border-yellow-800/50 pb-4">
                 <h3 class="text-2xl font-black text-amber-100 uppercase tracking-widest">Kasa Kasyna</h3>
                 <p class="text-lg text-yellow-500 font-bold mt-2">Do zapłaty: <span id="modal-amount" class="text-3xl font-black text-white">0.00</span> PLN</p>
             </div>
-
-            <div class="flex gap-2 mb-6 bg-black p-1.5 rounded-xl border border-yellow-900/50">
-                <button id="tab-blik" class="w-1/2 py-3 rounded-lg text-sm font-black bg-gradient-to-b from-yellow-500 to-yellow-700 text-black uppercase tracking-wider">BLIK</button>
-                <button id="tab-card" class="w-1/2 py-3 rounded-lg text-sm font-black text-yellow-700 hover:text-yellow-500 uppercase tracking-wider">Karta VIP</button>
-            </div>
-
-            <div id="form-blik" class="space-y-6">
+            
+            <div id="form-blik" class="space-y-6 mt-4">
                 <div>
                     <label class="block text-center text-sm text-amber-200 font-black uppercase mb-3 tracking-widest">Wprowadź kod BLIK</label>
                     <input type="text" id="blik-code" maxlength="6" placeholder="000 000" class="w-full bg-[#0a2a18] border-2 border-yellow-600 rounded-xl p-5 text-center text-4xl tracking-[0.3em] font-black text-white focus:outline-none focus:border-yellow-400 shadow-inner">
                 </div>
                 <button id="submit-blik" class="w-full bg-pink-600 hover:bg-pink-500 py-5 rounded-xl text-white text-lg font-black tracking-widest transition-colors uppercase border-b-4 border-pink-800 active:border-b-0 active:translate-y-1">
-                    Autoryzuj Płatność
+                    Autoryzuj
                 </button>
             </div>
 
-            <div id="form-card" class="space-y-5 hidden">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs text-amber-200 font-black uppercase mb-1 tracking-wider">Numer Złotej Karty</label>
-                        <input type="text" placeholder="4242 4242 4242 4242" class="w-full bg-[#0a2a18] border border-yellow-600 rounded-lg p-4 text-white font-mono text-lg focus:outline-none focus:border-yellow-400">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs text-amber-200 font-black uppercase mb-1 tracking-wider">Ważność</label>
-                            <input type="text" placeholder="MM/RR" class="w-full bg-[#0a2a18] border border-yellow-600 rounded-lg p-4 text-white font-mono text-center text-lg focus:outline-none focus:border-yellow-400">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-amber-200 font-black uppercase mb-1 tracking-wider">CVV / CVC</label>
-                            <input type="password" placeholder="***" maxlength="3" class="w-full bg-[#0a2a18] border border-yellow-600 rounded-lg p-4 text-white font-mono text-center text-lg focus:outline-none focus:border-yellow-400">
-                        </div>
-                    </div>
-                </div>
-                <button id="submit-card" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 py-5 rounded-xl text-black text-lg font-black tracking-widest transition-colors uppercase border-b-4 border-yellow-800 active:border-b-0 active:translate-y-1">
-                    Płać Kartą VIP
-                </button>
-            </div>
-
-            <div id="payment-processing" class="hidden absolute inset-0 bg-[#06180e] rounded-2xl flex flex-col items-center justify-center p-6 text-center border-4 border-yellow-500">
+            <!-- EKRAN PROCESOWANIA -->
+            <div id="payment-processing" class="hidden absolute inset-0 bg-[#06180e] rounded-xl flex flex-col items-center justify-center p-6 text-center border-4 border-yellow-500">
                 <div class="text-6xl mb-6 animate-spin">🎲</div>
-                <h4 class="text-2xl font-black text-yellow-400 mb-3 uppercase tracking-widest">Krupier przelicza żetony...</h4>
-                <p id="processing-details" class="text-amber-200 font-bold">Potwierdź transakcję w swoim banku.</p>
+                <h4 class="text-xl font-black text-yellow-400 mb-3 uppercase tracking-widest">Przetwarzanie...</h4>
             </div>
         </div>
     </div>
 
+    <!-- SKRYPT LOGIKI (Timer + Zakłady) -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            // --- ELEMENTY ZAKŁADÓW ---
             const buttons = document.querySelectorAll('.bet-btn');
             const paymentModule = document.getElementById('payment-module');
             const betsList = document.getElementById('selected-bets-list');
@@ -246,27 +254,87 @@
             const potentialWinEl = document.getElementById('potential-win');
             const payBtn = document.getElementById('pay-btn');
             const errorMsg = document.getElementById('error-msg');
+            
             const activeTicketsSection = document.getElementById('active-tickets-section');
             const ticketsContainer = document.getElementById('tickets-container');
-
+            
             const paymentModal = document.getElementById('payment-modal');
             const closeModalBtn = document.getElementById('close-modal');
             const modalAmount = document.getElementById('modal-amount');
-            const tabBlik = document.getElementById('tab-blik');
-            const tabCard = document.getElementById('tab-card');
-            const formBlik = document.getElementById('form-blik');
-            const formCard = document.getElementById('form-card');
-            const submitBlik = document.getElementById('submit-blik');
-            const submitCard = document.getElementById('submit-card');
-            const paymentProcessing = document.getElementById('payment-processing');
-            const processingDetails = document.getElementById('processing-details');
             const blikCodeInput = document.getElementById('blik-code');
+            const submitBlik = document.getElementById('submit-blik');
+            const paymentProcessing = document.getElementById('payment-processing');
 
-            let selections = { main: null, side: null };
-
-            // Kolory klas bazowych i aktywnych (Theme Kasyno)
-            const baseClasses = ['bg-[#0d4a2a]', 'bg-[#0a3a21]', 'border-yellow-700/50', 'border-yellow-800/40'];
+            // --- ELEMENTY TIMERA ---
+            const timerDisplay = document.getElementById('timer-display');
+            const timerBar = document.getElementById('timer-bar');
+            const lockOverlay = document.getElementById('lock-overlay');
+            const resetGameBtn = document.getElementById('reset-game-btn');
             
+            let selections = { main: null, side: null };
+            let timerInterval;
+            const BET_TIME_SECONDS = 30;
+
+            // --- SYSTEM TIMERA ---
+            function startGameTimer() {
+                let timeLeft = BET_TIME_SECONDS;
+                
+                // Reset UI timera i blokad
+                lockOverlay.classList.add('hidden');
+                timerDisplay.classList.remove('timer-danger');
+                timerDisplay.style.color = '#4ade80'; // zielony
+                timerBar.style.width = '100%';
+                timerBar.style.backgroundColor = '#facc15'; // żółty
+                
+                // Aktualizacja tekstu od razu
+                timerDisplay.textContent = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+
+                clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    
+                    // Formatowanie tekstu
+                    timerDisplay.textContent = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+                    
+                    // Pasek postępu
+                    const percentage = (timeLeft / BET_TIME_SECONDS) * 100;
+                    timerBar.style.width = `${percentage}%`;
+
+                    // Zmiana stylów przy końcówce czasu
+                    if (timeLeft <= 10) {
+                        timerDisplay.classList.add('timer-danger');
+                        timerBar.style.backgroundColor = '#ef4444'; // czerwony
+                    }
+
+                    // Koniec czasu - Blokada
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        lockBettingTable();
+                    }
+                }, 1000);
+            }
+
+            function lockBettingTable() {
+                // Pokazanie czarnej nakładki z kłódką nad całym stołem zakładów
+                lockOverlay.classList.remove('hidden');
+                
+                // Jeśli modal płatności był otwarty - zamknij go (zbyt późno na opłacenie!)
+                if(!paymentModal.classList.contains('hidden') && paymentProcessing.classList.contains('hidden')) {
+                    paymentModal.classList.add('hidden');
+                    alert("Czas na postawienie zakładu minął! Twój kupon został anulowany.");
+                }
+            }
+
+            // Uruchom timer przy załadowaniu strony
+            startGameTimer();
+
+            // Przycisk testowy do resetowania cyklu
+            resetGameBtn.addEventListener('click', () => {
+                resetCart();
+                startGameTimer();
+            });
+
+            // --- LOGIKA ZAKŁADÓW ---
             buttons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const group = btn.getAttribute('data-group');
@@ -305,12 +373,12 @@
                         totalOdds *= betDecimal;
 
                         const li = document.createElement('li');
-                        li.className = "flex justify-between items-center bg-[#0a2a18] p-4 rounded-xl border border-yellow-700/50 shadow-inner";
+                        li.className = "flex justify-between items-center bg-[#0a2a18] p-3 sm:p-4 rounded-xl border border-yellow-700/50 shadow-inner";
                         li.innerHTML = `
-                            <span class="flex items-center gap-2 uppercase tracking-wide text-sm">
-                                <span class="text-xl">✔️</span> ${betName}
+                            <span class="flex items-center gap-2 uppercase tracking-wide text-xs sm:text-sm">
+                                <span>✔️</span> ${betName}
                             </span> 
-                            <span class="font-black text-yellow-400 bg-black px-3 py-1.5 rounded-lg border border-yellow-800 text-sm">${betLabel} (x${betDecimal.toFixed(2)})</span>
+                            <span class="font-black text-yellow-400 bg-black px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-yellow-800 text-xs sm:text-sm">${betLabel} (x${betDecimal.toFixed(2)})</span>
                         `;
                         betsList.appendChild(li);
                     }
@@ -332,10 +400,11 @@
                 potentialWinEl.textContent = win.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " PLN";
             }
 
+            // --- MODAL I PŁATNOŚĆ ---
             payBtn.addEventListener('click', () => {
                 const stake = parseFloat(stakeInput.value) || 0;
                 if (stake <= 0) {
-                    errorMsg.textContent = "⚠️ Nie bądź mięczak! Rzuć na stół chociaż złotówkę!";
+                    errorMsg.textContent = "⚠️ Podaj stawkę!";
                     errorMsg.classList.remove('hidden');
                     return;
                 }
@@ -345,53 +414,21 @@
                 blikCodeInput.value = '';
             });
 
-            closeModalBtn.addEventListener('click', () => {
-                paymentModal.classList.add('hidden');
-            });
+            closeModalBtn.addEventListener('click', () => paymentModal.classList.add('hidden'));
 
-            tabBlik.addEventListener('click', () => {
-                tabBlik.className = "w-1/2 py-3 rounded-lg text-sm font-black bg-gradient-to-b from-yellow-500 to-yellow-700 text-black uppercase tracking-wider";
-                tabCard.className = "w-1/2 py-3 rounded-lg text-sm font-black text-yellow-700 hover:text-yellow-500 uppercase tracking-wider";
-                formBlik.classList.remove('hidden');
-                formCard.classList.add('hidden');
-            });
-
-            tabCard.addEventListener('click', () => {
-                tabCard.className = "w-1/2 py-3 rounded-lg text-sm font-black bg-gradient-to-b from-yellow-500 to-yellow-700 text-black uppercase tracking-wider";
-                tabBlik.className = "w-1/2 py-3 rounded-lg text-sm font-black text-yellow-700 hover:text-yellow-500 uppercase tracking-wider";
-                formCard.classList.remove('hidden');
-                formBlik.classList.add('hidden');
-            });
-
-            blikCodeInput.addEventListener('input', (e) => {
-                e.target.value = e.target.value.replace(/[^0-9]/g, '');
-            });
+            blikCodeInput.addEventListener('input', (e) => e.target.value = e.target.value.replace(/[^0-9]/g, ''));
 
             submitBlik.addEventListener('click', () => {
-                if (blikCodeInput.value.length < 6) {
-                    alert("Wpisz poprawny kod, szefie!");
-                    return;
-                }
-                startSimulatedPayment("BLIK");
-            });
-
-            submitCard.addEventListener('click', () => {
-                startSimulatedPayment("KARTA");
-            });
-
-            function startSimulatedPayment(metoda) {
+                if (blikCodeInput.value.length < 6) return alert("Wpisz poprawny 6-cyfrowy kod!");
+                
                 paymentProcessing.classList.remove('hidden');
-                processingDetails.textContent = metoda === "BLIK" 
-                    ? "Czekamy na autoryzację z banku..." 
-                    : "Łączymy się z systemem Visa/Mastercard...";
-
                 setTimeout(() => {
                     createActiveTicket();
                     paymentProcessing.classList.add('hidden');
                     paymentModal.classList.add('hidden');
                     resetCart();
-                }, 2500); 
-            }
+                }, 2000); 
+            });
 
             function createActiveTicket() {
                 const ticketId = Math.random().toString(36).substr(2, 6).toUpperCase();
@@ -402,30 +439,25 @@
                 let eventsHtml = '';
                 Object.values(selections).forEach(btn => {
                     if (btn) {
-                        const betName = btn.getAttribute('data-bet');
-                        eventsHtml += `<div class="text-sm font-bold text-amber-200">💎 ${betName.toUpperCase()}</div>`;
+                        eventsHtml += `<div class="text-xs sm:text-sm font-bold text-amber-200">💎 ${btn.getAttribute('data-bet').toUpperCase()}</div>`;
                     }
                 });
 
                 const ticketDiv = document.createElement('div');
-                ticketDiv.className = "bg-gradient-to-r from-[#0d4a2a] to-[#0a2a18] border-2 border-yellow-600 p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-[0_5px_15px_rgba(0,0,0,0.5)] relative overflow-hidden";
+                ticketDiv.className = "bg-gradient-to-r from-[#0d4a2a] to-[#0a2a18] border-2 border-yellow-600 p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-[0_5px_15px_rgba(0,0,0,0.5)]";
                 ticketDiv.innerHTML = `
-                    <div class="absolute -right-4 -top-4 text-8xl opacity-10 text-yellow-500">🏆</div>
-                    <div class="relative z-10">
+                    <div>
                         <div class="flex items-center gap-3 mb-2">
-                            <span class="text-xs font-black bg-yellow-500 text-black px-3 py-1 rounded-sm uppercase tracking-widest">AKTYWNY</span>
-                            <span class="text-xs text-yellow-600 font-mono font-bold border-b border-yellow-800 pb-0.5">ID: ${ticketId}</span>
+                            <span class="text-[10px] sm:text-xs font-black bg-yellow-500 text-black px-2 sm:px-3 py-1 rounded-sm uppercase tracking-widest">AKTYWNY</span>
+                            <span class="text-[10px] sm:text-xs text-yellow-600 font-mono font-bold">ID: ${ticketId}</span>
                         </div>
-                        <div class="space-y-1">
-                            ${eventsHtml}
-                        </div>
+                        <div class="space-y-1">${eventsHtml}</div>
                     </div>
-                    <div class="relative z-10 text-right flex flex-row sm:flex-col justify-between sm:justify-end w-full sm:w-auto border-t sm:border-t-0 border-yellow-800/50 pt-4 sm:pt-0 gap-2 sm:gap-0">
-                        <span class="text-xs font-bold text-yellow-700 uppercase tracking-widest">Wpłacono: <span class="text-white text-sm">${stake.toFixed(2)} PLN</span></span>
-                        <span class="text-lg font-black text-green-400 sm:mt-1 drop-shadow-md">Do wyjęcia: ${win.toFixed(2)} PLN</span>
+                    <div class="text-right w-full sm:w-auto border-t sm:border-t-0 border-yellow-800/50 pt-3 sm:pt-0 flex flex-row sm:flex-col justify-between sm:justify-end items-center sm:items-end">
+                        <span class="text-[10px] sm:text-xs font-bold text-yellow-700 uppercase tracking-widest">Wpłacono: <span class="text-white">${stake.toFixed(2)} PLN</span></span>
+                        <span class="text-base sm:text-lg font-black text-green-400 drop-shadow-md">Wypłata: ${win.toFixed(2)} PLN</span>
                     </div>
                 `;
-
                 ticketsContainer.prepend(ticketDiv);
                 activeTicketsSection.classList.remove('hidden');
             }
