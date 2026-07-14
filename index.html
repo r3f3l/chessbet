@@ -282,22 +282,26 @@
                 
                 try {
                     const channelsRes = await fetch(`https://lichess.org/api/tv/channels?_t=${Date.now()}`);
-                    if (!channelsRes.ok) throw new Error("TV API failed");
+                    if (!channelsRes.ok) throw new Error("TV API failed with status: " + channelsRes.status);
                     
                     const channelsData = await channelsRes.json();
-                    const topRated = channelsData["Top Rated"] || channelsData.top || channelsData["Blitz"];
                     
-                    if (!topRated || !topRated.gameId) throw new Error("No TV game found");
-                    const fetchedId = topRated.gameId;
+                    // Znaleziony błąd: API zwraca JSON w formacie camelCase (topRated, blitz, bullet).
+                    const channel = channelsData.topRated || channelsData.blitz || channelsData.bullet || Object.values(channelsData)[0];
+                    
+                    if (!channel || !channel.gameId) {
+                        console.error("No valid game found in channels payload:", channelsData);
+                        throw new Error("No TV game found");
+                    }
+                    
+                    const fetchedId = channel.gameId;
 
-                    // If TV feed hasn't rotated yet, wait.
                     if (fetchedId === lastPlayedId) {
                         lockContent.innerHTML = getLoadingHtml('Waiting for Lichess to rotate to a new game...');
                         setTimeout(initTable, 4000);
                         return;
                     }
 
-                    // We trust the TV feed that this new game is live!
                     currentLiveId = fetchedId;
                     lastPlayedId = fetchedId;
                     
@@ -315,6 +319,7 @@
                     startLiveMonitor();
 
                 } catch (error) {
+                    console.error("Initialization Error:", error);
                     lockContent.innerHTML = getLoadingHtml('<span class="text-red-500">API Connection lost. Retrying...</span>');
                     setTimeout(initTable, 4000);
                 }
@@ -323,28 +328,30 @@
             // --- 2. STATE 2: MONITOR LIVE GAME ---
             function startLiveMonitor() {
                 clearInterval(apiPollInterval);
+                
                 apiPollInterval = setInterval(async () => {
                     if (!currentLiveId) return;
+                    
                     try {
-                        // Monitor the TV channel feed instead of the specific game endpoint
-                        // This prevents 404 Not Found errors on active games and avoids rate limits.
-                        const channelsRes = await fetch(`https://lichess.org/api/tv/channels?_t=${Date.now()}`);
-                        if (!channelsRes.ok) return;
+                        // Lichess rzuca statusem 404 Not Found w przypadku gier wciąż trwających!
+                        // Gdy gra się skończy, status to 200 OK + payload JSON.
+                        const res = await fetch(`https://lichess.org/game/export/${currentLiveId}?_t=${Date.now()}`, {
+                            headers: { 'Accept': 'application/json' }
+                        });
                         
-                        const channelsData = await channelsRes.json();
-                        const topRated = channelsData["Top Rated"] || channelsData.top || channelsData["Blitz"];
-                        
-                        if (topRated && topRated.gameId) {
-                            // If the game on TV changed, our tracked game is finished!
-                            if (topRated.gameId !== currentLiveId) {
+                        if (res.status === 200) {
+                            const gameData = await res.json();
+                            if (gameData.status && gameData.status !== 'started' && gameData.status !== 'created') {
                                 clearInterval(apiPollInterval);
-                                triggerGameEnd(currentLiveId);
+                                triggerGameEnd(gameData);
                             }
+                        } else if (res.status === 404) {
+                            // 404 - Gra cały czas trwa, ignorujemy i czekamy na kolejny ping.
                         }
                     } catch(e) {
-                        // Silent catch, try again next tick
+                        // Błędy sieciowe (CORS, zerwane łącze) - ponawiamy po prostu
                     }
-                }, 5000); // Check every 5 seconds
+                }, 4000); // Check co 4 sekundy
             }
 
             // Dev force win listener
@@ -370,47 +377,21 @@
             });
 
             // --- 3. STATE 3: SETTLE BETS ---
-            async function triggerGameEnd(gameId) {
+            function triggerGameEnd(gameData) {
                 lockOverlay.classList.remove('hidden');
-                lockContent.innerHTML = getLoadingHtml('Fetching final result from the arbiter...');
+                lockContent.innerHTML = `
+                    <span class="text-7xl mb-4 text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">✅</span>
+                    <h2 class="text-4xl font-black text-green-500 tracking-[0.2em] uppercase text-center drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">WE HAVE A RESULT!</h2>
+                    <p class="text-amber-200 mt-2 font-bold text-lg uppercase tracking-widest text-center animate-pulse">Dealer is settling bets...</p>
+                `;
                 
-                try {
-                    // Safe to call now because the game has concluded and been removed from TV
-                    const res = await fetch(`https://lichess.org/game/export/${gameId}?_t=${Date.now()}`, {
-                        headers: { 'Accept': 'application/json' }
-                    });
-                    
-                    if (res.ok) {
-                        const gameData = await res.json();
-                        
-                        if (gameData.status === 'started' || gameData.status === 'created') {
-                            // False alarm (very rare)
-                            setTimeout(() => triggerGameEnd(gameId), 4000);
-                            return;
-                        }
-                        
-                        // Final results fetched successfully
-                        lockContent.innerHTML = `
-                            <span class="text-7xl mb-4 text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">✅</span>
-                            <h2 class="text-4xl font-black text-green-500 tracking-[0.2em] uppercase text-center drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">WE HAVE A RESULT!</h2>
-                            <p class="text-amber-200 mt-2 font-bold text-lg uppercase tracking-widest text-center animate-pulse">Dealer is settling bets...</p>
-                        `;
-                        
-                        if(!paymentModal.classList.contains('hidden') && paymentProcessing.classList.contains('hidden')) {
-                            paymentModal.classList.add('hidden');
-                        }
-
-                        setTimeout(() => {
-                            evaluateResults(gameData);
-                        }, 1500);
-                        
-                    } else {
-                        // Rate limit hiccup or Lichess JSON generation delay
-                        setTimeout(() => triggerGameEnd(gameId), 5000);
-                    }
-                } catch(e) {
-                    setTimeout(() => triggerGameEnd(gameId), 5000);
+                if(!paymentModal.classList.contains('hidden') && paymentProcessing.classList.contains('hidden')) {
+                    paymentModal.classList.add('hidden');
                 }
+
+                setTimeout(() => {
+                    evaluateResults(gameData);
+                }, 1500);
             }
 
             function evaluateResults(game) {
