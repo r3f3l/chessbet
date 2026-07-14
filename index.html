@@ -122,7 +122,7 @@
                     </button>
                 </div>
 
-                <!-- NEW: GAME ENDING BETS -->
+                <!-- GAME ENDING BETS -->
                 <div class="relative flex items-center py-2 mb-4">
                     <div class="flex-grow border-t-2 border-yellow-900/40"></div>
                     <span class="flex-shrink-0 mx-4 text-yellow-600 text-xs font-black uppercase tracking-[0.2em]">Game Ending</span>
@@ -135,15 +135,15 @@
                         <span class="text-[10px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Timeout</span>
                         <span class="text-lg font-black text-yellow-500 mt-1">1:1</span>
                     </button>
+                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-group="ending" data-bet="Resignation" data-decimal="3.00">
+                        <span class="text-3xl text-amber-100">🏳️</span>
+                        <span class="text-[10px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Resignation</span>
+                        <span class="text-lg font-black text-yellow-500 mt-1">1:2</span>
+                    </button>
                     <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-group="ending" data-bet="Checkmate" data-decimal="4.00">
                         <span class="text-3xl text-amber-100">⚔️</span>
                         <span class="text-[10px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Checkmate</span>
                         <span class="text-lg font-black text-yellow-500 mt-1">1:3</span>
-                    </button>
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-group="ending" data-bet="Resignation" data-decimal="6.00">
-                        <span class="text-3xl text-amber-100">🏳️</span>
-                        <span class="text-[10px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Resignation</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">1:5</span>
                     </button>
                 </div>
 
@@ -571,24 +571,19 @@
             btn.addEventListener('click', () => {
                 playClickSound();
                 
-                // Allow unique selections across all groups
                 if (activeSelections.has(btn)) {
                     activeSelections.delete(btn);
                     btn.classList.remove('glow-casino-active');
                 } else {
-                    // Check if picking mutually exclusive bets in the SAME group
                     const group = btn.getAttribute('data-group');
+                    // Prevent betting on mutually exclusive events in 'main'
                     if (group === 'main') {
-                        // Can't bet on both white and black
                         buttons.forEach(b => {
                             if (b.getAttribute('data-group') === 'main' && activeSelections.has(b)) {
                                 activeSelections.delete(b);
                                 b.classList.remove('glow-casino-active');
                             }
                         });
-                    }
-                    if (group === 'ending') {
-                        // Generally speaking, you could bet on multiple endings to cover bases, so we allow it.
                     }
 
                     activeSelections.add(btn);
