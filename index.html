@@ -49,27 +49,13 @@
 
     <main class="max-w-[1400px] mx-auto mt-6 p-4 flex flex-col lg:flex-row gap-8 items-start relative z-10">
         
-        <!-- LEFT COLUMN: BETTING -->
         <div class="w-full lg:w-2/3 casino-panel rounded-3xl p-6 sm:p-8 border-2 border-yellow-600/60 relative overflow-hidden">
             
-            <!-- WAITING SCREEN -->
             <div id="lock-overlay" class="absolute inset-0 bg-[#06180e]/95 z-30 flex flex-col items-center justify-center backdrop-blur-md transition-opacity duration-500">
                 <div id="lock-content" class="text-center flex flex-col items-center justify-center w-full px-4">
-                    <div class="relative w-28 h-28 mb-8">
-                        <div class="absolute inset-0 rounded-full border-4 border-yellow-900/50"></div>
-                        <div class="absolute inset-0 rounded-full border-4 border-yellow-400 border-t-transparent animate-spin shadow-[0_0_40px_rgba(255,215,0,0.3)]"></div>
-                        <div class="absolute inset-0 flex items-center justify-center text-5xl">🎲</div>
                     </div>
-                    <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 tracking-[0.2em] uppercase drop-shadow-md">
-                        Dealer is shuffling the cards...
-                    </h2>
-                    <p id="api-status-text" class="text-yellow-600/80 mt-4 font-bold text-sm uppercase tracking-widest text-center animate-pulse">
-                        Searching for a new game on the network
-                    </p>
-                </div>
             </div>
 
-            <!-- API MODULE -->
             <div class="flex flex-col sm:flex-row justify-between items-center bg-[#061a10] border-2 border-yellow-500 rounded-xl p-4 mb-6 shadow-inner relative overflow-hidden">
                 <div class="flex flex-col mb-2 sm:mb-0">
                     <div class="flex items-center gap-2">
@@ -159,14 +145,12 @@
                 </button>
             </div>
 
-            <!-- ACTIVE TICKETS -->
             <div id="active-tickets-section" class="mt-8 pt-6 border-t-2 border-yellow-900/50 hidden">
                 <h3 class="text-center font-black text-yellow-600 uppercase tracking-[0.2em] mb-4 text-xs">🎟️ Active Bets for this game</h3>
                 <div id="tickets-container" class="space-y-3"></div>
             </div>
         </div>
 
-        <!-- RIGHT COLUMN: LICHESS TV -->
         <div class="w-full lg:w-1/3 flex flex-col items-center lg:sticky lg:top-8 z-10">
             <div class="w-full max-w-[440px] flex flex-col items-center">
                 <span class="text-xs font-black text-white bg-red-600 px-6 py-2 rounded-t-xl border-x-2 border-t-2 border-yellow-500 shadow-[0_0_15px_rgba(220,38,38,0.8)] flex items-center gap-2 uppercase tracking-widest animate-pulse w-full justify-center">
@@ -183,7 +167,6 @@
         </div>
     </main>
 
-    <!-- PAYMENT MODAL -->
     <div id="payment-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
         <div class="bg-[#06180e] border-4 border-yellow-600 rounded-2xl w-full max-w-sm p-6 shadow-2xl relative">
             <button id="close-modal" class="absolute top-3 right-4 text-yellow-600 hover:text-yellow-400 text-xl font-black">✕</button>
@@ -202,7 +185,6 @@
         </div>
     </div>
 
-    <!-- RESULT MODAL -->
     <div id="result-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center p-4 z-[60] hidden backdrop-blur-md">
         <div class="bg-gradient-to-b from-[#0a2a18] to-[#04140a] border-4 border-yellow-500 rounded-3xl w-full max-w-2xl p-6 sm:p-8 shadow-[0_0_100px_rgba(255,215,0,0.4)] relative text-center overflow-hidden max-h-[90vh] flex flex-col">
             <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 pointer-events-none"></div>
@@ -222,8 +204,7 @@
             <div class="relative z-10 flex-grow overflow-y-auto w-full bg-black/50 border border-yellow-900/50 rounded-xl p-4 mb-4">
                 <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-700 pb-2">Your Bet Details</h3>
                 <div id="modal-bets-list" class="space-y-3 text-left">
-                    <!-- Dynamically injected bets -->
-                </div>
+                    </div>
             </div>
 
             <div class="relative z-10 flex-shrink-0">
@@ -241,7 +222,6 @@
         </div>
     </div>
 
-    <!-- SCRIPT LOGIC -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const buttons = document.querySelectorAll('.bet-btn');
@@ -273,66 +253,64 @@
             const nextGameBtn = document.getElementById('next-game-btn');
 
             let selections = { main: null, side: null };
-            let apiPollInterval;
+            let apiPollInterval = null;
             
-            let currentGameId = null;
+            let currentLiveId = null;
+            let lastPlayedId = null; 
             let activeTickets = []; 
 
-            // --- 1. FETCH NEW GAME ---
-            async function fetchNewGameAndStart() {
-                lockOverlay.classList.remove('hidden');
-                
-                lockContent.innerHTML = `
-                    <div class="relative w-28 h-28 mb-8">
+            // Helpr for loading screens
+            function getLoadingHtml(text) {
+                return `
+                    <div class="relative w-28 h-28 mb-8 mx-auto">
                         <div class="absolute inset-0 rounded-full border-4 border-yellow-900/50"></div>
                         <div class="absolute inset-0 rounded-full border-4 border-yellow-400 border-t-transparent animate-spin shadow-[0_0_40px_rgba(255,215,0,0.3)]"></div>
                         <div class="absolute inset-0 flex items-center justify-center text-5xl">🎲</div>
                     </div>
-                    <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 tracking-[0.2em] uppercase drop-shadow-md">
-                        Dealer is shuffling the cards...
+                    <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 tracking-[0.2em] uppercase drop-shadow-md text-center">
+                        Dealer is preparing...
                     </h2>
-                    <p id="api-status-text" class="text-yellow-600/80 mt-4 font-bold text-sm uppercase tracking-widest text-center animate-pulse">
-                        Searching for a new game on the network
+                    <p class="text-yellow-600/80 mt-4 font-bold text-sm uppercase tracking-widest text-center animate-pulse">
+                        ${text}
                     </p>
                 `;
+            }
+
+            // --- 1. STATE 1: INITIALIZE TABLE ---
+            async function initTable() {
+                lockOverlay.classList.remove('hidden');
+                lockContent.innerHTML = getLoadingHtml('Looking for an active game on Lichess TV...');
                 
                 try {
-                    const res = await fetch(`https://lichess.org/api/tv/channels?_t=${Date.now()}`);
-                    const data = await res.json();
+                    const channelsRes = await fetch(`https://lichess.org/api/tv/channels?_t=${Date.now()}`);
+                    const channelsData = await channelsRes.json();
+                    const topRated = channelsData["Top Rated"] || channelsData.top || channelsData["Blitz"];
                     
-                    let fetchedGameId = null;
-                    const topRated = data["Top Rated"] || data.top;
-                    
-                    if (topRated && topRated.gameId) fetchedGameId = topRated.gameId;
-                    else if (data["Blitz"] && data["Blitz"].gameId) fetchedGameId = data["Blitz"].gameId;
-                    
-                    if (fetchedGameId && fetchedGameId !== currentGameId) {
-                        
-                        // We must check if the Lichess TV game is ACTUALLY in progress, 
-                        // to prevent an instant game-over loop if Lichess TV hasn't updated its feed yet.
-                        try {
-                            const statusRes = await fetch(`https://lichess.org/game/export/${fetchedGameId}?_t=${Date.now()}`, {
-                                headers: { 'Accept': 'application/json' }
-                            });
-                            if (statusRes.ok) {
-                                const gameData = await statusRes.json();
-                                if (gameData.status && gameData.status !== 'started' && gameData.status !== 'created') {
-                                    // Game is already finished, Lichess TV is just lagging behind.
-                                    currentGameId = fetchedGameId; 
-                                    document.getElementById('api-status-text').textContent = "Previous game ended. Waiting for a new table...";
-                                    setTimeout(fetchNewGameAndStart, 3000);
-                                    return;
-                                }
-                            }
-                        } catch(e) {
-                            // Silent catch, fallback to proceeding
-                        }
+                    if (!topRated || !topRated.gameId) throw new Error("No TV game found");
+                    const fetchedId = topRated.gameId;
 
-                        // The game is fresh and live!
-                        currentGameId = fetchedGameId;
-                        trackedGameIdEl.textContent = "#" + currentGameId.toUpperCase();
+                    // If Lichess TV hasn't rotated yet, wait.
+                    if (fetchedId === lastPlayedId) {
+                        lockContent.innerHTML = getLoadingHtml('Waiting for Lichess to rotate to a new game...');
+                        setTimeout(initTable, 4000);
+                        return;
+                    }
+
+                    // Verify the game is actually live and not already finished
+                    const gameRes = await fetch(`https://lichess.org/game/export/${fetchedId}?_t=${Date.now()}`, {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    
+                    if (!gameRes.ok) throw new Error("Export fetch failed");
+                    const gameData = await gameRes.json();
+
+                    if (gameData.status === 'started' || gameData.status === 'created') {
+                        // Game is live! Open the table.
+                        currentLiveId = fetchedId;
+                        lastPlayedId = fetchedId;
                         
-                        lichessIframe.src = `https://lichess.org/embed/${currentGameId}?theme=brown&bg=dark`;
+                        trackedGameIdEl.textContent = "#" + currentLiveId.toUpperCase();
+                        lichessIframe.src = `https://lichess.org/embed/${currentLiveId}?theme=brown&bg=dark`;
                         
                         resetCart();
                         ticketsContainer.innerHTML = '';
@@ -342,69 +320,75 @@
                         document.getElementById('dev-force-win').classList.remove('hidden');
                         
                         lockOverlay.classList.add('hidden');
-                        pollGameStatus();
+                        startLiveMonitor();
                     } else {
-                        document.getElementById('api-status-text').textContent = "Same game still in progress. Waiting...";
-                        setTimeout(fetchNewGameAndStart, 3000);
+                        // The game on TV is already over, TV is just lagging behind. Skip it.
+                        lastPlayedId = fetchedId; 
+                        lockContent.innerHTML = getLoadingHtml('Previous game ended. Waiting for TV rotation...');
+                        setTimeout(initTable, 3000);
                     }
+
                 } catch (error) {
-                    document.getElementById('api-status-text').innerHTML = `<span class="text-red-500">Connection to Lichess TV lost... Retrying.</span>`;
-                    setTimeout(fetchNewGameAndStart, 4000);
+                    lockContent.innerHTML = getLoadingHtml('<span class="text-red-500">API Connection lost. Retrying...</span>');
+                    setTimeout(initTable, 4000);
                 }
             }
 
-            // Dev force win listener
+            // --- 2. STATE 2: MONITOR LIVE GAME ---
+            function startLiveMonitor() {
+                clearInterval(apiPollInterval);
+                apiPollInterval = setInterval(async () => {
+                    if (!currentLiveId) return;
+                    try {
+                        const gameRes = await fetch(`https://lichess.org/game/export/${currentLiveId}?_t=${Date.now()}`, {
+                            headers: { 'Accept': 'application/json' }
+                        });
+                        
+                        if (gameRes.ok) {
+                            const gameData = await gameRes.json();
+                            if (gameData.status && gameData.status !== 'started' && gameData.status !== 'created') {
+                                // GAME HAS ENDED!
+                                clearInterval(apiPollInterval);
+                                triggerGameEnd(gameData);
+                            }
+                        }
+                    } catch(e) {
+                        // Silent catch, try again next tick
+                    }
+                }, 4000);
+            }
+
+            // Dev force win listener - clear lastPlayedId so we can instantly re-enter same game
             document.getElementById('dev-force-win').addEventListener('click', () => {
                 clearInterval(apiPollInterval);
-                lockOverlay.classList.remove('hidden');
-                evaluateResults({
-                    id: currentGameId,
+                lastPlayedId = null; // Fix: allows user to play the same game again after Dev Test!
+                
+                triggerGameEnd({
+                    id: currentLiveId,
                     status: 'mate',
                     winner: 'white',
                     moves: 'e4 e5 Qh5#' 
                 });
             });
 
-            // --- 2. POLL API FOR RESULTS ---
-            function pollGameStatus() {
-                clearInterval(apiPollInterval);
+            // --- 3. STATE 3: SETTLE BETS ---
+            function triggerGameEnd(gameData) {
+                lockOverlay.classList.remove('hidden');
+                lockContent.innerHTML = `
+                    <span class="text-7xl mb-4 text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">✅</span>
+                    <h2 class="text-4xl font-black text-green-500 tracking-[0.2em] uppercase text-center drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">WE HAVE A RESULT!</h2>
+                    <p class="text-amber-200 mt-2 font-bold text-lg uppercase tracking-widest text-center animate-pulse">Dealer is settling bets...</p>
+                `;
                 
-                apiPollInterval = setInterval(async () => {
-                    if (!currentGameId) return;
-                    try {
-                        const res = await fetch(`https://lichess.org/game/export/${currentGameId}?_t=${Date.now()}`, {
-                            headers: { 'Accept': 'application/json' }
-                        });
-                        
-                        if (!res.ok) return; 
+                if(!paymentModal.classList.contains('hidden') && paymentProcessing.classList.contains('hidden')) {
+                    paymentModal.classList.add('hidden');
+                }
 
-                        const game = await res.json();
-                        
-                        if (game.status && game.status !== 'started' && game.status !== 'created') {
-                            clearInterval(apiPollInterval);
-                            
-                            lockOverlay.classList.remove('hidden');
-                            lockContent.innerHTML = `
-                                <span class="text-7xl mb-4 text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">✅</span>
-                                <h2 class="text-4xl font-black text-green-500 tracking-[0.2em] uppercase text-center drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">WE HAVE A RESULT!</h2>
-                                <p class="text-amber-200 mt-2 font-bold text-lg uppercase tracking-widest text-center animate-pulse">Dealer is settling bets...</p>
-                            `;
-                            
-                            if(!paymentModal.classList.contains('hidden') && paymentProcessing.classList.contains('hidden')) {
-                                paymentModal.classList.add('hidden');
-                            }
-
-                            setTimeout(() => {
-                                evaluateResults(game);
-                            }, 1500);
-                        }
-                    } catch (e) {
-                        // Silent catch, keep polling
-                    }
-                }, 4000); 
+                setTimeout(() => {
+                    evaluateResults(gameData);
+                }, 1500);
             }
 
-            // --- 3. EVALUATION AND SETTLEMENT ---
             function evaluateResults(game) {
                 let actualWinner = game.winner; 
                 let actualMethod = 'Unknown';
@@ -487,7 +471,6 @@
                 showResultModal(actualWinner, actualMethod, totalPayout, wonAny, activeTickets.length);
             }
 
-            // --- 4. RESULT MODAL SCREEN ---
             function showResultModal(winner, method, payout, wonAny, ticketCount) {
                 const winnerText = winner === 'white' ? 'WHITE' : (winner === 'black' ? 'BLACK' : 'DRAW');
                 
@@ -514,11 +497,10 @@
                 resultModal.classList.remove('hidden');
             }
 
+            // Restart Loop
             nextGameBtn.addEventListener('click', () => {
                 resultModal.classList.add('hidden');
-                // DO NOT reset currentGameId here. We must remember it so fetchNewGameAndStart 
-                // knows it should wait for a genuinely new table to appear on Lichess TV.
-                fetchNewGameAndStart();
+                initTable();
             });
 
             // --- TICKET AND PAYMENT LOGIC ---
@@ -623,7 +605,7 @@
                 ticketsContainer.prepend(ticketDiv);
                 activeTicketsSection.classList.remove('hidden');
 
-                activeTickets.push({ id: ticketId, gameId: currentGameId, bets: currentBets, stake: stake, win: win, element: ticketDiv });
+                activeTickets.push({ id: ticketId, gameId: currentLiveId, bets: currentBets, stake: stake, win: win, element: ticketDiv });
             }
 
             function resetCart() {
@@ -634,7 +616,7 @@
             }
 
             // Start immediately
-            fetchNewGameAndStart();
+            initTable();
         });
     </script>
 </body>
