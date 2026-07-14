@@ -2,73 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CHESSBET CASINO</title>
+    <title>DEBUGGER KASYNA</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-white p-4">
-    <!-- PANEL DEBUGOWANIA - TU ZOBACZYSZ BŁĘDY -->
-    <div id="debug-log" class="max-w-2xl mx-auto bg-black p-4 rounded mb-4 border border-red-500 text-red-400 font-mono text-xs">
-        System: Gotowy...
-    </div>
-
-    <div class="max-w-2xl mx-auto bg-slate-800 p-6 rounded-2xl border-2 border-yellow-500">
-        <h1 class="text-2xl font-bold text-center text-yellow-500 mb-6">CHESSBET CASINO</h1>
-        
-        <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="bg-black p-3 rounded">White: <span id="p-white" class="font-bold">---</span></div>
-            <div class="bg-black p-3 rounded">Black: <span id="p-black" class="font-bold">---</span></div>
-        </div>
-
-        <div class="flex gap-4">
-            <button class="bet-btn flex-1 bg-green-700 py-3 rounded font-bold" data-side="white">Bet White</button>
-            <button class="bet-btn flex-1 bg-green-700 py-3 rounded font-bold" data-side="black">Bet Black</button>
-        </div>
-
-        <input type="number" id="stake" placeholder="Amount ($)" class="w-full mt-4 p-3 bg-black rounded border border-yellow-500">
-        <button id="submit" class="w-full mt-2 bg-yellow-600 text-black font-bold p-3 rounded uppercase">Place Bet</button>
-        <p class="text-[10px] text-red-400 mt-2 text-center font-bold">NOTE: DRAW/STALEMATE = HOUSE WINS</p>
+<body class="bg-black text-green-500 p-10 font-mono">
+    <h1 class="text-2xl mb-4 text-white">DIAGNOSTYKA API</h1>
+    <div id="debug-view" class="bg-slate-900 p-4 rounded border border-green-500 whitespace-pre-wrap">
+        Ładowanie danych...
     </div>
 
     <script>
-        const log = (msg) => document.getElementById('debug-log').textContent = "Log: " + msg;
-
-        async function update() {
+        async function debugAPI() {
+            const display = document.getElementById('debug-view');
             try {
-                log("Odpytywanie Lichess...");
+                // Pobieramy dane
                 const res = await fetch('https://lichess.org/api/tv/channels');
-                if (!res.ok) throw new Error("API nie odpowiada (kod " + res.status + ")");
-                
                 const data = await res.json();
-                const game = data.topRated || data.blitz || Object.values(data)[0];
-
-                if (!game) throw new Error("Brak gry w TV");
-
-                document.getElementById('p-white').textContent = game.players ? game.players[0].name : "---";
-                document.getElementById('p-black').textContent = game.players ? game.players[1].name : "---";
-                log("Gra pobrana: " + game.gameId);
-
+                
+                // Wyświetlamy surowy JSON na stronie, żebyśmy widzieli strukturę
+                display.textContent = "ODPOWIEDŹ Z SERWERA:\n" + JSON.stringify(data, null, 2);
+                
+                // Sprawdzamy czy mamy cokolwiek w "topRated" (lub odpowiedniku)
+                if (data.topRated) {
+                    display.textContent += "\n\nSUKCES: Znaleziono 'topRated'!";
+                } else {
+                    display.textContent += "\n\nUWAGA: Nie widzę 'topRated'. Sprawdź, czy klucze to np. 'blitz', 'bullet' itp.";
+                }
             } catch (e) {
-                log("BŁĄD: " + e.message);
+                display.textContent = "BŁĄD: " + e.message;
             }
-            setTimeout(update, 10000);
         }
-
-        document.querySelectorAll('.bet-btn').forEach(b => {
-            b.onclick = () => {
-                document.querySelectorAll('.bet-btn').forEach(x => x.style.borderColor = "transparent");
-                b.style.borderColor = "white";
-                b.classList.add('selected');
-            }
-        });
-
-        document.getElementById('submit').onclick = () => {
-            const side = document.querySelector('.selected')?.dataset.side;
-            const amount = document.getElementById('stake').value;
-            if(!side || !amount) alert("Wybierz stronę i stawkę!");
-            else alert("Zakład przyjęty na: " + side);
-        };
-
-        update();
+        debugAPI();
     </script>
 </body>
 </html>
