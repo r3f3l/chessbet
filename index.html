@@ -2,37 +2,89 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>DEBUGGER KASYNA</title>
+    <title>CHESSBET CASINO</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #06180e; color: #fef3c7; }
+        .active-bet { border-color: #fbbf24 !important; background-color: #166534 !important; }
+    </style>
 </head>
-<body class="bg-black text-green-500 p-10 font-mono">
-    <h1 class="text-2xl mb-4 text-white">DIAGNOSTYKA API</h1>
-    <div id="debug-view" class="bg-slate-900 p-4 rounded border border-green-500 whitespace-pre-wrap">
-        Ładowanie danych...
+<body class="p-4 md:p-10 font-sans">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-center text-4xl font-black text-yellow-500 mb-8 uppercase tracking-widest">👑 ChessBet Casino 👑</h1>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Panel Zakładów -->
+            <div class="bg-[#0b3b24] p-6 rounded-2xl border-2 border-yellow-600">
+                <div id="status" class="text-center text-sm font-bold text-yellow-500 mb-4 animate-pulse">SYNCING WITH LICHESS...</div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-black p-3 rounded border border-yellow-800">
+                        <p class="text-[10px] text-gray-400">CURRENT PLAYER (BLITZ)</p>
+                        <p id="p-name" class="font-bold">---</p>
+                    </div>
+                    <div class="bg-black p-3 rounded border border-yellow-800">
+                        <p class="text-[10px] text-gray-400">RATING</p>
+                        <p id="p-rating" class="font-bold">---</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button class="bet-btn p-4 bg-green-900 rounded-lg border-2 border-transparent" data-side="white">Bet White</button>
+                    <button class="bet-btn p-4 bg-green-900 rounded-lg border-2 border-transparent" data-side="black">Bet Black</button>
+                </div>
+                
+                <input type="number" id="stake" placeholder="Stake ($)" class="w-full mt-4 p-3 bg-black rounded border border-yellow-500 text-white">
+                <button id="submit" class="w-full mt-2 bg-yellow-600 text-black font-black p-3 rounded uppercase">Place Bet</button>
+                <p class="text-[10px] text-red-400 mt-2 text-center font-bold">NOTE: DRAW/STALEMATE = HOUSE WINS</p>
+            </div>
+
+            <!-- Ramka Gry -->
+            <iframe id="game-frame" src="" class="w-full h-80 rounded-2xl border-4 border-yellow-600 bg-black"></iframe>
+        </div>
     </div>
 
     <script>
-        async function debugAPI() {
-            const display = document.getElementById('debug-view');
+        let lastGameId = null;
+
+        async function update() {
             try {
-                // Pobieramy dane
                 const res = await fetch('https://lichess.org/api/tv/channels');
                 const data = await res.json();
                 
-                // Wyświetlamy surowy JSON na stronie, żebyśmy widzieli strukturę
-                display.textContent = "ODPOWIEDŹ Z SERWERA:\n" + JSON.stringify(data, null, 2);
-                
-                // Sprawdzamy czy mamy cokolwiek w "topRated" (lub odpowiedniku)
-                if (data.topRated) {
-                    display.textContent += "\n\nSUKCES: Znaleziono 'topRated'!";
-                } else {
-                    display.textContent += "\n\nUWAGA: Nie widzę 'topRated'. Sprawdź, czy klucze to np. 'blitz', 'bullet' itp.";
+                // Korzystamy z kanału "blitz" zgodnie z Twoim zrzutem danych
+                const game = data.blitz;
+
+                if (game && game.gameId !== lastGameId) {
+                    lastGameId = game.gameId;
+                    document.getElementById('p-name').textContent = game.user.name;
+                    document.getElementById('p-rating').textContent = game.rating;
+                    document.getElementById('game-frame').src = `https://lichess.org/embed/${game.gameId}?theme=brown&bg=dark`;
+                    document.getElementById('status').textContent = "BETTING OPEN";
                 }
             } catch (e) {
-                display.textContent = "BŁĄD: " + e.message;
+                document.getElementById('status').textContent = "WAITING FOR CONNECTION...";
             }
+            setTimeout(update, 5000);
         }
-        debugAPI();
+
+        // Logika wyboru
+        document.querySelectorAll('.bet-btn').forEach(b => {
+            b.onclick = () => {
+                document.querySelectorAll('.bet-btn').forEach(x => x.classList.remove('active-bet'));
+                b.classList.add('active-bet');
+            }
+        });
+
+        // Potwierdzenie
+        document.getElementById('submit').onclick = () => {
+            const side = document.querySelector('.active-bet')?.dataset.side;
+            const stake = document.getElementById('stake').value;
+            if(!side || !stake) return alert("Select side and amount!");
+            alert(`Bet accepted: ${side.toUpperCase()} for $${stake}. Remember: Draw = Loss!`);
+        };
+
+        update();
     </script>
 </body>
 </html>
