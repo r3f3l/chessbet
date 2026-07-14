@@ -576,10 +576,12 @@
                     btn.classList.remove('glow-casino-active');
                 } else {
                     const group = btn.getAttribute('data-group');
-                    // Prevent betting on mutually exclusive events in 'main'
-                    if (group === 'main') {
+                    
+                    // Rozłączność wyboru w obrębie tej samej grupy zakładów
+                    // Działa dla grup: 'main', 'ending', 'side'
+                    if (group === 'main' || group === 'ending' || group === 'side') {
                         buttons.forEach(b => {
-                            if (b.getAttribute('data-group') === 'main' && activeSelections.has(b)) {
+                            if (b.getAttribute('data-group') === group && activeSelections.has(b)) {
                                 activeSelections.delete(b);
                                 b.classList.remove('glow-casino-active');
                             }
