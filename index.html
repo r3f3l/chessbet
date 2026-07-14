@@ -110,12 +110,12 @@
                 <!-- MAIN BETS -->
                 <h3 class="text-center font-bold text-yellow-500 uppercase tracking-[0.2em] mb-4 text-xs">Match Winner</h3>
                 <div class="grid grid-cols-2 gap-4 mb-6">
-                    <button class="bet-btn group p-4 rounded-xl flex flex-col items-center shadow-lg" data-group="main" data-bet="White Win" data-decimal="2.00">
+                    <button class="bet-btn group p-4 rounded-xl flex flex-col items-center shadow-lg" data-category="winner" data-bet="White Win" data-decimal="2.00">
                         <span class="chess-icon text-5xl text-white drop-shadow-md">♔</span>
                         <span class="font-bold text-amber-100 mt-2 uppercase">White</span>
                         <span class="text-yellow-500 text-sm font-black mt-1">1:1</span>
                     </button>
-                    <button class="bet-btn group p-4 rounded-xl flex flex-col items-center shadow-lg" data-group="main" data-bet="Black Win" data-decimal="2.00">
+                    <button class="bet-btn group p-4 rounded-xl flex flex-col items-center shadow-lg" data-category="winner" data-bet="Black Win" data-decimal="2.00">
                         <span class="chess-icon text-5xl text-gray-400 drop-shadow-md">♚</span>
                         <span class="font-bold text-amber-100 mt-2 uppercase">Black</span>
                         <span class="text-yellow-500 text-sm font-black mt-1">1:1</span>
@@ -130,17 +130,17 @@
                 </div>
                 
                 <div class="grid grid-cols-3 gap-3 mb-6">
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-group="ending" data-bet="Timeout" data-decimal="2.00">
+                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-category="ending" data-bet="Timeout" data-decimal="2.00">
                         <span class="text-3xl text-amber-100">⏱️</span>
                         <span class="text-[10px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Timeout</span>
                         <span class="text-lg font-black text-yellow-500 mt-1">1:1</span>
                     </button>
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-group="ending" data-bet="Resignation" data-decimal="3.00">
+                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-category="ending" data-bet="Resignation" data-decimal="3.00">
                         <span class="text-3xl text-amber-100">🏳️</span>
                         <span class="text-[10px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Resignation</span>
                         <span class="text-lg font-black text-yellow-500 mt-1">1:2</span>
                     </button>
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-group="ending" data-bet="Checkmate" data-decimal="4.00">
+                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-category="ending" data-bet="Checkmate" data-decimal="4.00">
                         <span class="text-3xl text-amber-100">⚔️</span>
                         <span class="text-[10px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Checkmate</span>
                         <span class="text-lg font-black text-yellow-500 mt-1">1:3</span>
@@ -155,33 +155,33 @@
                 </div>
 
                 <div class="grid grid-cols-5 gap-2 mb-8">
-                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Queen Mate" data-decimal="2.00">
+                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-category="ending" data-bet="Queen Mate" data-decimal="2.00">
                         <span class="chess-icon text-2xl text-amber-100">♕</span>
                         <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Queen</span>
                         <span class="text-sm font-black text-yellow-500">1:1</span>
                     </button>
-                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Rook Mate" data-decimal="4.00">
+                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-category="ending" data-bet="Rook Mate" data-decimal="4.00">
                         <span class="chess-icon text-2xl text-amber-100">♖</span>
                         <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Rook</span>
                         <span class="text-sm font-black text-yellow-500">1:3</span>
                     </button>
-                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Bishop Mate" data-decimal="7.00">
+                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-category="ending" data-bet="Bishop Mate" data-decimal="7.00">
                         <span class="chess-icon text-2xl text-amber-100">♗</span>
                         <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Bishop</span>
                         <span class="text-sm font-black text-yellow-500">1:6</span>
                     </button>
-                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Knight Mate" data-decimal="7.00">
+                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-category="ending" data-bet="Knight Mate" data-decimal="7.00">
                         <span class="chess-icon text-2xl text-amber-100">♘</span>
                         <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Knight</span>
                         <span class="text-sm font-black text-yellow-500">1:6</span>
                     </button>
-                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Pawn Mate" data-decimal="11.00">
+                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-category="ending" data-bet="Pawn Mate" data-decimal="11.00">
                         <span class="chess-icon text-2xl text-amber-100">♙</span>
                         <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Pawn</span>
                         <span class="text-sm font-black text-yellow-500">1:10</span>
                     </button>
                     
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center col-span-5 bg-yellow-900/40 royal-glow mt-2" data-group="special" data-bet="Royal Fork" data-decimal="100.00">
+                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center col-span-5 bg-yellow-900/40 royal-glow mt-2" data-category="special" data-bet="Royal Fork" data-decimal="100.00">
                         <div class="flex items-center gap-2">
                             <span class="chess-icon text-3xl text-amber-100">♘👑</span>
                         </div>
@@ -405,7 +405,7 @@
                     <div class="p-3 rounded-xl border ${bgClass} flex justify-between items-center text-sm shadow-sm">
                         <div>
                             <span class="font-bold text-white uppercase">${bet.type}</span>
-                            <span class="text-[10px] text-gray-400 ml-2 bg-black/50 px-2 py-0.5 rounded">${bet.group}</span>
+                            <span class="text-[10px] text-gray-400 ml-2 bg-black/50 px-2 py-0.5 rounded">${bet.category}</span>
                             <div class="text-xs text-gray-400 mt-1">Stake: $${bet.stake.toFixed(2)}</div>
                             <div class="text-[9px] text-gray-500">Game ID: ${bet.gameId}</div>
                         </div>
@@ -522,18 +522,20 @@
                             processedAny = true;
                             let ticketWon = false;
 
-                            if (!isDraw) {
-                                if (ticket.group === 'main') {
+                            // Royal Fork może wydarzyć się nawet w remisie
+                            if (ticket.category === 'special') {
+                                if (ticket.type === 'Royal Fork' && hasRoyalFork) ticketWon = true;
+                            } 
+                            // Pozostałe zakłady przegrywają, jeśli padł remis
+                            else if (!isDraw) {
+                                if (ticket.category === 'winner') {
                                     if (ticket.type === 'White Win' && actualWinner === 'white') ticketWon = true;
                                     if (ticket.type === 'Black Win' && actualWinner === 'black') ticketWon = true;
-                                } else if (ticket.group === 'ending') {
+                                } else if (ticket.category === 'ending') {
                                     if (ticket.type === 'Timeout' && isTimeout) ticketWon = true;
                                     if (ticket.type === 'Checkmate' && isCheckmate) ticketWon = true;
                                     if (ticket.type === 'Resignation' && isResign) ticketWon = true;
-                                } else if (ticket.group === 'side') {
                                     if (ticket.type === pieceMate) ticketWon = true;
-                                } else if (ticket.group === 'special') {
-                                    if (ticket.type === 'Royal Fork' && hasRoyalFork) ticketWon = true;
                                 }
                             }
 
@@ -558,9 +560,14 @@
         }
 
         // ---------------------------------------------------------
-        // BETTING INTERFACE LOGIC (Multi-Select Independent Bets)
+        // BETTING INTERFACE LOGIC (STRICT RADIO BEHAVIOR)
         // ---------------------------------------------------------
-        let activeSelections = new Set();
+        const activeBets = {
+            winner: null,
+            ending: null,
+            special: null
+        };
+        
         const buttons = document.querySelectorAll('.bet-btn');
         const stakeInput = document.getElementById('stake');
         const paymentModule = document.getElementById('payment-module');
@@ -571,25 +578,20 @@
             btn.addEventListener('click', () => {
                 playClickSound();
                 
-                if (activeSelections.has(btn)) {
-                    activeSelections.delete(btn);
+                const category = btn.getAttribute('data-category');
+                
+                // Jeśli kliknięto w już zaznaczony przycisk, po prostu go odznaczamy
+                if (activeBets[category] === btn) {
                     btn.classList.remove('glow-casino-active');
+                    activeBets[category] = null;
                 } else {
-                    const group = btn.getAttribute('data-group');
-                    
-                    // Rozłączność wyboru w obrębie tej samej grupy zakładów
-                    // Działa dla grup: 'main', 'ending', 'side'
-                    if (group === 'main' || group === 'ending' || group === 'side') {
-                        buttons.forEach(b => {
-                            if (b.getAttribute('data-group') === group && activeSelections.has(b)) {
-                                activeSelections.delete(b);
-                                b.classList.remove('glow-casino-active');
-                            }
-                        });
+                    // Jeśli w tej KATEGORII jest już coś zaznaczone, odznaczamy to
+                    if (activeBets[category]) {
+                        activeBets[category].classList.remove('glow-casino-active');
                     }
-
-                    activeSelections.add(btn);
+                    // Zaznaczamy nowy wybór
                     btn.classList.add('glow-casino-active');
+                    activeBets[category] = btn;
                 }
                 updateSlip();
             });
@@ -598,11 +600,13 @@
         stakeInput.addEventListener('input', updateSlip);
 
         function updateSlip() {
-            const count = activeSelections.size;
+            // Pobieramy tylko aktualnie zaznaczone przyciski (ignorujemy nulle)
+            const selections = Object.values(activeBets).filter(btn => btn !== null);
+            const count = selections.length;
             const stake = parseFloat(stakeInput.value) || 0;
             let totalPotentialWin = 0;
             
-            activeSelections.forEach(btn => {
+            selections.forEach(btn => {
                 totalPotentialWin += stake * parseFloat(btn.getAttribute('data-decimal'));
             });
 
@@ -619,7 +623,8 @@
         document.getElementById('pay-btn').onclick = () => {
             if (!currentLiveId) return alert("Please wait for a live game to sync.");
             
-            const count = activeSelections.size;
+            const selections = Object.values(activeBets).filter(btn => btn !== null);
+            const count = selections.length;
             if (count === 0) return;
 
             const stake = parseFloat(stakeInput.value);
@@ -631,13 +636,13 @@
             playBetPlaced();
             updateBalance(balance - totalStake);
 
-            activeSelections.forEach(btn => {
+            selections.forEach(btn => {
                 const decimal = parseFloat(btn.getAttribute('data-decimal'));
                 const bet = {
                     id: Math.random().toString(36).substr(2, 6).toUpperCase(),
                     gameId: currentLiveId,
                     type: btn.getAttribute('data-bet'),
-                    group: btn.getAttribute('data-group'),
+                    category: btn.getAttribute('data-category'), // np. 'winner', 'ending'
                     stake: stake,
                     potentialWin: stake * decimal,
                     status: 'pending'
@@ -647,8 +652,12 @@
 
             saveHistory();
             
-            activeSelections.forEach(btn => btn.classList.remove('glow-casino-active'));
-            activeSelections.clear();
+            // Czyszczenie formularza po wysłaniu kuponu
+            selections.forEach(btn => btn.classList.remove('glow-casino-active'));
+            activeBets.winner = null;
+            activeBets.ending = null;
+            activeBets.special = null;
+            
             stakeInput.value = '';
             updateSlip();
         };
