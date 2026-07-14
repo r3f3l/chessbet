@@ -7,16 +7,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { 
-            background-color: #03140a; /* Ciemna, butelkowa zieleń w tle */
+            background-color: #03140a; 
             color: #fef3c7; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+        .vegas-logo { 
+            font-family: 'Times New Roman', Times, serif; 
+            background: linear-gradient(180deg, #FFF7D6 0%, #FFD700 25%, #B8860B 50%, #FFD700 75%, #FFF7D6 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            filter: drop-shadow(0px 4px 0px #4A0E00); 
+        }
         .casino-panel { 
-            background-color: #0b3b24; /* Panel z screenshota */
-            border: 2px solid #d97706; /* Złota ramka */
+            background-color: #0b3b24; 
+            border: 2px solid #d97706; 
         }
         .bet-btn {
-            background-color: #166534; /* Ciemnozielony przycisk */
+            background-color: #166534; 
             transition: all 0.2s ease;
         }
         .bet-btn:hover { background-color: #15803d; }
@@ -24,48 +31,53 @@
             border-color: #fbbf24 !important; 
             background-color: #22c55e !important; 
             color: black !important;
+            box-shadow: 0 0 15px rgba(34,197,94,0.5);
         }
         .wallet-display {
             background: linear-gradient(180deg, #d97706, #92400e);
             border: 2px solid #fbbf24;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
+        /* Custom scrollbar for history */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 10px; }
     </style>
 </head>
-<body class="p-4 md:p-8 min-h-screen">
+<body class="p-4 md:p-8 min-h-screen flex flex-col items-center">
     
-    <header class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-        <h1 class="text-4xl font-black text-yellow-500 uppercase tracking-widest drop-shadow-md">
+    <!-- HEADER & WALLET -->
+    <header class="w-full max-w-[1200px] flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <h1 class="vegas-logo text-4xl sm:text-5xl font-black uppercase tracking-widest">
             👑 ChessBet Casino 👑
         </h1>
-        <div class="wallet-display px-6 py-2 rounded-xl text-white font-black text-xl flex items-center gap-2 shadow-lg">
-            <span>BALANCE:</span>
+        <div class="wallet-display px-6 py-3 rounded-xl text-white font-black text-2xl flex items-center gap-3 shadow-lg">
+            <span class="text-sm text-yellow-300 uppercase tracking-widest mt-1">BALANCE:</span>
             <span id="wallet-balance">$1000.00</span>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto grid md:grid-cols-[1fr_400px] gap-8">
+    <main class="w-full max-w-[1200px] grid lg:grid-cols-[1fr_440px] gap-8">
         
-        <!-- LEWA KOLUMNA: PANEL ZAKŁADÓW I HISTORIA -->
+        <!-- LEWA KOLUMNA: PANELE -->
         <div class="flex flex-col gap-6">
             
             <!-- GŁÓWNY PANEL ZAKŁADÓW -->
-            <div class="casino-panel p-6 rounded-2xl shadow-2xl relative overflow-hidden">
+            <div class="casino-panel p-6 sm:p-8 rounded-2xl shadow-2xl relative">
                 <div id="status" class="text-center text-sm font-black text-yellow-500 mb-6 uppercase tracking-widest animate-pulse">
                     CONNECTING TO LICHESS...
                 </div>
                 
-                <!-- PROFILE GRACZY (2 KOLUMNY) -->
+                <!-- PROFILE GRACZY -->
                 <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="bg-black p-4 rounded-xl border border-yellow-800/50 shadow-inner">
+                    <div class="bg-black/60 p-4 rounded-xl border border-yellow-800/50 shadow-inner">
                         <p class="text-[10px] text-gray-400 font-bold tracking-wider mb-1">WHITE PLAYER ♔</p>
-                        <p id="white-name" class="font-bold text-lg truncate">---</p>
-                        <p id="white-rating" class="text-sm text-yellow-600 font-mono">---</p>
+                        <p id="white-name" class="font-bold text-lg truncate text-white">---</p>
+                        <p id="white-rating" class="text-sm text-yellow-500 font-mono">---</p>
                     </div>
-                    <div class="bg-black p-4 rounded-xl border border-yellow-800/50 shadow-inner">
+                    <div class="bg-black/60 p-4 rounded-xl border border-yellow-800/50 shadow-inner">
                         <p class="text-[10px] text-gray-400 font-bold tracking-wider mb-1">BLACK PLAYER ♚</p>
-                        <p id="black-name" class="font-bold text-lg truncate">---</p>
-                        <p id="black-rating" class="text-sm text-yellow-600 font-mono">---</p>
+                        <p id="black-name" class="font-bold text-lg truncate text-white">---</p>
+                        <p id="black-rating" class="text-sm text-yellow-500 font-mono">---</p>
                     </div>
                 </div>
 
@@ -80,14 +92,14 @@
                 </div>
                 
                 <!-- STAWKA I POTWIERDZENIE -->
-                <div class="bg-black p-4 rounded-xl border border-yellow-800/50">
+                <div class="bg-black/80 p-5 rounded-xl border border-yellow-800/50">
                     <input type="number" id="stake" min="1" placeholder="Stake ($)" class="w-full p-4 bg-transparent text-2xl text-white font-black outline-none border-b-2 border-yellow-800 focus:border-yellow-500 transition-colors mb-4 text-center">
                     <button id="submit" class="w-full bg-[#d97706] hover:bg-[#b45309] text-black font-black p-4 rounded-xl uppercase text-xl transition-colors shadow-lg active:scale-95">
                         Place Bet
                     </button>
                 </div>
                 
-                <p class="text-xs text-red-400 mt-4 text-center font-bold uppercase tracking-widest">
+                <p class="text-[11px] text-red-400 mt-4 text-center font-bold uppercase tracking-widest">
                     NOTE: DRAW/STALEMATE = HOUSE WINS
                 </p>
             </div>
@@ -96,9 +108,9 @@
             <div class="casino-panel p-6 rounded-2xl shadow-2xl">
                 <h2 class="text-yellow-500 font-black uppercase tracking-widest mb-4 flex justify-between items-center border-b border-yellow-800/50 pb-2">
                     <span>🎟️ Betting History</span>
-                    <button id="clear-history" class="text-xs bg-red-900/50 hover:bg-red-800 px-3 py-1 rounded text-red-200">Clear</button>
+                    <button id="clear-history" class="text-xs bg-red-900/50 hover:bg-red-800 px-3 py-1 rounded text-red-200 transition-colors">Clear</button>
                 </h2>
-                <div id="bets-list" class="space-y-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                <div id="bets-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2">
                     <!-- Dynamicznie wstrzykiwane kupony -->
                 </div>
             </div>
@@ -106,11 +118,11 @@
         </div>
 
         <!-- PRAWA KOLUMNA: LICHESS TV -->
-        <div class="flex flex-col">
-            <div class="bg-gradient-to-b from-yellow-500 to-yellow-700 text-black text-center font-black text-xs py-2 rounded-t-2xl uppercase tracking-widest">
+        <div class="flex flex-col h-full w-full max-w-[440px] mx-auto">
+            <div class="bg-gradient-to-b from-yellow-500 to-yellow-700 text-black text-center font-black text-xs py-2 rounded-t-2xl uppercase tracking-widest border-x-4 border-t-4 border-yellow-600">
                 LIVE BROADCAST
             </div>
-            <iframe id="game-frame" src="" class="w-full aspect-[400/444] rounded-b-2xl border-x-4 border-b-4 border-yellow-600 bg-black shadow-2xl"></iframe>
+            <iframe id="game-frame" src="" class="w-full aspect-[400/444] rounded-b-2xl border-x-4 border-b-4 border-yellow-600 bg-black shadow-2xl" allowtransparency="true" frameborder="0"></iframe>
         </div>
         
     </main>
@@ -140,7 +152,6 @@
                 return;
             }
 
-            // Pokaż najnowsze na górze
             [...betsHistory].reverse().forEach(bet => {
                 let statusColor = "text-yellow-500";
                 let statusText = "IN PLAY";
@@ -157,13 +168,13 @@
                 }
 
                 container.innerHTML += `
-                    <div class="p-3 rounded-xl border ${bgClass} flex justify-between items-center text-sm">
+                    <div class="p-3 rounded-xl border ${bgClass} flex justify-between items-center text-sm shadow-sm">
                         <div>
                             <span class="font-bold text-white uppercase">${bet.side}</span>
                             <span class="text-xs text-gray-400 ml-2">Stake: $${bet.stake.toFixed(2)}</span>
                             <div class="text-[10px] text-gray-500 mt-1">Game ID: ${bet.gameId}</div>
                         </div>
-                        <div class="font-black ${statusColor} text-right">
+                        <div class="font-black ${statusColor} text-right text-xs sm:text-sm">
                             ${statusText}
                         </div>
                     </div>
@@ -173,12 +184,11 @@
 
         document.getElementById('clear-history').onclick = () => {
             if(confirm("Are you sure you want to clear your betting history?")) {
-                betsHistory = betsHistory.filter(b => b.status === 'pending'); // Zostaw tylko te w grze
+                betsHistory = betsHistory.filter(b => b.status === 'pending'); 
                 saveHistory();
             }
         };
 
-        // Inicjalizacja UI
         updateBalance(balance);
         renderHistory();
 
@@ -187,53 +197,51 @@
 
         async function fetchGameData() {
             try {
-                // Pobieramy bezpieczny kanał TV
                 const res = await fetch('https://lichess.org/api/tv/channels?_=' + Date.now());
+                if (!res.ok) throw new Error("API Limit");
                 const data = await res.json();
-                const game = data.blitz; 
+                
+                // NAPRAWA: Zamiast samego "data.blitz", bierzemy najlepszy dostępny kanał, żeby skrypt się nie wieszał!
+                const channelKey = ['blitz', 'topRated', 'bullet', 'rapid', 'classical'].find(k => data[k]) || Object.keys(data)[0];
+                const game = data[channelKey]; 
 
                 if (game && game.gameId !== currentLiveId) {
                     
-                    // ZANIM zmienimy stół, rozliczmy zakłady z poprzedniej gry!
                     if (currentLiveId !== null) {
                         settleGame(currentLiveId);
                     }
 
-                    // Ustaw nową grę
                     currentLiveId = game.gameId;
                     
-                    // Ładujemy iframe
                     document.getElementById('game-frame').src = `https://lichess.org/embed/${game.gameId}?theme=brown&bg=dark`;
                     document.getElementById('status').textContent = "BETTING OPEN";
                     document.getElementById('status').className = "text-center text-sm font-black text-green-400 mb-6 uppercase tracking-widest";
 
-                    // Próbujemy pobrać szczegóły obu graczy
+                    // Wywołujemy profile graczy
                     fetchPlayerProfiles(game.gameId);
                 }
             } catch (e) {
-                // Cicha obsługa błędów sieciowych
+                console.warn("Retrying Lichess connection...");
             }
-            setTimeout(fetchGameData, 6000); // Check co 6 sekund
+            setTimeout(fetchGameData, 8000); // Odpytujemy co 8s, żeby Lichess nas nie zablokował
         }
 
         async function fetchPlayerProfiles(gameId) {
             try {
-                // Pobieramy pełnego JSONA nowej partii, aby mieć profile białych i czarnych
-                const res = await fetch(`https://lichess.org/game/export/${gameId}`, {
+                const res = await fetch(`https://lichess.org/game/export/${gameId}?tags=true`, {
                     headers: { 'Accept': 'application/json' }
                 });
                 if(res.ok) {
                     const gameData = await res.json();
-                    document.getElementById('white-name').textContent = gameData.players.white.user?.name || 'Anonymous';
-                    document.getElementById('white-rating').textContent = "Rating: " + (gameData.players.white.rating || 'N/A');
+                    document.getElementById('white-name').textContent = gameData.players?.white?.user?.name || 'Anonymous';
+                    document.getElementById('white-rating').textContent = "Rating: " + (gameData.players?.white?.rating || '---');
                     
-                    document.getElementById('black-name').textContent = gameData.players.black.user?.name || 'Anonymous';
-                    document.getElementById('black-rating').textContent = "Rating: " + (gameData.players.black.rating || 'N/A');
+                    document.getElementById('black-name').textContent = gameData.players?.black?.user?.name || 'Anonymous';
+                    document.getElementById('black-rating').textContent = "Rating: " + (gameData.players?.black?.rating || '---');
                 }
             } catch (e) {
-                // Fallback (gdyby Lichess zablokował eksport)
-                document.getElementById('white-name').textContent = "White Player";
-                document.getElementById('black-name').textContent = "Black Player";
+                // Jeśli API zablokuje eksport, ukryjemy błąd i zostawimy puste pola, 
+                // szachownica i tak pokaże imiona.
             }
         }
 
@@ -249,13 +257,12 @@
                 if (res.ok) {
                     const gameData = await res.json();
                     
-                    // USTALAMY WYNIK. Remis = brak zwycięzcy ('draw' lub 'stalemate' u Lichessa)
+                    // Remis to wygrana kasyna
                     const winner = gameData.winner || 'draw'; 
                     
                     let newlyWon = 0;
                     let processedAny = false;
 
-                    // Przeszukujemy naszą historię pod kątem zakładów dla zakończonej gry
                     betsHistory.forEach(bet => {
                         if (bet.gameId === endedGameId && bet.status === 'pending') {
                             processedAny = true;
@@ -273,9 +280,10 @@
                     if (processedAny) {
                         if (newlyWon > 0) {
                             updateBalance(balance + newlyWon);
-                            alert(`BETS SETTLED! You won $${newlyWon.toFixed(2)} on the last game!`);
+                            // Opcjonalny alert z wygraną
+                            // alert(`BETS SETTLED! You won $${newlyWon.toFixed(2)} on the last game!`);
                         }
-                        saveHistory(); // Zapisuje zaktualizowane statusy i odświeża listę
+                        saveHistory(); 
                     }
                 }
             } catch(e) {
@@ -302,28 +310,25 @@
             if (!stakeInput || isNaN(stake) || stake <= 0) return alert("Enter a valid stake!");
             if (stake > balance) return alert("Insufficient funds in wallet!");
 
-            // Pobieramy stawkę
             updateBalance(balance - stake);
 
-            // Tworzymy kupon (kurs 1:1, czyli wygrana to stake * 2)
             const bet = {
                 id: Math.random().toString(36).substr(2, 6).toUpperCase(),
                 gameId: currentLiveId,
                 side: sideBtn.dataset.side,
                 stake: stake,
-                potentialWin: stake * 2,
+                potentialWin: stake * 2, // Kurs 2.0 (1:1)
                 status: 'pending'
             };
 
             betsHistory.push(bet);
             saveHistory();
             
-            // Czyszczenie formularza
             sideBtn.classList.remove('active-bet');
             document.getElementById('stake').value = '';
         };
 
-        // Start skryptu
+        // Start
         fetchGameData();
 
     </script>
