@@ -30,13 +30,19 @@
         .bet-btn {
             background-color: #0d4a2a; 
             border: 2px solid rgba(217, 119, 6, 0.4);
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
         }
-        .bet-btn:hover { background-color: #136138; }
+        .bet-btn:hover { 
+            background-color: #136138; 
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(218, 165, 32, 0.3);
+            border-color: rgba(251, 191, 36, 0.8);
+        }
         .glow-casino-active { 
             background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 100%) !important;
             border-color: #fbbf24 !important; 
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.5), inset 0 0 10px rgba(251, 191, 36, 0.3) !important; 
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.6), inset 0 0 10px rgba(251, 191, 36, 0.4) !important; 
             transform: scale(1.02);
             color: white !important;
         }
@@ -58,13 +64,21 @@
             50% { border-color: rgba(255, 215, 0, 1); }
             100% { border-color: rgba(218, 165, 32, 0.4); }
         }
+        
+        .win-animation {
+            animation: flash-green 1s ease-out;
+        }
+        @keyframes flash-green {
+            0% { background-color: rgba(34, 197, 94, 0.5); }
+            100% { background-color: transparent; }
+        }
     </style>
 </head>
 <body class="p-4 md:p-6 min-h-screen">
     
     <header class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center mb-6 gap-4 border-b-2 border-yellow-700/50 pb-4">
         <h1 class="vegas-logo text-3xl sm:text-5xl font-black">👑 CHESSBET CASINO 👑</h1>
-        <div class="wallet-display px-6 py-2 rounded-xl text-white font-black text-2xl flex items-center gap-2 shadow-lg">
+        <div class="wallet-display px-6 py-2 rounded-xl text-white font-black text-2xl flex items-center gap-2 shadow-lg transition-colors" id="wallet-container">
             <span class="text-xs text-yellow-300 uppercase tracking-widest mt-1">Wallet:</span>
             <span id="wallet-balance">$1000.00</span>
         </div>
@@ -93,7 +107,8 @@
                     </div>
                 </div>
 
-                <h3 class="text-center font-bold text-yellow-500 uppercase tracking-[0.2em] mb-4 text-xs">Game Winner</h3>
+                <!-- MAIN BETS -->
+                <h3 class="text-center font-bold text-yellow-500 uppercase tracking-[0.2em] mb-4 text-xs">Match Winner</h3>
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <button class="bet-btn group p-4 rounded-xl flex flex-col items-center shadow-lg" data-group="main" data-bet="White Win" data-decimal="2.00">
                         <span class="chess-icon text-5xl text-white drop-shadow-md">♔</span>
@@ -107,45 +122,66 @@
                     </button>
                 </div>
 
+                <!-- NEW: GAME ENDING BETS -->
                 <div class="relative flex items-center py-2 mb-4">
                     <div class="flex-grow border-t-2 border-yellow-900/40"></div>
-                    <span class="flex-shrink-0 mx-4 text-yellow-600 text-xs font-black uppercase tracking-[0.2em]">Execution Method (Side Bets)</span>
+                    <span class="flex-shrink-0 mx-4 text-yellow-600 text-xs font-black uppercase tracking-[0.2em]">Game Ending</span>
+                    <div class="flex-grow border-t-2 border-yellow-900/40"></div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-3 mb-6">
+                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-group="ending" data-bet="Timeout" data-decimal="2.00">
+                        <span class="text-3xl text-amber-100">⏱️</span>
+                        <span class="text-[10px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Timeout</span>
+                        <span class="text-lg font-black text-yellow-500 mt-1">1:1</span>
+                    </button>
+                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-group="ending" data-bet="Checkmate" data-decimal="4.00">
+                        <span class="text-3xl text-amber-100">⚔️</span>
+                        <span class="text-[10px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Checkmate</span>
+                        <span class="text-lg font-black text-yellow-500 mt-1">1:3</span>
+                    </button>
+                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-group="ending" data-bet="Resignation" data-decimal="6.00">
+                        <span class="text-3xl text-amber-100">🏳️</span>
+                        <span class="text-[10px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Resignation</span>
+                        <span class="text-lg font-black text-yellow-500 mt-1">1:5</span>
+                    </button>
+                </div>
+
+                <!-- SPECIFIC PIECE MATES -->
+                <div class="relative flex items-center py-2 mb-4">
+                    <div class="flex-grow border-t-2 border-yellow-900/40"></div>
+                    <span class="flex-shrink-0 mx-4 text-yellow-600 text-xs font-black uppercase tracking-[0.2em]">Specific Mates</span>
                     <div class="flex-grow border-t-2 border-yellow-900/40"></div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-3 mb-8">
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Queen Mate" data-decimal="2.00">
-                        <span class="chess-icon text-3xl text-amber-100">♕</span>
-                        <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Queen Mate</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">1:1</span>
+                <div class="grid grid-cols-5 gap-2 mb-8">
+                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Queen Mate" data-decimal="2.00">
+                        <span class="chess-icon text-2xl text-amber-100">♕</span>
+                        <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Queen</span>
+                        <span class="text-sm font-black text-yellow-500">1:1</span>
                     </button>
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Rook Mate" data-decimal="4.00">
-                        <span class="chess-icon text-3xl text-amber-100">♖</span>
-                        <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Rook Mate</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">1:3</span>
+                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Rook Mate" data-decimal="4.00">
+                        <span class="chess-icon text-2xl text-amber-100">♖</span>
+                        <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Rook</span>
+                        <span class="text-sm font-black text-yellow-500">1:3</span>
                     </button>
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Bishop Mate" data-decimal="7.00">
-                        <span class="chess-icon text-3xl text-amber-100">♗</span>
-                        <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Bishop Mate</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">1:6</span>
+                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Bishop Mate" data-decimal="7.00">
+                        <span class="chess-icon text-2xl text-amber-100">♗</span>
+                        <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Bishop</span>
+                        <span class="text-sm font-black text-yellow-500">1:6</span>
                     </button>
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Knight Mate" data-decimal="7.00">
-                        <span class="chess-icon text-3xl text-amber-100">♘</span>
-                        <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Knight Mate</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">1:6</span>
+                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Knight Mate" data-decimal="7.00">
+                        <span class="chess-icon text-2xl text-amber-100">♘</span>
+                        <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Knight</span>
+                        <span class="text-sm font-black text-yellow-500">1:6</span>
                     </button>
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Pawn Mate" data-decimal="11.00">
-                        <span class="chess-icon text-3xl text-amber-100">♙</span>
-                        <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Pawn Mate</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">1:10</span>
-                    </button>
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Timeout Mate" data-decimal="3.00">
-                        <span class="text-3xl text-amber-100">⏱️</span>
-                        <span class="text-[9px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Timeout</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">1:2</span>
+                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-group="side" data-bet="Pawn Mate" data-decimal="11.00">
+                        <span class="chess-icon text-2xl text-amber-100">♙</span>
+                        <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Pawn</span>
+                        <span class="text-sm font-black text-yellow-500">1:10</span>
                     </button>
                     
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center col-span-3 sm:col-span-3 bg-yellow-900/40 royal-glow" data-group="side" data-bet="Royal Fork" data-decimal="100.00">
+                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center col-span-5 bg-yellow-900/40 royal-glow mt-2" data-group="special" data-bet="Royal Fork" data-decimal="100.00">
                         <div class="flex items-center gap-2">
                             <span class="chess-icon text-3xl text-amber-100">♘👑</span>
                         </div>
@@ -154,14 +190,26 @@
                     </button>
                 </div>
                 
-                <div id="payment-module" class="bg-black/80 p-5 rounded-xl border border-yellow-800/50 hidden">
+                <!-- MULTI-BET PAYMENT MODULE -->
+                <div id="payment-module" class="bg-black/80 p-5 rounded-xl border border-yellow-800/50 hidden shadow-[0_0_20px_rgba(218,165,32,0.15)]">
+                    <p class="text-[10px] text-yellow-500 text-center uppercase font-bold tracking-widest mb-3 border-b border-yellow-800/50 pb-2">All selections are placed as independent bets</p>
                     <div class="flex justify-between items-center mb-4">
-                        <span class="text-xs font-black text-yellow-600 uppercase">Total Multiplier: <span id="total-odds" class="text-white text-lg">0.00x</span></span>
-                        <span class="text-xs font-black text-yellow-600 uppercase">To Win: <span id="potential-win" class="text-green-400 text-lg">$0.00</span></span>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-black text-yellow-600 uppercase">Selected Bets</span>
+                            <span id="bets-count" class="text-white text-xl font-bold">0</span>
+                        </div>
+                        <div class="flex flex-col text-center">
+                            <span class="text-[10px] font-black text-yellow-600 uppercase">Total Stake</span>
+                            <span id="total-stake-display" class="text-white text-xl font-bold">$0.00</span>
+                        </div>
+                        <div class="flex flex-col text-right">
+                            <span class="text-[10px] font-black text-yellow-600 uppercase">Max Potential Win</span>
+                            <span id="potential-win" class="text-green-400 text-xl font-bold">$0.00</span>
+                        </div>
                     </div>
-                    <input type="number" id="stake" min="1" placeholder="Enter Stake ($)" class="w-full p-4 bg-[#0a2a18] text-2xl text-white font-black outline-none border-2 border-yellow-800 focus:border-yellow-500 rounded-xl transition-colors mb-4 text-center">
-                    <button id="pay-btn" class="w-full bg-gradient-to-b from-yellow-400 to-yellow-600 hover:to-yellow-500 text-black font-black p-4 rounded-xl uppercase text-xl shadow-lg active:scale-95 transition-transform border-2 border-yellow-200">
-                        🎲 Place Bet
+                    <input type="number" id="stake" min="1" placeholder="Stake per bet ($)" class="w-full p-4 bg-[#0a2a18] text-2xl text-white font-black outline-none border-2 border-yellow-800 focus:border-yellow-500 rounded-xl transition-colors mb-4 text-center">
+                    <button id="pay-btn" class="w-full bg-gradient-to-b from-yellow-400 to-yellow-600 hover:to-yellow-500 text-black font-black p-4 rounded-xl uppercase text-xl shadow-lg active:scale-95 transition-transform border-2 border-yellow-200 flex items-center justify-center gap-2">
+                        🎲 Place Bets
                     </button>
                 </div>
                 
@@ -176,7 +224,7 @@
                     <button id="clear-history" class="text-[10px] bg-red-900/50 hover:bg-red-800 px-3 py-1 rounded text-red-200 uppercase font-bold transition-colors border border-red-800">Clear History</button>
                 </h2>
                 <div id="bets-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2">
-                    </div>
+                </div>
             </div>
 
         </div>
@@ -192,10 +240,44 @@
 
     <script>
         // ---------------------------------------------------------
-        // 0. ROYAL FORK DETECTION ENGINE (Powered by chess.js)
+        // AUDIO ENGINE (Web Audio API)
         // ---------------------------------------------------------
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
-        // Funkcja weryfikująca czy ścieżka dla figur dalekosiężnych (Goniec, Wieża, Hetman) jest czysta
+        function playTone(freq, type, duration, vol) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playHoverSound() { playTone(800, 'sine', 0.05, 0.03); }
+        function playClickSound() { playTone(600, 'triangle', 0.1, 0.1); }
+        function playBetPlaced() {
+            playTone(400, 'square', 0.1, 0.1);
+            setTimeout(() => playTone(600, 'square', 0.1, 0.1), 100);
+            setTimeout(() => playTone(1200, 'sine', 0.3, 0.15), 200);
+        }
+        function playWinSound() {
+            [440, 554, 659, 880].forEach((f, i) => {
+                setTimeout(() => playTone(f, 'square', 0.4, 0.15), i * 150);
+            });
+        }
+
+        // ---------------------------------------------------------
+        // ROYAL FORK DETECTION ENGINE 
+        // ---------------------------------------------------------
         function isPathClear(board, r1, c1, r2, c2) {
             const dr = Math.sign(r2 - r1);
             const dc = Math.sign(c2 - c1);
@@ -209,10 +291,8 @@
             return true;
         }
 
-        // Główny silnik weryfikacji
         function checkRoyalForkOccurred(pgnMovesStr) {
             if (typeof Chess === 'undefined' || !pgnMovesStr) return false;
-            
             const game = new Chess();
             const moves = pgnMovesStr.split(' ');
             let royalForkFound = false;
@@ -222,17 +302,15 @@
                 const moveResult = game.move(move);
                 if (!moveResult) continue;
 
-                // Sprawdzamy sytuacje tylko gdy jest Szach (król atakowany)
                 if (game.in_check()) {
                     const attackerSq = moveResult.to;
-                    const attackerPiece = moveResult.piece; // 'n', 'b', 'r', 'q', 'p'
+                    const attackerPiece = moveResult.piece; 
                     const attackerColor = moveResult.color;
                     const opponentColor = attackerColor === 'w' ? 'b' : 'w';
                     
                     const board = game.board(); 
                     const queenSquares = [];
                     
-                    // Szukamy hetmana/hetmanów przeciwnika na planszy
                     for (let r = 0; r < 8; r++) {
                         for (let c = 0; c < 8; c++) {
                             const p = board[r][c];
@@ -242,32 +320,25 @@
                         }
                     }
 
-                    // Obliczamy współrzędne w macierzy szachownicy dla atakującej figury
                     const cA = attackerSq.charCodeAt(0) - 97; 
                     const rA = 8 - parseInt(attackerSq[1]); 
 
-                    // Weryfikujemy czy figura atakująca Króla atakuje jednocześnie Hetmana
                     for (let q of queenSquares) {
                         const df = Math.abs(cA - q.c);
                         const dr = Math.abs(rA - q.r);
-                        
                         let attacksQueen = false;
                         
-                        if (attackerPiece === 'n') { // Skoczek
+                        if (attackerPiece === 'n') { 
                             attacksQueen = (df === 1 && dr === 2) || (df === 2 && dr === 1);
-                        } else if (attackerPiece === 'p') { // Pion
+                        } else if (attackerPiece === 'p') { 
                             const direction = attackerColor === 'w' ? -1 : 1; 
                             attacksQueen = (df === 1 && (q.r - rA) === direction);
-                        } else { // Figury dalekosiężne (Wieża, Goniec, Hetman)
+                        } else { 
                             if (attackerPiece === 'r' || attackerPiece === 'q') {
-                                if (df === 0 || dr === 0) {
-                                    if (isPathClear(board, rA, cA, q.r, q.c)) attacksQueen = true;
-                                }
+                                if (df === 0 || dr === 0) if (isPathClear(board, rA, cA, q.r, q.c)) attacksQueen = true;
                             }
                             if (attackerPiece === 'b' || attackerPiece === 'q') {
-                                if (df === dr) {
-                                    if (isPathClear(board, rA, cA, q.r, q.c)) attacksQueen = true;
-                                }
+                                if (df === dr) if (isPathClear(board, rA, cA, q.r, q.c)) attacksQueen = true;
                             }
                         }
                         
@@ -277,21 +348,28 @@
                         }
                     }
                 }
-                if (royalForkFound) break; // Zatrzymujemy, jeśli znalazł Royal Fork
+                if (royalForkFound) break; 
             }
             return royalForkFound;
         }
 
         // ---------------------------------------------------------
-        // 1. WALLET & HISTORY SYSTEM
+        // WALLET & HISTORY SYSTEM
         // ---------------------------------------------------------
         let balance = parseFloat(localStorage.getItem('chessbet_balance')) || 1000.00;
         let betsHistory = JSON.parse(localStorage.getItem('chessbet_history')) || [];
         
-        function updateBalance(newAmount) {
+        function updateBalance(newAmount, animate = false) {
             balance = newAmount;
             localStorage.setItem('chessbet_balance', balance.toFixed(2));
-            document.getElementById('wallet-balance').textContent = `$${balance.toFixed(2)}`;
+            const balEl = document.getElementById('wallet-balance');
+            const container = document.getElementById('wallet-container');
+            balEl.textContent = `$${balance.toFixed(2)}`;
+            
+            if (animate) {
+                container.classList.add('win-animation');
+                setTimeout(() => container.classList.remove('win-animation'), 1000);
+            }
         }
 
         function saveHistory() {
@@ -323,14 +401,13 @@
                     bgClass = "bg-red-900/20 border-red-800/50";
                 }
 
-                const betNames = bet.bets.map(b => b.type).join(' + ');
-
                 container.innerHTML += `
                     <div class="p-3 rounded-xl border ${bgClass} flex justify-between items-center text-sm shadow-sm">
                         <div>
-                            <span class="font-bold text-white uppercase">${betNames}</span>
-                            <span class="text-xs text-gray-400 ml-2">Stake: $${bet.stake.toFixed(2)}</span>
-                            <div class="text-[10px] text-gray-500 mt-1">Game ID: ${bet.gameId}</div>
+                            <span class="font-bold text-white uppercase">${bet.type}</span>
+                            <span class="text-[10px] text-gray-400 ml-2 bg-black/50 px-2 py-0.5 rounded">${bet.group}</span>
+                            <div class="text-xs text-gray-400 mt-1">Stake: $${bet.stake.toFixed(2)}</div>
+                            <div class="text-[9px] text-gray-500">Game ID: ${bet.gameId}</div>
                         </div>
                         <div class="font-black ${statusColor} text-right text-xs sm:text-sm">
                             ${statusText}
@@ -341,7 +418,8 @@
         }
 
         document.getElementById('clear-history').onclick = () => {
-            if(confirm("Are you sure you want to clear your past betting history? Active bets will remain.")) {
+            playClickSound();
+            if(confirm("Clear history? Active bets will remain.")) {
                 betsHistory = betsHistory.filter(b => b.status === 'pending'); 
                 saveHistory();
             }
@@ -351,7 +429,7 @@
         renderHistory();
 
         // ---------------------------------------------------------
-        // 2. LICHESS API (BACKGROUND SYNC)
+        // LICHESS API SYNC & SETTLEMENT
         // ---------------------------------------------------------
         let currentLiveId = null;
 
@@ -360,17 +438,12 @@
                 const res = await fetch('https://lichess.org/api/tv/channels?_=' + Date.now());
                 if (!res.ok) throw new Error("API Fetch failed");
                 const data = await res.json();
-                
                 const game = data.best || data.blitz || Object.values(data)[0];
 
                 if (game && game.gameId !== currentLiveId) {
-                    
-                    if (currentLiveId !== null) {
-                        settleGame(currentLiveId);
-                    }
+                    if (currentLiveId !== null) settleGame(currentLiveId);
 
                     currentLiveId = game.gameId;
-                    
                     document.getElementById('status').textContent = "BETTING OPEN";
                     document.getElementById('status').className = "text-center text-sm font-black text-green-400 mb-6 uppercase tracking-widest";
 
@@ -388,9 +461,7 @@
 
                     fetchOpponentProfileSafely(game.gameId);
                 }
-            } catch (e) {
-                // Silent Error Handling
-            }
+            } catch (e) {}
             setTimeout(fetchGameData, 5000); 
         }
 
@@ -423,25 +494,24 @@
                 if (res.ok) {
                     const game = await res.json();
                     const actualWinner = game.winner || 'draw'; 
-                    let actualMethod = 'Unknown';
+                    const status = game.status;
                     
-                    // Rozliczenie standardowych zakończeń
-                    if (game.status === 'outoftime') actualMethod = 'Timeout Mate';
-                    else if (game.status === 'mate') {
+                    let isTimeout = status === 'outoftime';
+                    let isCheckmate = status === 'mate';
+                    let isResign = status === 'resign';
+                    let isDraw = status === 'draw' || status === 'stalemate';
+                    
+                    let pieceMate = 'Unknown';
+                    if (isCheckmate) {
                         const moves = game.moves ? game.moves.split(' ') : [];
                         const lastMove = moves[moves.length - 1] || '';
-                        if (lastMove.includes('Q') || lastMove.includes('=Q')) actualMethod = 'Queen Mate';
-                        else if (lastMove.includes('R') || lastMove.includes('=R')) actualMethod = 'Rook Mate';
-                        else if (lastMove.includes('B') || lastMove.includes('=B')) actualMethod = 'Bishop Mate';
-                        else if (lastMove.includes('N') || lastMove.includes('=N')) actualMethod = 'Knight Mate';
-                        else if (lastMove.match(/^[a-h]/)) actualMethod = 'Pawn Mate'; 
-                    } else if (game.status === 'draw' || game.status === 'stalemate') {
-                        actualMethod = 'Draw';
-                    } else if (game.status === 'resign') {
-                        actualMethod = 'Resignation';
+                        if (lastMove.includes('Q') || lastMove.includes('=Q')) pieceMate = 'Queen Mate';
+                        else if (lastMove.includes('R') || lastMove.includes('=R')) pieceMate = 'Rook Mate';
+                        else if (lastMove.includes('B') || lastMove.includes('=B')) pieceMate = 'Bishop Mate';
+                        else if (lastMove.includes('N') || lastMove.includes('=N')) pieceMate = 'Knight Mate';
+                        else if (lastMove.match(/^[a-h]/)) pieceMate = 'Pawn Mate'; 
                     }
 
-                    // --- DETEKCJA ROYAL FORK W TLE ---
                     const hasRoyalFork = checkRoyalForkOccurred(game.moves);
 
                     let newlyWon = 0;
@@ -450,24 +520,21 @@
                     betsHistory.forEach(ticket => {
                         if (ticket.gameId === endedGameId && ticket.status === 'pending') {
                             processedAny = true;
-                            let ticketWon = true;
+                            let ticketWon = false;
 
-                            if (actualWinner === 'draw') {
-                                ticketWon = false;
-                            } else {
-                                ticket.bets.forEach(b => {
-                                    if (b.group === 'main') {
-                                        if (b.type === 'White Win' && actualWinner !== 'white') ticketWon = false;
-                                        if (b.type === 'Black Win' && actualWinner !== 'black') ticketWon = false;
-                                    } else if (b.group === 'side') {
-                                        // Specjalna logika weryfikacyjna dla Royal Fork
-                                        if (b.type === 'Royal Fork') {
-                                            if (!hasRoyalFork) ticketWon = false;
-                                        } else {
-                                            if (b.type !== actualMethod) ticketWon = false;
-                                        }
-                                    }
-                                });
+                            if (!isDraw) {
+                                if (ticket.group === 'main') {
+                                    if (ticket.type === 'White Win' && actualWinner === 'white') ticketWon = true;
+                                    if (ticket.type === 'Black Win' && actualWinner === 'black') ticketWon = true;
+                                } else if (ticket.group === 'ending') {
+                                    if (ticket.type === 'Timeout' && isTimeout) ticketWon = true;
+                                    if (ticket.type === 'Checkmate' && isCheckmate) ticketWon = true;
+                                    if (ticket.type === 'Resignation' && isResign) ticketWon = true;
+                                } else if (ticket.group === 'side') {
+                                    if (ticket.type === pieceMate) ticketWon = true;
+                                } else if (ticket.group === 'special') {
+                                    if (ticket.type === 'Royal Fork' && hasRoyalFork) ticketWon = true;
+                                }
                             }
 
                             if (ticketWon) {
@@ -481,7 +548,8 @@
 
                     if (processedAny) {
                         if (newlyWon > 0) {
-                            updateBalance(balance + newlyWon);
+                            playWinSound();
+                            updateBalance(balance + newlyWon, true);
                         }
                         saveHistory(); 
                     }
@@ -490,100 +558,104 @@
         }
 
         // ---------------------------------------------------------
-        // 3. BETTING INTERFACE LOGIC
+        // BETTING INTERFACE LOGIC (Multi-Select Independent Bets)
         // ---------------------------------------------------------
-        let selections = { main: null, side: null };
+        let activeSelections = new Set();
         const buttons = document.querySelectorAll('.bet-btn');
         const stakeInput = document.getElementById('stake');
-        const totalOddsEl = document.getElementById('total-odds');
-        const potentialWinEl = document.getElementById('potential-win');
         const paymentModule = document.getElementById('payment-module');
 
         buttons.forEach(btn => {
+            btn.addEventListener('mouseenter', playHoverSound);
+            
             btn.addEventListener('click', () => {
-                const group = btn.getAttribute('data-group');
+                playClickSound();
                 
-                if (selections[group] === btn) {
-                    selections[group] = null;
+                // Allow unique selections across all groups
+                if (activeSelections.has(btn)) {
+                    activeSelections.delete(btn);
                     btn.classList.remove('glow-casino-active');
                 } else {
-                    if (selections[group]) selections[group].classList.remove('glow-casino-active');
-                    selections[group] = btn;
+                    // Check if picking mutually exclusive bets in the SAME group
+                    const group = btn.getAttribute('data-group');
+                    if (group === 'main') {
+                        // Can't bet on both white and black
+                        buttons.forEach(b => {
+                            if (b.getAttribute('data-group') === 'main' && activeSelections.has(b)) {
+                                activeSelections.delete(b);
+                                b.classList.remove('glow-casino-active');
+                            }
+                        });
+                    }
+                    if (group === 'ending') {
+                        // Generally speaking, you could bet on multiple endings to cover bases, so we allow it.
+                    }
+
+                    activeSelections.add(btn);
                     btn.classList.add('glow-casino-active');
                 }
                 updateSlip();
             });
         });
 
-        stakeInput.addEventListener('input', calculateWin);
+        stakeInput.addEventListener('input', updateSlip);
 
         function updateSlip() {
-            let totalOdds = 1.0;
-            let betsCount = 0;
+            const count = activeSelections.size;
+            const stake = parseFloat(stakeInput.value) || 0;
+            let totalPotentialWin = 0;
             
-            Object.values(selections).forEach(btn => {
-                if (btn) {
-                    betsCount++;
-                    totalOdds *= parseFloat(btn.getAttribute('data-decimal'));
-                }
+            activeSelections.forEach(btn => {
+                totalPotentialWin += stake * parseFloat(btn.getAttribute('data-decimal'));
             });
 
-            if (betsCount > 0) {
+            if (count > 0) {
                 paymentModule.classList.remove('hidden');
-                totalOddsEl.textContent = totalOdds.toFixed(2) + "x";
-                calculateWin();
+                document.getElementById('bets-count').textContent = count;
+                document.getElementById('total-stake-display').textContent = "$" + (stake * count).toLocaleString('en-US', { minimumFractionDigits: 2 });
+                document.getElementById('potential-win').textContent = "$" + totalPotentialWin.toLocaleString('en-US', { minimumFractionDigits: 2 });
             } else {
                 paymentModule.classList.add('hidden');
             }
         }
 
-        function calculateWin() {
-            const stake = parseFloat(stakeInput.value) || 0;
-            const totalOdds = parseFloat(totalOddsEl.textContent) || 0;
-            potentialWinEl.textContent = "$" + (stake * totalOdds).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
         document.getElementById('pay-btn').onclick = () => {
             if (!currentLiveId) return alert("Please wait for a live game to sync.");
             
-            const stake = parseFloat(stakeInput.value);
-            if (!stake || isNaN(stake) || stake <= 0) return alert("Enter a valid stake!");
-            if (stake > balance) return alert("Insufficient funds in wallet!");
+            const count = activeSelections.size;
+            if (count === 0) return;
 
-            let currentBets = [];
-            Object.values(selections).forEach(btn => {
-                if (btn) {
-                    currentBets.push({ 
-                        type: btn.getAttribute('data-bet'), 
-                        group: btn.getAttribute('data-group') 
-                    });
-                }
+            const stake = parseFloat(stakeInput.value);
+            if (!stake || isNaN(stake) || stake <= 0) return alert("Enter a valid stake per bet!");
+            
+            const totalStake = stake * count;
+            if (totalStake > balance) return alert("Insufficient funds in wallet for total stake!");
+
+            playBetPlaced();
+            updateBalance(balance - totalStake);
+
+            activeSelections.forEach(btn => {
+                const decimal = parseFloat(btn.getAttribute('data-decimal'));
+                const bet = {
+                    id: Math.random().toString(36).substr(2, 6).toUpperCase(),
+                    gameId: currentLiveId,
+                    type: btn.getAttribute('data-bet'),
+                    group: btn.getAttribute('data-group'),
+                    stake: stake,
+                    potentialWin: stake * decimal,
+                    status: 'pending'
+                };
+                betsHistory.push(bet);
             });
 
-            if (currentBets.length === 0) return;
-
-            updateBalance(balance - stake);
-            const totalOdds = parseFloat(totalOddsEl.textContent);
-
-            const bet = {
-                id: Math.random().toString(36).substr(2, 6).toUpperCase(),
-                gameId: currentLiveId,
-                bets: currentBets,
-                stake: stake,
-                potentialWin: stake * totalOdds,
-                status: 'pending'
-            };
-
-            betsHistory.push(bet);
             saveHistory();
             
-            selections = { main: null, side: null };
-            buttons.forEach(btn => btn.classList.remove('glow-casino-active'));
+            activeSelections.forEach(btn => btn.classList.remove('glow-casino-active'));
+            activeSelections.clear();
             stakeInput.value = '';
             updateSlip();
         };
 
-        // Start TV Sync
         fetchGameData();
 
     </script>
