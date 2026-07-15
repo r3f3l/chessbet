@@ -127,12 +127,8 @@
         .form-group label { display: block; margin-bottom: 8px; font-weight: 800; color: var(--primary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; }
         .form-group input, .form-group select { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 1.05rem; background: #f8f9fa; transition: border-color 0.2s; outline: none; }
         .form-group input:focus, .form-group select:focus { border-color: var(--accent); background: #fff; }
-        
-        /* Rozłączne opcje zakładów */
-        .exclusive-options { display: flex; gap: 10px; margin-top: 10px; }
-        .exclusive-options label { flex: 1; background: #f8f9fa; text-align: center; padding: 12px 5px; border-radius: 10px; cursor: pointer; border: 2px solid var(--border); font-weight: 600; font-size: 0.9rem; transition: all 0.2s; color: var(--text-muted); }
-        .exclusive-options input[type="radio"] { display: none; }
-        .exclusive-options input[type="radio"]:checked + label { background: var(--primary); color: var(--accent); border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+
+        .bet-rule-box { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--accent); padding: 12px; border-radius: 10px; color: var(--accent); font-weight: 800; text-align: center; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
 
         .btn-close { background: #e0e0e0; color: var(--text-main); margin-top: 15px; box-shadow: none; }
         .btn-close:hover { background: #d5d5d5; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
@@ -160,7 +156,7 @@
             </div>
     </div>
 
-    <div class="fab" onmouseenter="playSound('hover')" onmousedown="playSound('click')" onclick="openModal()">+</div>
+    <div class="fab" onclick="playSound('click'); openModal()">+</div>
 
     <div class="modal-overlay" id="create-modal">
         <div class="modal-content">
@@ -181,57 +177,38 @@
             </div>
 
             <div class="form-group">
-                <label>Typ zakładu (Wykluczające się)</label>
-                <div class="exclusive-options">
-                    <input type="radio" id="out-win" name="outcome" value="win" checked onchange="playSound('click')">
-                    <label for="out-win" onmouseenter="playSound('hover')">Ja wygrywam</label>
-                    <input type="radio" id="out-opponent" name="outcome" value="opponent" onchange="playSound('click')">
-                    <label for="out-opponent" onmouseenter="playSound('hover')">Rywal wygrywa</label>
-                    <input type="radio" id="out-draw" name="outcome" value="draw" onchange="playSound('click')">
-                    <label for="out-draw" onmouseenter="playSound('hover')">Remis</label>
+                <label>Zasada zakładu</label>
+                <div class="bet-rule-box">
+                    🏆 Zawsze stawiasz na swoją wygraną
                 </div>
             </div>
 
-            <button class="btn-accept" id="btn-create" onmouseenter="playSound('hover')" onmousedown="playSound('click')" onclick="createChallenge()">Zablokuj żetony i graj</button>
-            <button class="btn-close" onmouseenter="playSound('hover')" onmousedown="playSound('click')" onclick="closeModal()">Anuluj</button>
+            <button class="btn-accept" id="btn-create" onclick="playSound('click'); createChallenge()">Zablokuj żetony i graj</button>
+            <button class="btn-close" onclick="playSound('click'); closeModal()">Anuluj</button>
         </div>
     </div>
 
     <script>
-        // --- SYNTEZATOR DŹWIĘKU (Web Audio API) ---
+        // --- SYNTEZATOR DŹWIĘKU ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
 
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new AudioContext();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
         document.body.addEventListener('click', initAudio, { once: true });
 
         function playSound(type) {
             if (!audioCtx) return;
-            
             const osc = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
             osc.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-
             const now = audioCtx.currentTime;
 
-            if (type === 'hover') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, now);
-                osc.frequency.exponentialRampToValueAtTime(800, now + 0.03);
-                gainNode.gain.setValueAtTime(0.02, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
-                osc.start(now);
-                osc.stop(now + 0.03);
-            } else if (type === 'click') {
+            if (type === 'click') {
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(800, now);
                 osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
@@ -241,9 +218,9 @@
                 osc.stop(now + 0.1);
             } else if (type === 'success') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(440, now); // A4
-                osc.frequency.setValueAtTime(554.37, now + 0.1); // C#5
-                osc.frequency.setValueAtTime(659.25, now + 0.2); // E5
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.setValueAtTime(554.37, now + 0.1);
+                osc.frequency.setValueAtTime(659.25, now + 0.2);
                 gainNode.gain.setValueAtTime(0, now);
                 gainNode.gain.linearRampToValueAtTime(0.15, now + 0.05);
                 gainNode.gain.setValueAtTime(0.15, now + 0.2);
@@ -282,10 +259,7 @@
                         <span>${ch.label}</span>
                         <span class="stake">${ch.stake} PLN</span>
                     </div>
-                    <button class="btn-accept" 
-                            onmouseenter="playSound('hover')" 
-                            onmousedown="playSound('click')" 
-                            onclick="acceptChallenge('${ch.id}')">
+                    <button class="btn-accept" onclick="playSound('click'); acceptChallenge('${ch.id}')">
                         Wchodzę do gry (${ch.stake} PLN)
                     </button>
                 `;
@@ -293,15 +267,14 @@
             });
         }
 
-        // Bezpośrednie i bezpieczne łączenie z Lichess API na GitHubie
+        // Pobieranie API z funkcją Fallback
         async function createLichessRoom(limitMinutes, incrementSeconds) {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000); // Max 10s
+            const timeoutId = setTimeout(() => controller.abort(), 6000); 
 
             try {
-                const limitInSeconds = limitMinutes * 60;
                 const formBody = new URLSearchParams({
-                    'clock.limit': limitInSeconds,
+                    'clock.limit': limitMinutes * 60,
                     'clock.increment': incrementSeconds
                 });
 
@@ -314,24 +287,26 @@
 
                 clearTimeout(timeoutId);
                 
-                if (!response.ok) {
-                    const errText = await response.text();
-                    throw new Error(`Odmowa serwera HTTP ${response.status}: ${errText}`);
-                }
-                
+                if (!response.ok) throw new Error('API odrzuciło zapytanie');
                 const data = await response.json();
                 return data.challenge.url; 
                 
             } catch (error) {
                 clearTimeout(timeoutId);
-                console.error("Szczegóły błędu połączenia:", error);
-                return { error: error.name === 'AbortError' ? 'Brak odpowiedzi serwera (Timeout)' : error.message };
+                console.warn("Tryb Fallback: Lichess zablokował request z GitHuba ze względu na CORS.");
+                return "FALLBACK_MODE"; 
             }
         }
 
-        // Obsługa zakładu z blokadą UI, chroniącą przed stałym zawieszeniem na "łączenie z lichess"
         async function createChallenge() {
             const btn = document.getElementById('btn-create');
             const amount = parseFloat(document.getElementById('bet-amount').value);
             const formatData = JSON.parse(document.getElementById('game-format').value);
-            const outcomeElement
+            let available = parseFloat(document.getElementById('balance-available').innerText);
+            
+            if (available < amount) {
+                alert("Brak żetonów, by otworzyć stół.");
+                return;
+            }
+
+            // Zabezpieczenie przed wielokrotnym kliknięciem
