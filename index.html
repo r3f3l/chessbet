@@ -6,12 +6,11 @@
     <title>ChessBet - Gram o stawkę</title>
     <style>
         :root {
-            /* Kolorystyka Kasynowa */
-            --bg-gradient: radial-gradient(circle at top, #146b2b, #072e10);
+            var(--bg-gradient): radial-gradient(circle at top, #146b2b, #072e10);
             --header-bg: rgba(7, 46, 16, 0.9);
             --card-bg: #ffffff;
             --primary: #072e10; 
-            --accent: #d4af37; /* Kasynowe złoto */
+            --accent: #d4af37; 
             --accent-hover: #f1c40f;
             --text-main: #333333;
             --text-light: #ffffff;
@@ -23,14 +22,13 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
         body { 
-            background: var(--bg-gradient); 
+            background: radial-gradient(circle at top, #146b2b, #072e10); 
             background-attachment: fixed;
             color: var(--text-main); 
             padding-bottom: 80px; 
             min-height: 100vh;
         }
 
-        /* Header & Portfel */
         header { 
             background: var(--header-bg); 
             color: var(--text-light); 
@@ -52,7 +50,6 @@
         .wallet-amount { font-size: 1.3rem; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
         .pending { color: #f39c12; }
 
-        /* Lista wyzwań */
         .container { padding: 15px; }
         .section-title { font-size: 1.2rem; margin-bottom: 15px; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         
@@ -68,10 +65,6 @@
             gap: 15px; 
             transition: transform 0.3s ease, border-color 0.3s ease;
         }
-        .challenge-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent);
-        }
 
         .card-header { display: flex; justify-content: space-between; align-items: center; }
         .player-info { display: flex; align-items: center; gap: 12px; }
@@ -82,7 +75,6 @@
         .match-details { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 12px; border-radius: 10px; font-size: 0.95rem; border: 1px solid #e0e0e0; }
         .stake { font-weight: 900; color: var(--primary); font-size: 1.3rem; background: rgba(212, 175, 55, 0.2); padding: 5px 10px; border-radius: 8px; border: 1px solid var(--accent); }
 
-        /* Animowane Przyciski */
         button { 
             border: none; 
             border-radius: 10px; 
@@ -91,47 +83,28 @@
             cursor: pointer; 
             font-size: 1.05rem; 
             width: 100%; 
-            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); 
+            transition: all 0.2s; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        button:disabled { opacity: 0.7; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+        button:disabled { opacity: 0.7; cursor: not-allowed; }
         
-        .btn-accept { 
-            background: linear-gradient(135deg, var(--accent), #b5952f); 
-            color: var(--primary); 
-            text-shadow: 0 1px 1px rgba(255,255,255,0.4);
-        }
-        .btn-accept:hover:not(:disabled) { 
-            background: linear-gradient(135deg, var(--accent-hover), var(--accent)); 
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 15px rgba(212, 175, 55, 0.5);
-        }
-        .btn-accept:active:not(:disabled) {
-            transform: translateY(1px) scale(0.98);
-            box-shadow: 0 2px 4px rgba(212, 175, 55, 0.5);
-        }
+        .btn-accept { background: linear-gradient(135deg, var(--accent), #b5952f); color: var(--primary); }
         
-        /* Floating Action Button */
-        .fab { position: fixed; bottom: 25px; right: 25px; background: linear-gradient(135deg, var(--accent), #b5952f); color: var(--primary); width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); cursor: pointer; z-index: 1000; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid #fff; }
-        .fab:hover { transform: scale(1.15) rotate(90deg); box-shadow: 0 8px 25px rgba(212, 175, 55, 0.6); }
+        .fab { position: fixed; bottom: 25px; right: 25px; background: linear-gradient(135deg, var(--accent), #b5952f); color: var(--primary); width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); cursor: pointer; z-index: 1000; border: 2px solid #fff; padding: 0; }
         .fab:active { transform: scale(0.95); }
 
-        /* Modal */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(3px); display: none; align-items: flex-end; z-index: 2000; }
-        .modal-content { background: var(--card-bg); width: 100%; border-radius: 24px 24px 0 0; padding: 30px 25px; animation: slideUp 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 -10px 25px rgba(0,0,0,0.5); }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .modal-content { background: var(--card-bg); width: 100%; border-radius: 24px 24px 0 0; padding: 30px 25px; box-shadow: 0 -10px 25px rgba(0,0,0,0.5); }
         
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 800; color: var(--primary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; }
-        .form-group input, .form-group select { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 1.05rem; background: #f8f9fa; transition: border-color 0.2s; outline: none; }
-        .form-group input:focus, .form-group select:focus { border-color: var(--accent); background: #fff; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 800; color: var(--primary); text-transform: uppercase; font-size: 0.85rem; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 1.05rem; background: #f8f9fa; }
+        
+        .bet-rule-box { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--accent); padding: 12px; border-radius: 10px; color: var(--accent); font-weight: 800; text-align: center; font-size: 0.95rem; text-transform: uppercase; }
 
-        .bet-rule-box { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--accent); padding: 12px; border-radius: 10px; color: var(--accent); font-weight: 800; text-align: center; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
-
-        .btn-close { background: #e0e0e0; color: var(--text-main); margin-top: 15px; box-shadow: none; }
-        .btn-close:hover { background: #d5d5d5; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .btn-close { background: #e0e0e0; color: var(--text-main); margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -152,11 +125,10 @@
 
     <div class="container">
         <h2 class="section-title">Otwarte stoły</h2>
-        <div id="challenges-list">
-            </div>
+        <div id="challenges-list"></div>
     </div>
 
-    <div class="fab" onclick="playSound('click'); openModal()">+</div>
+    <button class="fab" onclick="bezpiecznyDzwiek('click'); openModal()">+</button>
 
     <div class="modal-overlay" id="create-modal">
         <div class="modal-content">
@@ -164,7 +136,7 @@
             
             <div class="form-group">
                 <label>Format gry</label>
-                <select id="game-format" onchange="playSound('click')">
+                <select id="game-format">
                     <option value='{"limit": 3, "inc": 0, "label": "⚡ Blitz 3+0"}'>⚡ Blitz 3+0</option>
                     <option value='{"limit": 5, "inc": 0, "label": "⚡ Blitz 5+0"}'>⚡ Blitz 5+0</option>
                     <option value='{"limit": 10, "inc": 5, "label": "⏱️ Rapid 10+5"}'>⏱️ Rapid 10+5</option>
@@ -173,64 +145,67 @@
 
             <div class="form-group">
                 <label>Stawka zakładu (PLN)</label>
-                <input type="number" id="bet-amount" value="20" min="5" max="150" onclick="playSound('click')">
+                <input type="number" id="bet-amount" value="20" min="5" max="150">
             </div>
 
             <div class="form-group">
                 <label>Zasada zakładu</label>
-                <div class="bet-rule-box">
-                    🏆 Zawsze stawiasz na swoją wygraną
-                </div>
+                <div class="bet-rule-box">🏆 Zawsze stawiasz na swoją wygraną</div>
             </div>
 
-            <button class="btn-accept" id="btn-create" onclick="playSound('click'); createChallenge()">Zablokuj żetony i graj</button>
-            <button class="btn-close" onclick="playSound('click'); closeModal()">Anuluj</button>
+            <button class="btn-accept" id="btn-create" onclick="bezpiecznyDzwiek('click'); createChallenge()">Zablokuj żetony i graj</button>
+            <button class="btn-close" onclick="bezpiecznyDzwiek('click'); closeModal()">Anuluj</button>
         </div>
     </div>
 
     <script>
-        // --- SYNTEZATOR DŹWIĘKU ---
+        // --- 1. KULOODPORNY SYSTEM AUDIO ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
 
         function initAudio() {
-            if (!audioCtx) audioCtx = new AudioContext();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            try {
+                if (!audioCtx) audioCtx = new AudioContext();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+            } catch (e) {
+                console.warn("Nie można zainicjować audio", e);
+            }
         }
-
         document.body.addEventListener('click', initAudio, { once: true });
 
-        function playSound(type) {
-            if (!audioCtx) return;
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            const now = audioCtx.currentTime;
+        // Zamknięcie audio w klatce try-catch, by crash nie blokował przycisków
+        function bezpiecznyDzwiek(type) {
+            try {
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                const now = audioCtx.currentTime;
 
-            if (type === 'click') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(800, now);
-                osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
-                gainNode.gain.setValueAtTime(0.15, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-                osc.start(now);
-                osc.stop(now + 0.1);
-            } else if (type === 'success') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(440, now);
-                osc.frequency.setValueAtTime(554.37, now + 0.1);
-                osc.frequency.setValueAtTime(659.25, now + 0.2);
-                gainNode.gain.setValueAtTime(0, now);
-                gainNode.gain.linearRampToValueAtTime(0.15, now + 0.05);
-                gainNode.gain.setValueAtTime(0.15, now + 0.2);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-                osc.start(now);
-                osc.stop(now + 0.5);
+                if (type === 'click') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
+                    gainNode.gain.setValueAtTime(0.15, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'success') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.2);
+                    gainNode.gain.setValueAtTime(0.15, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                }
+            } catch (error) {
+                console.warn("Przeglądarka zablokowała audio. Aplikacja działa dalej.", error);
             }
         }
 
-        // --- LOGIKA APLIKACJI ---
+        // --- 2. LOGIKA APLIKACJI ---
         let challenges = [];
 
         function renderChallenges() {
@@ -259,7 +234,7 @@
                         <span>${ch.label}</span>
                         <span class="stake">${ch.stake} PLN</span>
                     </div>
-                    <button class="btn-accept" onclick="playSound('click'); acceptChallenge('${ch.id}')">
+                    <button class="btn-accept" onclick="bezpiecznyDzwiek('click'); acceptChallenge('${ch.id}')">
                         Wchodzę do gry (${ch.stake} PLN)
                     </button>
                 `;
@@ -267,7 +242,6 @@
             });
         }
 
-        // Pobieranie API z funkcją Fallback
         async function createLichessRoom(limitMinutes, incrementSeconds) {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 6000); 
@@ -287,26 +261,121 @@
 
                 clearTimeout(timeoutId);
                 
-                if (!response.ok) throw new Error('API odrzuciło zapytanie');
+                if (!response.ok) throw new Error('Odrzucono');
                 const data = await response.json();
                 return data.challenge.url; 
                 
             } catch (error) {
                 clearTimeout(timeoutId);
-                console.warn("Tryb Fallback: Lichess zablokował request z GitHuba ze względu na CORS.");
                 return "FALLBACK_MODE"; 
             }
         }
 
+        // --- 3. GŁÓWNA FUNKCJA TWORZENIA Z ZABEZPIECZONYM PARSOWANIEM ---
         async function createChallenge() {
             const btn = document.getElementById('btn-create');
-            const amount = parseFloat(document.getElementById('bet-amount').value);
-            const formatData = JSON.parse(document.getElementById('game-format').value);
-            let available = parseFloat(document.getElementById('balance-available').innerText);
             
-            if (available < amount) {
-                alert("Brak żetonów, by otworzyć stół.");
-                return;
-            }
+            try {
+                const amount = parseFloat(document.getElementById('bet-amount').value);
+                const formatData = JSON.parse(document.getElementById('game-format').value);
+                
+                // Bezpieczne pobranie wartości salda - omijamy błąd z dopiskiem " PLN"
+                let availableText = document.getElementById('balance-available').innerText;
+                let available = parseFloat(availableText.replace(/[^\d.-]/g, ''));
+                
+                let pendingText = document.getElementById('balance-pending').innerText;
+                let pending = parseFloat(pendingText.replace(/[^\d.-]/g, ''));
 
-            // Zabezpieczenie przed wielokrotnym kliknięciem
+                if (isNaN(available) || isNaN(amount)) {
+                    alert("Wystąpił błąd odczytu kwoty.");
+                    return;
+                }
+
+                if (available < amount) {
+                    alert("Brak żetonów, by otworzyć stół.");
+                    return;
+                }
+
+                // Zablokuj przycisk, żeby pokazać użytkownikowi, że proces ruszył
+                btn.disabled = true;
+                btn.innerText = "Tasowanie... łączę...";
+
+                const result = await createLichessRoom(formatData.limit, formatData.inc);
+                let gameUrl = result;
+
+                if (result === "FALLBACK_MODE") {
+                    gameUrl = "https://lichess.org/setup/friend?mock=" + Date.now();
+                } else if (!result) {
+                    alert("Błąd tworzenia stołu.");
+                    return;
+                }
+
+                bezpiecznyDzwiek('success'); 
+
+                // Aktualizacja UI
+                document.getElementById('balance-available').innerText = (available - amount).toFixed(2) + " PLN";
+                document.getElementById('balance-pending').innerText = (pending + amount).toFixed(2) + " PLN";
+                
+                challenges.unshift({
+                    id: Date.now().toString(),
+                    user: "TwójNick",
+                    rating: 1500,
+                    label: formatData.label,
+                    stake: amount,
+                    url: gameUrl 
+                });
+                
+                renderChallenges();
+                closeModal();
+                
+                setTimeout(() => {
+                    if(confirm(`Stół gotowy!\n\nZabezpieczono ${amount} PLN na Twoją wygraną.\n\nCzy chcesz usiąść do stołu?`)) {
+                        window.open(gameUrl, '_blank');
+                    }
+                }, 300);
+
+            } catch (err) {
+                console.error("Błąd logiki biznesowej:", err);
+                alert("Wystąpił nieoczekiwany błąd. Odśwież stronę.");
+            } finally {
+                // To wywoła się ZAWSZE odblokowując UI
+                btn.disabled = false;
+                btn.innerText = "Zablokuj żetony i graj";
+            }
+        }
+
+        function acceptChallenge(challengeId) {
+            const challenge = challenges.find(ch => ch.id === challengeId);
+            if (!challenge) return;
+
+            let availableText = document.getElementById('balance-available').innerText;
+            let available = parseFloat(availableText.replace(/[^\d.-]/g, ''));
+            
+            let pendingText = document.getElementById('balance-pending').innerText;
+            let pending = parseFloat(pendingText.replace(/[^\d.-]/g, ''));
+
+            if (available >= challenge.stake) {
+                bezpiecznyDzwiek('success'); 
+
+                document.getElementById('balance-available').innerText = (available - challenge.stake).toFixed(2) + " PLN";
+                document.getElementById('balance-pending').innerText = (pending + challenge.stake).toFixed(2) + " PLN";
+
+                challenges = challenges.filter(ch => ch.id !== challengeId);
+                renderChallenges();
+
+                setTimeout(() => {
+                    alert(`Wchodzisz do gry o stawkę ${challenge.stake} PLN.\n\nPrzenoszenie na stół...`);
+                    window.open(challenge.url, '_blank');
+                }, 300);
+            } else {
+                alert("Brak żetonów, aby wejść do tej gry.");
+            }
+        }
+
+        function openModal() { document.getElementById('create-modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('create-modal').style.display = 'none'; }
+
+        window.onload = () => { renderChallenges(); };
+    </script>
+</body>
+</html>
