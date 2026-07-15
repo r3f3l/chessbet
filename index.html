@@ -339,7 +339,8 @@
                 document.getElementById('balance-available').innerText = (available - challenge.stake).toFixed(2) + " PLN";
                 document.getElementById('balance-pending').innerText = (pending + challenge.stake).toFixed(2) + " PLN";
 
-                challenges = challenges.filter(ch => ch.id !== challengeId);
+                challenges = challenges
+                .filter(ch => ch.id !== challengeId);
                 renderChallenges();
 
                 setTimeout(() => {
