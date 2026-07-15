@@ -1,725 +1,264 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHESSBET CASINO - Live & Side Bets</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ChessBet - Gram o stawkę</title>
     <style>
-        body { 
-            background-color: #051e11; 
-            background-image: radial-gradient(circle at 50% 0%, #0a3a21 0%, #051e11 60%, #020a06 100%);
-            color: #fef3c7; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --primary: #2c3e50;
+            --accent: #27ae60;
+            --accent-hover: #219653;
+            --text-main: #333333;
+            --text-muted: #7f8c8d;
+            --border: #e0e6ed;
+            --danger: #e74c3c;
         }
-        .vegas-logo { 
-            font-family: 'Times New Roman', Times, serif; 
-            text-transform: uppercase;
-            background: linear-gradient(180deg, #FFF7D6 0%, #FFD700 25%, #B8860B 50%, #FFD700 75%, #FFF7D6 100%); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            filter: drop-shadow(0px 6px 0px #4A0E00); 
-            letter-spacing: 2px;
-        }
-        .casino-panel { 
-            background-color: rgba(4, 26, 15, 0.9); 
-            border: 2px solid #d97706; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(218, 165, 32, 0.1);
-        }
-        .bet-btn {
-            background-color: #0d4a2a; 
-            border: 2px solid rgba(217, 119, 6, 0.4);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-        .bet-btn:hover { 
-            background-color: #136138; 
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(218, 165, 32, 0.3);
-            border-color: rgba(251, 191, 36, 0.8);
-        }
-        .glow-casino-active { 
-            background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 100%) !important;
-            border-color: #fbbf24 !important; 
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.6), inset 0 0 10px rgba(251, 191, 36, 0.4) !important; 
-            transform: scale(1.02);
-            color: white !important;
-        }
-        .wallet-display {
-            background: linear-gradient(180deg, #b45309, #78350f);
-            border: 2px solid #fbbf24;
-        }
-        .chess-icon { font-family: 'Times New Roman', Times, serif; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #b45309; border-radius: 10px; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+        body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 80px; }
+
+        /* Header & Portfel */
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .wallet-container { display: flex; justify-content: space-around; margin-top: 15px; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; }
+        .wallet-item { display: flex; flex-direction: column; align-items: center; }
+        .wallet-label { font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; }
+        .wallet-amount { font-size: 1.2rem; font-weight: bold; }
+        .pending { color: #f1c40f; }
+
+        /* Status API */
+        #api-status-bar { background: #f39c12; color: white; text-align: center; padding: 5px; font-size: 0.8rem; display: none; }
+
+        /* Lista wyzwań */
+        .container { padding: 15px; }
+        .section-title { font-size: 1.2rem; margin-bottom: 15px; color: var(--primary); }
         
-        .royal-glow {
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-            animation: pulse-border 2s infinite;
-        }
-        @keyframes pulse-border {
-            0% { border-color: rgba(218, 165, 32, 0.4); }
-            50% { border-color: rgba(255, 215, 0, 1); }
-            100% { border-color: rgba(218, 165, 32, 0.4); }
-        }
+        .challenge-card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; }
+        .player-info { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .username { font-weight: bold; font-size: 1.1rem; }
+        .rating { color: var(--text-muted); font-size: 0.9rem; }
         
-        .win-animation {
-            animation: flash-green 1s ease-out;
-        }
-        @keyframes flash-green {
-            0% { background-color: rgba(34, 197, 94, 0.5); }
-            100% { background-color: transparent; }
-        }
+        .match-details { display: flex; justify-content: space-between; background: var(--bg-color); padding: 10px; border-radius: 8px; font-size: 0.95rem; }
+        .stake { font-weight: bold; color: var(--accent); font-size: 1.1rem; }
+
+        button { border: none; border-radius: 8px; padding: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1rem; width: 100%; }
+        .btn-accept { background: var(--accent); color: white; }
+        .btn-accept:hover { background: var(--accent-hover); }
+        
+        /* Floating Action Button */
+        .fab { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000; transition: transform 0.2s; }
+        .fab:active { transform: scale(0.95); }
+
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; z-index: 2000; }
+        .modal-content { background: white; width: 100%; border-radius: 20px 20px 0 0; padding: 25px; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--primary); }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
+        
+        /* Kategoryzacja rozłączna zakładów */
+        .exclusive-options { display: flex; gap: 10px; margin-top: 10px; }
+        .exclusive-options label { flex: 1; background: var(--bg-color); text-align: center; padding: 10px; border-radius: 8px; cursor: pointer; border: 1px solid var(--border); font-weight: normal; }
+        .exclusive-options input[type="radio"] { display: none; }
+        .exclusive-options input[type="radio"]:checked + label { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .btn-close { background: var(--danger); color: white; margin-top: 10px; }
     </style>
 </head>
-<body class="p-4 md:p-6 min-h-screen">
-    
-    <header class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center mb-6 gap-4 border-b-2 border-yellow-700/50 pb-4">
-        <h1 class="vegas-logo text-3xl sm:text-5xl font-black">👑 CHESSBET CASINO 👑</h1>
-        <div class="wallet-display px-6 py-2 rounded-xl text-white font-black text-2xl flex items-center gap-2 shadow-lg transition-colors" id="wallet-container">
-            <span class="text-xs text-yellow-300 uppercase tracking-widest mt-1">Wallet:</span>
-            <span id="wallet-balance">$1000.00</span>
+<body>
+
+    <div id="api-status-bar">Łączenie z Lichess API...</div>
+
+    <header>
+        <h1>ChessBet</h1>
+        <div class="wallet-container">
+            <div class="wallet-item">
+                <span class="wallet-label">Dostępne (PLN)</span>
+                <span class="wallet-amount" id="balance-available">150.00</span>
+            </div>
+            <div class="wallet-item">
+                <span class="wallet-label">W weryfikacji</span>
+                <span class="wallet-amount pending" id="balance-pending">50.00</span>
+            </div>
         </div>
     </header>
 
-    <main class="max-w-[1400px] mx-auto grid lg:grid-cols-[1fr_400px] gap-8 items-start">
-        
-        <div class="flex flex-col gap-6">
+    <div class="container">
+        <h2 class="section-title">Otwarte wyzwania</h2>
+        <div id="challenges-list">
+            </div>
+    </div>
+
+    <div class="fab" onclick="openModal()">+</div>
+
+    <div class="modal-overlay" id="create-modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 15px;">Utwórz zaproszenie</h2>
             
-            <div class="casino-panel p-6 sm:p-8 rounded-2xl relative">
-                
-                <div id="status" class="text-center text-sm font-black text-yellow-500 mb-6 uppercase tracking-widest animate-pulse">
-                    SYNCING CASINO...
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4 mb-8">
-                    <div class="bg-black/80 p-4 rounded-xl border border-yellow-800/50 shadow-inner flex flex-col items-center text-center relative">
-                        <span class="text-[10px] text-gray-400 font-bold tracking-widest mb-1">WHITE PLAYER ♔</span>
-                        <span id="white-name" class="font-bold text-lg text-white truncate w-full">---</span>
-                        
-                        <div class="flex items-center gap-2 mt-1 bg-[#051e11] px-2 py-0.5 rounded border border-yellow-900/50 shadow-sm">
-                            <span id="white-flag" class="text-sm drop-shadow-md">🏳️</span>
-                            <span id="white-country" class="text-[10px] text-gray-300 font-bold uppercase tracking-widest">INT</span>
-                        </div>
-                        
-                        <span id="white-rating" class="text-sm text-yellow-500 font-mono mt-2">---</span>
-                    </div>
-
-                    <div class="bg-black/80 p-4 rounded-xl border border-yellow-800/50 shadow-inner flex flex-col items-center text-center relative">
-                        <span class="text-[10px] text-gray-400 font-bold tracking-widest mb-1">BLACK PLAYER ♚</span>
-                        <span id="black-name" class="font-bold text-lg text-white truncate w-full">---</span>
-                        
-                        <div class="flex items-center gap-2 mt-1 bg-[#051e11] px-2 py-0.5 rounded border border-yellow-900/50 shadow-sm">
-                            <span id="black-flag" class="text-sm drop-shadow-md">🏳️</span>
-                            <span id="black-country" class="text-[10px] text-gray-300 font-bold uppercase tracking-widest">INT</span>
-                        </div>
-                        
-                        <span id="black-rating" class="text-sm text-yellow-500 font-mono mt-2">---</span>
-                    </div>
-                </div>
-
-                <h3 class="text-center font-bold text-yellow-500 uppercase tracking-[0.2em] mb-4 text-xs">Match Winner</h3>
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <button class="bet-btn group p-4 rounded-xl flex flex-col items-center shadow-lg" data-category="winner" data-bet="White Win" data-decimal="2.00">
-                        <span class="chess-icon text-5xl text-white drop-shadow-md">♔</span>
-                        <span class="font-bold text-amber-100 mt-2 uppercase">White</span>
-                        <span class="text-yellow-500 text-sm font-black mt-1">1:1</span>
-                    </button>
-                    <button class="bet-btn group p-4 rounded-xl flex flex-col items-center shadow-lg" data-category="winner" data-bet="Black Win" data-decimal="2.00">
-                        <span class="chess-icon text-5xl text-gray-400 drop-shadow-md">♚</span>
-                        <span class="font-bold text-amber-100 mt-2 uppercase">Black</span>
-                        <span class="text-yellow-500 text-sm font-black mt-1">1:1</span>
-                    </button>
-                </div>
-
-                <div class="relative flex items-center py-2 mb-4">
-                    <div class="flex-grow border-t-2 border-yellow-900/40"></div>
-                    <span class="flex-shrink-0 mx-4 text-yellow-600 text-xs font-black uppercase tracking-[0.2em]">Game Ending</span>
-                    <div class="flex-grow border-t-2 border-yellow-900/40"></div>
-                </div>
-                
-                <div class="grid grid-cols-3 gap-3 mb-6">
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-category="ending" data-bet="Timeout" data-decimal="2.00">
-                        <span class="text-3xl text-amber-100">⏱️</span>
-                        <span class="text-[10px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Timeout</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">1:1</span>
-                    </button>
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-category="ending" data-bet="Resignation" data-decimal="3.00">
-                        <span class="text-3xl text-amber-100">🏳️</span>
-                        <span class="text-[10px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Resignation</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">1:2</span>
-                    </button>
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-[#0d4a2a] to-[#0a3a21]" data-category="ending" data-bet="Checkmate" data-decimal="4.00">
-                        <span class="text-3xl text-amber-100">⚔️</span>
-                        <span class="text-[10px] font-bold text-amber-200 mt-2 uppercase tracking-wide">Checkmate</span>
-                        <span class="text-lg font-black text-yellow-500 mt-1">1:3</span>
-                    </button>
-                </div>
-
-                <div class="relative flex items-center py-2 mb-4">
-                    <div class="flex-grow border-t-2 border-yellow-900/40"></div>
-                    <span class="flex-shrink-0 mx-4 text-yellow-600 text-xs font-black uppercase tracking-[0.2em]">Specific Mates</span>
-                    <div class="flex-grow border-t-2 border-yellow-900/40"></div>
-                </div>
-
-                <div class="grid grid-cols-5 gap-2 mb-8">
-                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-category="ending" data-bet="Queen Mate" data-decimal="5.00">
-                        <span class="chess-icon text-2xl text-amber-100">♕</span>
-                        <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Queen</span>
-                        <span class="text-sm font-black text-yellow-500">1:4</span>
-                    </button>
-                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-category="ending" data-bet="Rook Mate" data-decimal="6.00">
-                        <span class="chess-icon text-2xl text-amber-100">♖</span>
-                        <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Rook</span>
-                        <span class="text-sm font-black text-yellow-500">1:5</span>
-                    </button>
-                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-category="ending" data-bet="Bishop Mate" data-decimal="7.00">
-                        <span class="chess-icon text-2xl text-amber-100">♗</span>
-                        <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Bishop</span>
-                        <span class="text-sm font-black text-yellow-500">1:6</span>
-                    </button>
-                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-category="ending" data-bet="Knight Mate" data-decimal="8.00">
-                        <span class="chess-icon text-2xl text-amber-100">♘</span>
-                        <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Knight</span>
-                        <span class="text-sm font-black text-yellow-500">1:7</span>
-                    </button>
-                    <button class="bet-btn group p-2 rounded-xl flex flex-col items-center justify-center" data-category="ending" data-bet="Pawn Mate" data-decimal="9.00">
-                        <span class="chess-icon text-2xl text-amber-100">♙</span>
-                        <span class="text-[8px] font-bold text-amber-200 mt-1 uppercase">Pawn</span>
-                        <span class="text-sm font-black text-yellow-500">1:8</span>
-                    </button>
-                    
-                    <button class="bet-btn group p-3 rounded-xl flex flex-col items-center justify-center col-span-5 bg-yellow-900/40 royal-glow mt-2" data-category="special" data-bet="Royal Fork" data-decimal="10.00">
-                        <div class="flex items-center gap-2">
-                            <span class="chess-icon text-3xl text-amber-100">♘👑</span>
-                        </div>
-                        <span class="text-[10px] font-black text-yellow-300 mt-2 uppercase tracking-widest">Royal Fork (Any Point in Game)</span>
-                        <span class="text-xl font-black text-yellow-400 mt-1">1:9</span>
-                    </button>
-                </div>
-                
-                <div id="payment-module" class="bg-black/80 p-5 rounded-xl border border-yellow-800/50 hidden shadow-[0_0_20px_rgba(218,165,32,0.15)]">
-                    <p class="text-[10px] text-yellow-500 text-center uppercase font-bold tracking-widest mb-3 border-b border-yellow-800/50 pb-2">All selections are placed as independent bets</p>
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] font-black text-yellow-600 uppercase">Selected Bets</span>
-                            <span id="bets-count" class="text-white text-xl font-bold">0</span>
-                        </div>
-                        <div class="flex flex-col text-center">
-                            <span class="text-[10px] font-black text-yellow-600 uppercase">Total Stake</span>
-                            <span id="total-stake-display" class="text-white text-xl font-bold">$0.00</span>
-                        </div>
-                        <div class="flex flex-col text-right">
-                            <span class="text-[10px] font-black text-yellow-600 uppercase">Max Potential Win</span>
-                            <span id="potential-win" class="text-green-400 text-xl font-bold">$0.00</span>
-                        </div>
-                    </div>
-                    <input type="number" id="stake" min="1" placeholder="Stake per bet ($)" class="w-full p-4 bg-[#0a2a18] text-2xl text-white font-black outline-none border-2 border-yellow-800 focus:border-yellow-500 rounded-xl transition-colors mb-4 text-center">
-                    <button id="pay-btn" class="w-full bg-gradient-to-b from-yellow-400 to-yellow-600 hover:to-yellow-500 text-black font-black p-4 rounded-xl uppercase text-xl shadow-lg active:scale-95 transition-transform border-2 border-yellow-200 flex items-center justify-center gap-2">
-                        🎲 Place Bets
-                    </button>
-                </div>
-                
-                <p class="text-[11px] text-red-400 mt-4 text-center font-bold uppercase tracking-widest bg-red-900/20 py-2 rounded-lg border border-red-900/50">
-                    ⚠️ NOTE: DRAW/STALEMATE = HOUSE WINS ⚠️
-                </p>
+            <div class="form-group">
+                <label>Format gry (Lichess)</label>
+                <select id="game-format">
+                    <option value="⚡ Blitz 3+0">⚡ Blitz 3+0</option>
+                    <option value="⚡ Blitz 5+0">⚡ Blitz 5+0</option>
+                    <option value="⏱️ Rapid 10+5">⏱️ Rapid 10+5</option>
+                </select>
             </div>
 
-            <div class="casino-panel p-6 rounded-2xl">
-                <h2 class="text-yellow-500 font-black uppercase tracking-widest mb-4 flex justify-between items-center border-b border-yellow-800/50 pb-2">
-                    <span>🎟️ Active & Past Bets</span>
-                    <button id="clear-history" class="text-[10px] bg-red-900/50 hover:bg-red-800 px-3 py-1 rounded text-red-200 uppercase font-bold transition-colors border border-red-800">Clear History</button>
-                </h2>
-                <div id="bets-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+            <div class="form-group">
+                <label>Stawka z salda (PLN)</label>
+                <input type="number" id="bet-amount" value="20" min="5" max="150">
+            </div>
+
+            <div class="form-group">
+                <label>Zasady rozliczenia (Zdarzenia rozłączne)</label>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px;">Wybierz na kogo stawiasz. Możliwe warianty końca gry wykluczają się wzajemnie.</p>
+                <div class="exclusive-options">
+                    <input type="radio" id="out-win" name="outcome" value="win" checked>
+                    <label for="out-win">Moja wygrana</label>
+
+                    <input type="radio" id="out-opponent" name="outcome" value="opponent">
+                    <label for="out-opponent">Wygrana rywala</label>
+
+                    <input type="radio" id="out-draw" name="outcome" value="draw">
+                    <label for="out-draw">Remis</label>
                 </div>
             </div>
 
+            <button class="btn-accept" onclick="createChallenge()">Zabezpiecz środki i Opublikuj</button>
+            <button class="btn-close" onclick="closeModal()">Anuluj</button>
         </div>
-
-        <div class="flex flex-col sticky top-6">
-            <div class="bg-gradient-to-b from-yellow-500 to-yellow-700 text-black text-center font-black text-xs py-3 rounded-t-xl uppercase tracking-widest border-x-4 border-t-4 border-yellow-600 shadow-md">
-                📺 Lichess TV Broadcast
-            </div>
-            <iframe id="game-frame" src="https://lichess.org/tv/frame?theme=brown&bg=dark" class="w-full aspect-[400/444] rounded-b-xl border-x-4 border-b-4 border-yellow-600 bg-black shadow-2xl" allowtransparency="true" frameborder="0"></iframe>
-        </div>
-        
-    </main>
+    </div>
 
     <script>
-        // ---------------------------------------------------------
-        // AUDIO ENGINE (Web Audio API)
-        // ---------------------------------------------------------
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        function playTone(freq, type, duration, vol) {
-            if(audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
+        // Mockowane dane początkowe
+        const mockChallenges = [
+            { id: 1, user: "JanekKowalski", rating: 1850, format: "⚡ Blitz 3+0", stake: 50 },
+            { id: 2, user: "SzachowyMistrz", rating: 2100, format: "⏱️ Rapid 10+5", stake: 100 },
+            { id: 3, user: "Nowicjusz99", rating: 1400, format: "⚡ Blitz 5+0", stake: 20 }
+        ];
+
+        // Funkcja renderująca listę
+        function renderChallenges() {
+            const list = document.getElementById('challenges-list');
+            list.innerHTML = '';
             
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            
-            gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-            
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
-        }
-
-        function playHoverSound() { playTone(800, 'sine', 0.05, 0.03); }
-        function playClickSound() { playTone(600, 'triangle', 0.1, 0.1); }
-        function playBetPlaced() {
-            playTone(400, 'square', 0.1, 0.1);
-            setTimeout(() => playTone(600, 'square', 0.1, 0.1), 100);
-            setTimeout(() => playTone(1200, 'sine', 0.3, 0.15), 200);
-        }
-        function playWinSound() {
-            [440, 554, 659, 880].forEach((f, i) => {
-                setTimeout(() => playTone(f, 'square', 0.4, 0.15), i * 150);
-            });
-        }
-
-        // ---------------------------------------------------------
-        // COUNTRY CODE TO EMOJI FLAG CONVERTER
-        // ---------------------------------------------------------
-        function getFlagEmoji(countryCode) {
-            if (!countryCode) return '🏳️';
-            const codePoints = countryCode
-                .toUpperCase()
-                .split('')
-                .map(char => 127397 + char.charCodeAt());
-            return String.fromCodePoint(...codePoints);
-        }
-
-        // ---------------------------------------------------------
-        // ROYAL FORK DETECTION ENGINE 
-        // ---------------------------------------------------------
-        function isPathClear(board, r1, c1, r2, c2) {
-            const dr = Math.sign(r2 - r1);
-            const dc = Math.sign(c2 - c1);
-            let r = r1 + dr;
-            let c = c1 + dc;
-            while (r !== r2 || c !== c2) {
-                if (board[r][c] !== null) return false;
-                r += dr;
-                c += dc;
-            }
-            return true;
-        }
-
-        function checkRoyalForkOccurred(pgnMovesStr) {
-            if (typeof Chess === 'undefined' || !pgnMovesStr) return false;
-            const game = new Chess();
-            const moves = pgnMovesStr.split(' ');
-            let royalForkFound = false;
-
-            for (let move of moves) {
-                if (!move) continue;
-                const moveResult = game.move(move);
-                if (!moveResult) continue;
-
-                if (game.in_check()) {
-                    const attackerSq = moveResult.to;
-                    const attackerPiece = moveResult.piece; 
-                    const attackerColor = moveResult.color;
-                    const opponentColor = attackerColor === 'w' ? 'b' : 'w';
-                    
-                    const board = game.board(); 
-                    const queenSquares = [];
-                    
-                    for (let r = 0; r < 8; r++) {
-                        for (let c = 0; c < 8; c++) {
-                            const p = board[r][c];
-                            if (p && p.type === 'q' && p.color === opponentColor) {
-                                queenSquares.push({r, c});
-                            }
-                        }
-                    }
-
-                    const cA = attackerSq.charCodeAt(0) - 97; 
-                    const rA = 8 - parseInt(attackerSq[1]); 
-
-                    for (let q of queenSquares) {
-                        const df = Math.abs(cA - q.c);
-                        const dr = Math.abs(rA - q.r);
-                        let attacksQueen = false;
-                        
-                        if (attackerPiece === 'n') { 
-                            attacksQueen = (df === 1 && dr === 2) || (df === 2 && dr === 1);
-                        } else if (attackerPiece === 'p') { 
-                            const direction = attackerColor === 'w' ? -1 : 1; 
-                            attacksQueen = (df === 1 && (q.r - rA) === direction);
-                        } else { 
-                            if (attackerPiece === 'r' || attackerPiece === 'q') {
-                                if (df === 0 || dr === 0) if (isPathClear(board, rA, cA, q.r, q.c)) attacksQueen = true;
-                            }
-                            if (attackerPiece === 'b' || attackerPiece === 'q') {
-                                if (df === dr) if (isPathClear(board, rA, cA, q.r, q.c)) attacksQueen = true;
-                            }
-                        }
-                        
-                        if (attacksQueen) {
-                            royalForkFound = true;
-                            break;
-                        }
-                    }
-                }
-                if (royalForkFound) break; 
-            }
-            return royalForkFound;
-        }
-
-        // ---------------------------------------------------------
-        // WALLET & HISTORY SYSTEM
-        // ---------------------------------------------------------
-        let balance = parseFloat(localStorage.getItem('chessbet_balance')) || 1000.00;
-        let betsHistory = JSON.parse(localStorage.getItem('chessbet_history')) || [];
-        
-        function updateBalance(newAmount, animate = false) {
-            balance = newAmount;
-            localStorage.setItem('chessbet_balance', balance.toFixed(2));
-            const balEl = document.getElementById('wallet-balance');
-            const container = document.getElementById('wallet-container');
-            balEl.textContent = `$${balance.toFixed(2)}`;
-            
-            if (animate) {
-                container.classList.add('win-animation');
-                setTimeout(() => container.classList.remove('win-animation'), 1000);
-            }
-        }
-
-        function saveHistory() {
-            localStorage.setItem('chessbet_history', JSON.stringify(betsHistory));
-            renderHistory();
-        }
-
-        function renderHistory() {
-            const container = document.getElementById('bets-list');
-            container.innerHTML = '';
-            
-            if (betsHistory.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-500 text-sm py-4 italic font-bold">No bets placed yet.</p>';
-                return;
-            }
-
-            [...betsHistory].reverse().forEach(bet => {
-                let statusColor = "text-yellow-500";
-                let statusText = "IN PLAY";
-                let bgClass = "bg-black/50 border-yellow-800/50";
-
-                if (bet.status === 'won') {
-                    statusColor = "text-green-400";
-                    statusText = "WON (+$" + bet.potentialWin.toFixed(2) + ")";
-                    bgClass = "bg-green-900/20 border-green-700/50";
-                } else if (bet.status === 'lost') {
-                    statusColor = "text-red-500";
-                    statusText = "LOST";
-                    bgClass = "bg-red-900/20 border-red-800/50";
-                }
-
-                container.innerHTML += `
-                    <div class="p-3 rounded-xl border ${bgClass} flex justify-between items-center text-sm shadow-sm">
-                        <div>
-                            <span class="font-bold text-white uppercase">${bet.type}</span>
-                            <span class="text-[10px] text-gray-400 ml-2 bg-black/50 px-2 py-0.5 rounded">${bet.category}</span>
-                            <div class="text-xs text-gray-400 mt-1">Stake: $${bet.stake.toFixed(2)}</div>
-                            <div class="text-[9px] text-gray-500">Game ID: ${bet.gameId}</div>
-                        </div>
-                        <div class="font-black ${statusColor} text-right text-xs sm:text-sm">
-                            ${statusText}
+            mockChallenges.forEach(ch => {
+                const card = document.createElement('div');
+                card.className = 'challenge-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="player-info">
+                            <div class="avatar">${ch.user.charAt(0)}</div>
+                            <div>
+                                <div class="username">${ch.user}</div>
+                                <div class="rating">Ranking: ${ch.rating}</div>
+                            </div>
                         </div>
                     </div>
+                    <div class="match-details">
+                        <span>${ch.format}</span>
+                        <span class="stake">${ch.stake} PLN</span>
+                    </div>
+                    <button class="btn-accept" onclick="acceptChallenge(${ch.id}, ${ch.stake})">Przyjmij zaproszenie do gry</button>
                 `;
+                list.appendChild(card);
             });
         }
 
-        document.getElementById('clear-history').onclick = () => {
-            playClickSound();
-            if(confirm("Clear history? Active bets will remain.")) {
-                betsHistory = betsHistory.filter(b => b.status === 'pending'); 
-                saveHistory();
-            }
-        };
+        // Bezpieczne połączenie z API (eliminacja błędu ciągłego zawieszenia na "łączenie z lichess tv")
+        async function checkLichessStatus() {
+            const statusBar = document.getElementById('api-status-bar');
+            statusBar.style.display = 'block';
+            statusBar.innerText = 'Łączenie z Lichess API...';
+            statusBar.style.backgroundColor = '#f39c12';
 
-        updateBalance(balance);
-        renderHistory();
-
-        // ---------------------------------------------------------
-        // LICHESS API SYNC & SETTLEMENT
-        // ---------------------------------------------------------
-        let currentLiveId = null;
-
-        // Fetch detailed profile for country data
-        async function fetchPlayerProfile(username, colorStr) {
             try {
-                if (!username || username === 'Anonymous' || username === 'Opponent') return;
-                const res = await fetch(`https://lichess.org/api/user/${username}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    const countryCode = data.profile && data.profile.country ? data.profile.country : null;
-                    
-                    const flagEl = document.getElementById(`${colorStr}-flag`);
-                    const countryEl = document.getElementById(`${colorStr}-country`);
-                    
-                    if (countryCode) {
-                        flagEl.textContent = getFlagEmoji(countryCode);
-                        countryEl.textContent = countryCode;
-                    } else {
-                        flagEl.textContent = '🏳️';
-                        countryEl.textContent = 'INT';
-                    }
-                }
-            } catch (e) {
-                // Silent catch
+                // Implementacja wbudowanego timeoutu, aby skrypt nigdy nie wisiał w nieskończoność
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+                const response = await fetch('https://lichess.org/api/user/lichess', { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (!response.ok) throw new Error('Brak odpowiedzi serwera Lichess');
+                
+                statusBar.innerText = 'Połączono z Lichess - Dane zsynchronizowane';
+                statusBar.style.backgroundColor = '#27ae60';
+                
+                setTimeout(() => { statusBar.style.display = 'none'; }, 2000);
+
+            } catch (error) {
+                // Obsługa błędu połączenia - fallback, aby aplikacja działała dalej
+                console.error("Błąd połączenia z API Lichess:", error);
+                statusBar.innerText = 'Błąd połączenia. Praca na zapisanych danych offline.';
+                statusBar.style.backgroundColor = '#e74c3c';
+                
+                setTimeout(() => { statusBar.style.display = 'none'; }, 4000);
             }
         }
 
-        async function fetchGameData() {
-            try {
-                const res = await fetch('https://lichess.org/api/tv/channels?_=' + Date.now());
-                if (!res.ok) throw new Error("API Fetch failed");
-                const data = await res.json();
-                const game = data.best || data.blitz || Object.values(data)[0];
-
-                if (game && game.gameId !== currentLiveId) {
-                    if (currentLiveId !== null) settleGame(currentLiveId);
-
-                    currentLiveId = game.gameId;
-                    document.getElementById('status').textContent = "BETTING OPEN";
-                    document.getElementById('status').className = "text-center text-sm font-black text-green-400 mb-6 uppercase tracking-widest";
-
-                    // Reset flags for new game
-                    document.getElementById('white-flag').textContent = '🏳️';
-                    document.getElementById('white-country').textContent = '...';
-                    document.getElementById('black-flag').textContent = '🏳️';
-                    document.getElementById('black-country').textContent = '...';
-
-                    if (game.color === 'white') {
-                        document.getElementById('white-name').textContent = game.user.name;
-                        document.getElementById('white-rating').textContent = "RATING: " + game.rating;
-                        document.getElementById('black-name').textContent = "Opponent";
-                        document.getElementById('black-rating').textContent = "RATING: ---";
-                    } else {
-                        document.getElementById('black-name').textContent = game.user.name;
-                        document.getElementById('black-rating').textContent = "RATING: " + game.rating;
-                        document.getElementById('white-name').textContent = "Opponent";
-                        document.getElementById('white-rating').textContent = "RATING: ---";
-                    }
-
-                    fetchOpponentProfileSafely(game.gameId);
-                }
-            } catch (e) {}
-            setTimeout(fetchGameData, 5000); 
-        }
-
-        async function fetchOpponentProfileSafely(gameId) {
-            try {
-                const res = await fetch(`https://lichess.org/game/export/${gameId}?tags=true&clocks=false&evals=false&moves=false`, {
-                    headers: { 'Accept': 'application/json' }
-                });
-                if(res.ok) {
-                    const gameData = await res.json();
-                    
-                    const wName = gameData.players?.white?.user?.name || 'Anonymous';
-                    const bName = gameData.players?.black?.user?.name || 'Anonymous';
-
-                    document.getElementById('white-name').textContent = wName;
-                    document.getElementById('white-rating').textContent = "RATING: " + (gameData.players?.white?.rating || '---');
-                    
-                    document.getElementById('black-name').textContent = bName;
-                    document.getElementById('black-rating').textContent = "RATING: " + (gameData.players?.black?.rating || '---');
-
-                    // Fetch flags
-                    if (wName !== 'Anonymous') fetchPlayerProfile(wName, 'white');
-                    if (bName !== 'Anonymous') fetchPlayerProfile(bName, 'black');
-                }
-            } catch (e) {}
-        }
-
-        async function settleGame(endedGameId, retries = 3) {
-            try {
-                const res = await fetch(`https://lichess.org/game/export/${endedGameId}?tags=true&clocks=false&evals=false&moves=true`, {
-                    headers: { 'Accept': 'application/json' }
-                });
-                
-                if (res.status === 404 && retries > 0) {
-                    setTimeout(() => settleGame(endedGameId, retries - 1), 4000);
-                    return;
-                }
-
-                if (res.ok) {
-                    const game = await res.json();
-                    const actualWinner = game.winner || 'draw'; 
-                    const status = game.status;
-                    
-                    let isTimeout = status === 'outoftime';
-                    let isCheckmate = status === 'mate';
-                    let isResign = status === 'resign';
-                    let isDraw = status === 'draw' || status === 'stalemate';
-                    
-                    let pieceMate = 'Unknown';
-                    if (isCheckmate) {
-                        const moves = game.moves ? game.moves.split(' ') : [];
-                        const lastMove = moves[moves.length - 1] || '';
-                        if (lastMove.includes('Q') || lastMove.includes('=Q')) pieceMate = 'Queen Mate';
-                        else if (lastMove.includes('R') || lastMove.includes('=R')) pieceMate = 'Rook Mate';
-                        else if (lastMove.includes('B') || lastMove.includes('=B')) pieceMate = 'Bishop Mate';
-                        else if (lastMove.includes('N') || lastMove.includes('=N')) pieceMate = 'Knight Mate';
-                        else if (lastMove.match(/^[a-h]/)) pieceMate = 'Pawn Mate'; 
-                    }
-
-                    const hasRoyalFork = checkRoyalForkOccurred(game.moves);
-
-                    let newlyWon = 0;
-                    let processedAny = false;
-
-                    betsHistory.forEach(ticket => {
-                        if (ticket.gameId === endedGameId && ticket.status === 'pending') {
-                            processedAny = true;
-                            let ticketWon = false;
-
-                            // Royal Fork może wydarzyć się nawet w remisie
-                            if (ticket.category === 'special') {
-                                if (ticket.type === 'Royal Fork' && hasRoyalFork) ticketWon = true;
-                            } 
-                            // Pozostałe zakłady przegrywają, jeśli padł remis
-                            else if (!isDraw) {
-                                if (ticket.category === 'winner') {
-                                    if (ticket.type === 'White Win' && actualWinner === 'white') ticketWon = true;
-                                    if (ticket.type === 'Black Win' && actualWinner === 'black') ticketWon = true;
-                                } else if (ticket.category === 'ending') {
-                                    if (ticket.type === 'Timeout' && isTimeout) ticketWon = true;
-                                    if (ticket.type === 'Checkmate' && isCheckmate) ticketWon = true;
-                                    if (ticket.type === 'Resignation' && isResign) ticketWon = true;
-                                    if (ticket.type === pieceMate) ticketWon = true;
-                                }
-                            }
-
-                            if (ticketWon) {
-                                ticket.status = 'won';
-                                newlyWon += ticket.potentialWin;
-                            } else {
-                                ticket.status = 'lost';
-                            }
-                        }
-                    });
-
-                    if (processedAny) {
-                        if (newlyWon > 0) {
-                            playWinSound();
-                            updateBalance(balance + newlyWon, true);
-                        }
-                        saveHistory(); 
-                    }
-                }
-            } catch(e) {}
-        }
-
-        // ---------------------------------------------------------
-        // BETTING INTERFACE LOGIC (STRICT RADIO BEHAVIOR)
-        // ---------------------------------------------------------
-        const activeBets = {
-            winner: null,
-            ending: null,
-            special: null
-        };
-        
-        const buttons = document.querySelectorAll('.bet-btn');
-        const stakeInput = document.getElementById('stake');
-        const paymentModule = document.getElementById('payment-module');
-
-        buttons.forEach(btn => {
-            btn.addEventListener('mouseenter', playHoverSound);
-            
-            btn.addEventListener('click', () => {
-                playClickSound();
-                
-                const category = btn.getAttribute('data-category');
-                
-                if (activeBets[category] === btn) {
-                    btn.classList.remove('glow-casino-active');
-                    activeBets[category] = null;
-                } else {
-                    if (activeBets[category]) {
-                        activeBets[category].classList.remove('glow-casino-active');
-                    }
-                    btn.classList.add('glow-casino-active');
-                    activeBets[category] = btn;
-                }
-                updateSlip();
-            });
-        });
-
-        stakeInput.addEventListener('input', updateSlip);
-
-        function updateSlip() {
-            const selections = Object.values(activeBets).filter(btn => btn !== null);
-            const count = selections.length;
-            const stake = parseFloat(stakeInput.value) || 0;
-            let totalPotentialWin = 0;
-            
-            selections.forEach(btn => {
-                totalPotentialWin += stake * parseFloat(btn.getAttribute('data-decimal'));
-            });
-
-            if (count > 0) {
-                paymentModule.classList.remove('hidden');
-                document.getElementById('bets-count').textContent = count;
-                document.getElementById('total-stake-display').textContent = "$" + (stake * count).toLocaleString('en-US', { minimumFractionDigits: 2 });
-                document.getElementById('potential-win').textContent = "$" + totalPotentialWin.toLocaleString('en-US', { minimumFractionDigits: 2 });
+        // Logika Escrow / Akceptacji
+        function acceptChallenge(id, amount) {
+            let available = parseFloat(document.getElementById('balance-available').innerText);
+            if (available >= amount) {
+                // Odjęcie z głównego salda (symulacja pobrania środków na rachunek powierniczy Stripe)
+                document.getElementById('balance-available').innerText = (available - amount).toFixed(2);
+                alert(`Wyzwanie przyjęte! Zabezpieczono ${amount} PLN na poczet Escrow.\nZostaniesz przeniesiony do partii na Lichess.`);
+                // Tu nastąpiłby redirect do gry
             } else {
-                paymentModule.classList.add('hidden');
+                alert("Brak wystarczających środków na koncie, aby przyjąć to wyzwanie.");
             }
         }
 
-        document.getElementById('pay-btn').onclick = () => {
-            if (!currentLiveId) return alert("Please wait for a live game to sync.");
-            
-            const selections = Object.values(activeBets).filter(btn => btn !== null);
-            const count = selections.length;
-            if (count === 0) return;
+        // Modale
+        function openModal() {
+            document.getElementById('create-modal').style.display = 'flex';
+        }
 
-            const stake = parseFloat(stakeInput.value);
-            if (!stake || isNaN(stake) || stake <= 0) return alert("Enter a valid stake per bet!");
-            
-            const totalStake = stake * count;
-            if (totalStake > balance) return alert("Insufficient funds in wallet for total stake!");
+        function closeModal() {
+            document.getElementById('create-modal').style.display = 'none';
+        }
 
-            playBetPlaced();
-            updateBalance(balance - totalStake);
-
-            selections.forEach(btn => {
-                const decimal = parseFloat(btn.getAttribute('data-decimal'));
-                const bet = {
-                    id: Math.random().toString(36).substr(2, 6).toUpperCase(),
-                    gameId: currentLiveId,
-                    type: btn.getAttribute('data-bet'),
-                    category: btn.getAttribute('data-category'),
-                    stake: stake,
-                    potentialWin: stake * decimal,
-                    status: 'pending'
-                };
-                betsHistory.push(bet);
-            });
-
-            saveHistory();
+        function createChallenge() {
+            const amount = parseFloat(document.getElementById('bet-amount').value);
+            const format = document.getElementById('game-format').value;
             
-            selections.forEach(btn => btn.classList.remove('glow-casino-active'));
-            activeBets.winner = null;
-            activeBets.ending = null;
-            activeBets.special = null;
+            // Pobieranie wartości ze zbioru rozłącznego (radio buttons)
+            const outcome = document.querySelector('input[name="outcome"]:checked').value;
+
+            let available = parseFloat(document.getElementById('balance-available').innerText);
             
-            stakeInput.value = '';
-            updateSlip();
+            if (available >= amount) {
+                document.getElementById('balance-available').innerText = (available - amount).toFixed(2);
+                
+                mockChallenges.unshift({
+                    id: Date.now(),
+                    user: "TwójNick", // W docelowej aplikacji pobierane przez OAuth
+                    rating: 2000,
+                    format: format,
+                    stake: amount
+                });
+                
+                renderChallenges();
+                closeModal();
+                alert(`Utworzono wyzwanie o stawkę ${amount} PLN. Środki pobrane do depozytu.\nZakład: ${outcome}`);
+            } else {
+                alert("Brak środków, by wystawić zaproszenie.");
+            }
+        }
+
+        // Inicjalizacja przy starcie
+        window.onload = () => {
+            renderChallenges();
+            checkLichessStatus(); // Testowe wywołanie chronionego zapytania
         };
-
-        fetchGameData();
-
     </script>
 </body>
 </html>
