@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChessBet - Play for Money</title>
+    <title>ChessBet - Gram o stawkę</title>
     <style>
         :root {
             --bg-gradient: radial-gradient(circle at top, #146b2b, #072e10);
@@ -103,4 +103,253 @@
         
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 800; color: var(--primary); text-transform: uppercase; font-size: 0.85rem; }
-        .form-group input, .form-group select { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 1
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 1.05rem; background: #f8f9fa; }
+        
+        .bet-rule-box { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--accent); padding: 12px; border-radius: 10px; color: var(--accent); font-weight: 800; text-align: center; font-size: 0.95rem; text-transform: uppercase; }
+
+        .btn-close { background: #e0e0e0; color: var(--text-main); margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Chess<span>Bet</span></h1>
+        <p class="subtitle">Graj z najlepszymi na pieniądze</p>
+        <div class="wallet-container">
+            <div class="wallet-item">
+                <span class="wallet-label">Dostępne żetony</span>
+                <span class="wallet-amount" id="balance-available">150.00 PLN</span>
+            </div>
+            <div class="wallet-item">
+                <span class="wallet-label">W grze / Escrow</span>
+                <span class="wallet-amount pending" id="balance-pending">50.00 PLN</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2 class="section-title">Otwarte stoły</h2>
+        <div id="challenges-list"></div>
+    </div>
+
+    <button class="fab" id="btn-fab">+</button>
+
+    <div class="modal-overlay" id="create-modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 20px; color: var(--primary); border-bottom: 2px solid var(--accent); padding-bottom: 10px;">Otwórz nowy stół</h2>
+            
+            <div class="form-group">
+                <label>Format gry</label>
+                <select id="game-format">
+                    <option value='{"limit": 3, "inc": 0, "label": "⚡ Blitz 3+0"}'>⚡ Blitz 3+0</option>
+                    <option value='{"limit": 5, "inc": 0, "label": "⚡ Blitz 5+0"}'>⚡ Blitz 5+0</option>
+                    <option value='{"limit": 10, "inc": 5, "label": "⏱️ Rapid 10+5"}'>⏱️ Rapid 10+5</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Stawka zakładu (PLN)</label>
+                <input type="number" id="bet-amount" value="20" min="5" max="150">
+            </div>
+
+            <div class="form-group">
+                <label>Zasada zakładu</label>
+                <div class="bet-rule-box">🏆 Zawsze stawiasz na swoją wygraną</div>
+            </div>
+
+            <button class="btn-accept" id="btn-create">Zablokuj żetony i graj</button>
+            <button class="btn-close" id="btn-close-modal">Anuluj</button>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGIKA APLIKACJI (Bez Audio) ---
+        let challenges = [];
+
+        // Inicjalizacja nasłuchiwaczy zdarzeń po załadowaniu DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('btn-fab').addEventListener('click', openModal);
+            document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+            document.getElementById('btn-create').addEventListener('click', createChallenge);
+            
+            renderChallenges();
+        });
+
+        function openModal() { 
+            document.getElementById('create-modal').style.display = 'flex'; 
+        }
+        
+        function closeModal() { 
+            document.getElementById('create-modal').style.display = 'none'; 
+        }
+
+        function renderChallenges() {
+            const list = document.getElementById('challenges-list');
+            list.innerHTML = '';
+            
+            if (challenges.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.7); padding: 30px; font-size: 1.1rem;">Brak wolnych stołów. Otwórz swój własny!</p>';
+                return;
+            }
+
+            challenges.forEach(ch => {
+                const card = document.createElement('div');
+                card.className = 'challenge-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="player-info">
+                            <div class="avatar">${ch.user.charAt(0)}</div>
+                            <div>
+                                <div class="username">${ch.user}</div>
+                                <div class="rating">Ranking: ${ch.rating}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="match-details">
+                        <span>${ch.label}</span>
+                        <span class="stake">${ch.stake} PLN</span>
+                    </div>
+                `;
+                
+                const btnAccept = document.createElement('button');
+                btnAccept.className = 'btn-accept';
+                btnAccept.innerText = `Wchodzę do gry (${ch.stake} PLN)`;
+                btnAccept.addEventListener('click', () => acceptChallenge(ch.id));
+                
+                card.appendChild(btnAccept);
+                list.appendChild(card);
+            });
+        }
+
+        // Poprawione zapytanie do Lichess API (Parametry wymuszające grę towarzyską)
+        async function createLichessRoom(limitMinutes, incrementSeconds) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 6000); 
+
+            try {
+                const formBody = new URLSearchParams({
+                    'clock.limit': limitMinutes * 60,
+                    'clock.increment': incrementSeconds,
+                    'rated': 'false', 
+                    'variant': 'standard'
+                });
+
+                const response = await fetch('https://lichess.org/api/challenge/open', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formBody.toString(),
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error('API odrzuciło zapytanie');
+                }
+                
+                const data = await response.json();
+                return data.challenge.url; 
+                
+            } catch (error) {
+                clearTimeout(timeoutId);
+                console.warn("Wymuszono Fallback ze względu na błąd połączenia lub CORS.");
+                return "FALLBACK_MODE"; 
+            }
+        }
+
+        async function createChallenge() {
+            const btn = document.getElementById('btn-create');
+            
+            try {
+                const amount = parseFloat(document.getElementById('bet-amount').value);
+                const formatData = JSON.parse(document.getElementById('game-format').value);
+                
+                let availableText = document.getElementById('balance-available').innerText;
+                let available = parseFloat(availableText.replace(/[^\d.-]/g, ''));
+                
+                let pendingText = document.getElementById('balance-pending').innerText;
+                let pending = parseFloat(pendingText.replace(/[^\d.-]/g, ''));
+
+                if (isNaN(available) || isNaN(amount)) {
+                    alert("Wystąpił błąd odczytu kwoty.");
+                    return;
+                }
+
+                if (available < amount) {
+                    alert("Brak żetonów, by otworzyć stół.");
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.innerText = "Tasowanie... łączę...";
+
+                const result = await createLichessRoom(formatData.limit, formatData.inc);
+                let gameUrl = result;
+
+                if (result === "FALLBACK_MODE") {
+                    // Tryb awaryjny - kieruje na główną stronę Lichess
+                    gameUrl = "https://lichess.org/";
+                } else if (!result) {
+                    alert("Błąd tworzenia stołu.");
+                    return;
+                }
+
+                // Aktualizacja UI po poprawnym przetworzeniu
+                document.getElementById('balance-available').innerText = (available - amount).toFixed(2) + " PLN";
+                document.getElementById('balance-pending').innerText = (pending + amount).toFixed(2) + " PLN";
+                
+                challenges.unshift({
+                    id: Date.now().toString(),
+                    user: "TwójNick",
+                    rating: 1500,
+                    label: formatData.label,
+                    stake: amount,
+                    url: gameUrl 
+                });
+                
+                renderChallenges();
+                closeModal();
+                
+                setTimeout(() => {
+                    if(confirm(`Stół gotowy!\n\nZabezpieczono ${amount} PLN na Twoją wygraną.\n\nCzy chcesz przejść na stół?`)) {
+                        window.open(gameUrl, '_blank');
+                    }
+                }, 300);
+
+            } catch (err) {
+                console.error("Błąd logiki:", err);
+                alert("Wystąpił nieoczekiwany błąd. Odśwież stronę.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Zablokuj żetony i graj";
+            }
+        }
+
+        function acceptChallenge(challengeId) {
+            const challenge = challenges.find(ch => ch.id === challengeId);
+            if (!challenge) return;
+
+            let availableText = document.getElementById('balance-available').innerText;
+            let available = parseFloat(availableText.replace(/[^\d.-]/g, ''));
+            
+            let pendingText = document.getElementById('balance-pending').innerText;
+            let pending = parseFloat(pendingText.replace(/[^\d.-]/g, ''));
+
+            if (available >= challenge.stake) {
+                document.getElementById('balance-available').innerText = (available - challenge.stake).toFixed(2) + " PLN";
+                document.getElementById('balance-pending').innerText = (pending + challenge.stake).toFixed(2) + " PLN";
+
+                challenges = challenges.filter(ch => ch.id !== challengeId);
+                renderChallenges();
+
+                setTimeout(() => {
+                    alert(`Wchodzisz do gry o stawkę ${challenge.stake} PLN.\n\nPrzenoszenie na stół...`);
+                    window.open(challenge.url, '_blank');
+                }, 300);
+            } else {
+                alert("Brak żetonów, aby wejść do tej gry.");
+            }
+        }
+    </script>
+</body>
+</html>
