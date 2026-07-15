@@ -6,7 +6,7 @@
     <title>ChessBet - Gram o stawkę</title>
     <style>
         :root {
-            var(--bg-gradient): radial-gradient(circle at top, #146b2b, #072e10);
+            --bg-gradient: radial-gradient(circle at top, #146b2b, #072e10);
             --header-bg: rgba(7, 46, 16, 0.9);
             --card-bg: #ffffff;
             --primary: #072e10; 
@@ -22,7 +22,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
         body { 
-            background: radial-gradient(circle at top, #146b2b, #072e10); 
+            background: var(--bg-gradient); 
             background-attachment: fixed;
             color: var(--text-main); 
             padding-bottom: 80px; 
@@ -91,6 +91,7 @@
         button:disabled { opacity: 0.7; cursor: not-allowed; }
         
         .btn-accept { background: linear-gradient(135deg, var(--accent), #b5952f); color: var(--primary); }
+        .btn-accept:active { transform: translateY(2px); }
         
         .fab { position: fixed; bottom: 25px; right: 25px; background: linear-gradient(135deg, var(--accent), #b5952f); color: var(--primary); width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); cursor: pointer; z-index: 1000; border: 2px solid #fff; padding: 0; }
         .fab:active { transform: scale(0.95); }
@@ -128,7 +129,7 @@
         <div id="challenges-list"></div>
     </div>
 
-    <button class="fab" onclick="bezpiecznyDzwiek('click'); openModal()">+</button>
+    <button class="fab" id="btn-fab">+</button>
 
     <div class="modal-overlay" id="create-modal">
         <div class="modal-content">
@@ -153,60 +154,31 @@
                 <div class="bet-rule-box">🏆 Zawsze stawiasz na swoją wygraną</div>
             </div>
 
-            <button class="btn-accept" id="btn-create" onclick="bezpiecznyDzwiek('click'); createChallenge()">Zablokuj żetony i graj</button>
-            <button class="btn-close" onclick="bezpiecznyDzwiek('click'); closeModal()">Anuluj</button>
+            <button class="btn-accept" id="btn-create">Zablokuj żetony i graj</button>
+            <button class="btn-close" id="btn-close-modal">Anuluj</button>
         </div>
     </div>
 
     <script>
-        // --- 1. KULOODPORNY SYSTEM AUDIO ---
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx;
-
-        function initAudio() {
-            try {
-                if (!audioCtx) audioCtx = new AudioContext();
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-            } catch (e) {
-                console.warn("Nie można zainicjować audio", e);
-            }
-        }
-        document.body.addEventListener('click', initAudio, { once: true });
-
-        // Zamknięcie audio w klatce try-catch, by crash nie blokował przycisków
-        function bezpiecznyDzwiek(type) {
-            try {
-                if (!audioCtx) return;
-                const osc = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                osc.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                const now = audioCtx.currentTime;
-
-                if (type === 'click') {
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(800, now);
-                    osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
-                    gainNode.gain.setValueAtTime(0.15, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-                    osc.start(now);
-                    osc.stop(now + 0.1);
-                } else if (type === 'success') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(440, now);
-                    osc.frequency.setValueAtTime(659.25, now + 0.2);
-                    gainNode.gain.setValueAtTime(0.15, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-                    osc.start(now);
-                    osc.stop(now + 0.5);
-                }
-            } catch (error) {
-                console.warn("Przeglądarka zablokowała audio. Aplikacja działa dalej.", error);
-            }
-        }
-
-        // --- 2. LOGIKA APLIKACJI ---
+        // Logika trzymana całkowicie po stronie JavaScript - omija blokady CSP na serwerach
         let challenges = [];
+
+        // Inicjalizacja nasłuchiwaczy dopiero, gdy przeglądarka sparsuje cały kod HTML
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('btn-fab').addEventListener('click', openModal);
+            document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+            document.getElementById('btn-create').addEventListener('click', createChallenge);
+            
+            renderChallenges();
+        });
+
+        function openModal() { 
+            document.getElementById('create-modal').style.display = 'flex'; 
+        }
+        
+        function closeModal() { 
+            document.getElementById('create-modal').style.display = 'none'; 
+        }
 
         function renderChallenges() {
             const list = document.getElementById('challenges-list');
@@ -220,6 +192,8 @@
             challenges.forEach(ch => {
                 const card = document.createElement('div');
                 card.className = 'challenge-card';
+                
+                // Tworzymy szkielet karty
                 card.innerHTML = `
                     <div class="card-header">
                         <div class="player-info">
@@ -234,10 +208,15 @@
                         <span>${ch.label}</span>
                         <span class="stake">${ch.stake} PLN</span>
                     </div>
-                    <button class="btn-accept" onclick="bezpiecznyDzwiek('click'); acceptChallenge('${ch.id}')">
-                        Wchodzę do gry (${ch.stake} PLN)
-                    </button>
                 `;
+                
+                // Tworzymy przycisk programowo i podpinamy event (chroni przed błędami parsowania)
+                const btnAccept = document.createElement('button');
+                btnAccept.className = 'btn-accept';
+                btnAccept.innerText = `Wchodzę do gry (${ch.stake} PLN)`;
+                btnAccept.addEventListener('click', () => acceptChallenge(ch.id));
+                
+                card.appendChild(btnAccept);
                 list.appendChild(card);
             });
         }
@@ -271,7 +250,6 @@
             }
         }
 
-        // --- 3. GŁÓWNA FUNKCJA TWORZENIA Z ZABEZPIECZONYM PARSOWANIEM ---
         async function createChallenge() {
             const btn = document.getElementById('btn-create');
             
@@ -279,7 +257,6 @@
                 const amount = parseFloat(document.getElementById('bet-amount').value);
                 const formatData = JSON.parse(document.getElementById('game-format').value);
                 
-                // Bezpieczne pobranie wartości salda - omijamy błąd z dopiskiem " PLN"
                 let availableText = document.getElementById('balance-available').innerText;
                 let available = parseFloat(availableText.replace(/[^\d.-]/g, ''));
                 
@@ -296,7 +273,6 @@
                     return;
                 }
 
-                // Zablokuj przycisk, żeby pokazać użytkownikowi, że proces ruszył
                 btn.disabled = true;
                 btn.innerText = "Tasowanie... łączę...";
 
@@ -309,8 +285,6 @@
                     alert("Błąd tworzenia stołu.");
                     return;
                 }
-
-                bezpiecznyDzwiek('success'); 
 
                 // Aktualizacja UI
                 document.getElementById('balance-available').innerText = (available - amount).toFixed(2) + " PLN";
@@ -335,10 +309,9 @@
                 }, 300);
 
             } catch (err) {
-                console.error("Błąd logiki biznesowej:", err);
-                alert("Wystąpił nieoczekiwany błąd. Odśwież stronę.");
+                console.error("Błąd środowiska: ", err);
+                alert("Błąd: Sprawdź konsolę przeglądarki (F12)");
             } finally {
-                // To wywoła się ZAWSZE odblokowując UI
                 btn.disabled = false;
                 btn.innerText = "Zablokuj żetony i graj";
             }
@@ -355,8 +328,6 @@
             let pending = parseFloat(pendingText.replace(/[^\d.-]/g, ''));
 
             if (available >= challenge.stake) {
-                bezpiecznyDzwiek('success'); 
-
                 document.getElementById('balance-available').innerText = (available - challenge.stake).toFixed(2) + " PLN";
                 document.getElementById('balance-pending').innerText = (pending + challenge.stake).toFixed(2) + " PLN";
 
@@ -371,11 +342,6 @@
                 alert("Brak żetonów, aby wejść do tej gry.");
             }
         }
-
-        function openModal() { document.getElementById('create-modal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('create-modal').style.display = 'none'; }
-
-        window.onload = () => { renderChallenges(); };
     </script>
 </body>
 </html>
