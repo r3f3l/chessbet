@@ -52,8 +52,6 @@
         .wallet-amount { font-size: 1.3rem; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
         .pending { color: #f39c12; }
 
-        #api-status-bar { background: #f39c12; color: white; text-align: center; padding: 5px; font-size: 0.8rem; display: none; }
-
         /* Lista wyzwań */
         .container { padding: 15px; }
         .section-title { font-size: 1.2rem; margin-bottom: 15px; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
@@ -130,6 +128,7 @@
         .form-group input, .form-group select { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 1.05rem; background: #f8f9fa; transition: border-color 0.2s; outline: none; }
         .form-group input:focus, .form-group select:focus { border-color: var(--accent); background: #fff; }
         
+        /* Rozłączne opcje zakładów */
         .exclusive-options { display: flex; gap: 10px; margin-top: 10px; }
         .exclusive-options label { flex: 1; background: #f8f9fa; text-align: center; padding: 12px 5px; border-radius: 10px; cursor: pointer; border: 2px solid var(--border); font-weight: 600; font-size: 0.9rem; transition: all 0.2s; color: var(--text-muted); }
         .exclusive-options input[type="radio"] { display: none; }
@@ -140,8 +139,6 @@
     </style>
 </head>
 <body>
-
-    <div id="api-status-bar">Generowanie partii...</div>
 
     <header>
         <h1>Chess<span>Bet</span></h1>
@@ -160,11 +157,9 @@
     <div class="container">
         <h2 class="section-title">Otwarte stoły</h2>
         <div id="challenges-list">
-            <!-- Karty wyzwań wygenerowane przez JS -->
-        </div>
+            </div>
     </div>
 
-    <!-- Pływający przycisk dodany dźwięk hover i click -->
     <div class="fab" onmouseenter="playSound('hover')" onmousedown="playSound('click')" onclick="openModal()">+</div>
 
     <div class="modal-overlay" id="create-modal">
@@ -204,7 +199,6 @@
 
     <script>
         // --- SYNTEZATOR DŹWIĘKU (Web Audio API) ---
-        // Generuje dźwięki w locie bez plików MP3
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
 
@@ -217,7 +211,6 @@
             }
         }
 
-        // Aktywacja audio przy pierwszym kliknięciu w dokument (polityka przeglądarek)
         document.body.addEventListener('click', initAudio, { once: true });
 
         function playSound(type) {
@@ -231,7 +224,6 @@
             const now = audioCtx.currentTime;
 
             if (type === 'hover') {
-                // Szybki, lekki "klik" przy najechaniu
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(600, now);
                 osc.frequency.exponentialRampToValueAtTime(800, now + 0.03);
@@ -240,7 +232,6 @@
                 osc.start(now);
                 osc.stop(now + 0.03);
             } else if (type === 'click') {
-                // Głęboki dźwięk uderzenia żetonu kasynowego
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(800, now);
                 osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
@@ -249,7 +240,6 @@
                 osc.start(now);
                 osc.stop(now + 0.1);
             } else if (type === 'success') {
-                // Dźwięk wygranej/akceptacji (kaskada akordów)
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(440, now); // A4
                 osc.frequency.setValueAtTime(554.37, now + 0.1); // C#5
@@ -278,7 +268,6 @@
             challenges.forEach(ch => {
                 const card = document.createElement('div');
                 card.className = 'challenge-card';
-                // Dodajemy eventy audio na przyciski generowane dynamicznie
                 card.innerHTML = `
                     <div class="card-header">
                         <div class="player-info">
@@ -304,9 +293,10 @@
             });
         }
 
+        // Bezpośrednie i bezpieczne łączenie z Lichess API na GitHubie
         async function createLichessRoom(limitMinutes, incrementSeconds) {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000); 
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // Max 10s
 
             try {
                 const limitInSeconds = limitMinutes * 60;
@@ -323,96 +313,25 @@
                 });
 
                 clearTimeout(timeoutId);
-                if (!response.ok) throw new Error('Nie udało się utworzyć wyzwania na Lichess');
+                
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`Odmowa serwera HTTP ${response.status}: ${errText}`);
+                }
                 
                 const data = await response.json();
                 return data.challenge.url; 
                 
             } catch (error) {
-                console.error("Lichess API error:", error);
-                return null;
+                clearTimeout(timeoutId);
+                console.error("Szczegóły błędu połączenia:", error);
+                return { error: error.name === 'AbortError' ? 'Brak odpowiedzi serwera (Timeout)' : error.message };
             }
         }
 
+        // Obsługa zakładu z blokadą UI, chroniącą przed stałym zawieszeniem na "łączenie z lichess"
         async function createChallenge() {
             const btn = document.getElementById('btn-create');
             const amount = parseFloat(document.getElementById('bet-amount').value);
             const formatData = JSON.parse(document.getElementById('game-format').value);
-            const outcome = document.querySelector('input[name="outcome"]:checked').value;
-            let available = parseFloat(document.getElementById('balance-available').innerText);
-            
-            if (available < amount) {
-                alert("Brak żetonów, by otworzyć stół.");
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerText = "Tasowanie... łączenie z Lichess";
-
-            const gameUrl = await createLichessRoom(formatData.limit, formatData.inc);
-
-            btn.disabled = false;
-            btn.innerText = "Zablokuj żetony i graj";
-
-            if (!gameUrl) {
-                alert("Wystąpił problem z połączeniem Lichess (timeout). Spróbuj ponownie.");
-                return;
-            }
-
-            playSound('success'); // Dźwięk sukcesu
-
-            document.getElementById('balance-available').innerText = (available - amount).toFixed(2) + " PLN";
-            let pending = parseFloat(document.getElementById('balance-pending').innerText);
-            document.getElementById('balance-pending').innerText = (pending + amount).toFixed(2) + " PLN";
-            
-            challenges.unshift({
-                id: Date.now().toString(),
-                user: "TwójNick",
-                rating: 1500,
-                label: formatData.label,
-                stake: amount,
-                url: gameUrl 
-            });
-            
-            renderChallenges();
-            closeModal();
-            
-            setTimeout(() => {
-                if(confirm(`Stół gotowy!\n\nZabezpieczono ${amount} PLN.\n\nCzy chcesz usiąść do stołu na Lichess i poczekać na rywala?`)) {
-                    window.open(gameUrl, '_blank');
-                }
-            }, 300);
-        }
-
-        function acceptChallenge(challengeId) {
-            const challenge = challenges.find(ch => ch.id === challengeId);
-            if (!challenge) return;
-
-            let available = parseFloat(document.getElementById('balance-available').innerText);
-            
-            if (available >= challenge.stake) {
-                playSound('success'); // Dźwięk sukcesu
-
-                document.getElementById('balance-available').innerText = (available - challenge.stake).toFixed(2) + " PLN";
-                let pending = parseFloat(document.getElementById('balance-pending').innerText);
-                document.getElementById('balance-pending').innerText = (pending + challenge.stake).toFixed(2) + " PLN";
-
-                challenges = challenges.filter(ch => ch.id !== challengeId);
-                renderChallenges();
-
-                setTimeout(() => {
-                    alert(`Stawka ${challenge.stake} PLN wchodzi do puli.\n\nPrzenoszenie na stół Lichess...`);
-                    window.open(challenge.url, '_blank');
-                }, 300);
-            } else {
-                alert("Brak żetonów, aby wejść do tej gry.");
-            }
-        }
-
-        function openModal() { document.getElementById('create-modal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('create-modal').style.display = 'none'; }
-
-        window.onload = () => { renderChallenges(); };
-    </script>
-</body>
-</html>
+            const outcomeElement
