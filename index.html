@@ -1,1 +1,338 @@
-chuj
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StakeChess | Win or Learn</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chessboard.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+    <style>
+        /* Lichess dark mode palette */
+        body { background-color: #161512; color: #bababa; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .bg-panel { background-color: #262421; }
+        .bg-panel-darker { background-color: #1e1d1a; }
+        .text-accent { color: #629924; }
+        .bg-accent { background-color: #629924; }
+        .bg-accent:hover { background-color: #74ad29; }
+        .border-panel { border-color: #363431; }
+        
+        /* Custom Stake Button Radio */
+        .stake-radio input:checked + div {
+            border-color: #629924;
+            background-color: #1e1d1a;
+            color: #ffffff;
+        }
+
+        /* Chessboard Lichess Theme Override */
+        .white-1e1d7 { background-color: #f0d9b5; color: #b58863; }
+        .black-3c85d { background-color: #b58863; color: #f0d9b5; }
+        
+        .log-panel {
+            height: 180px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #363431 #161512;
+        }
+        .log-panel::-webkit-scrollbar { width: 6px; }
+        .log-panel::-webkit-scrollbar-thumb { background: #363431; border-radius: 4px; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-panel-darker border-b border-panel py-3 px-6 flex justify-between items-center shadow-lg">
+        <div class="flex items-center gap-2">
+            <span class="text-2xl font-bold text-white tracking-tight">Stake<span class="text-accent">Chess</span></span>
+            <span class="text-xs ml-2 bg-gray-700 px-2 py-1 rounded text-gray-300 font-semibold uppercase tracking-wider">Beta</span>
+        </div>
+        <nav class="hidden md:flex gap-6 text-sm font-medium">
+            <a href="#" class="text-white hover:text-accent transition">Play</a>
+            <a href="#" class="hover:text-white transition">Teachers</a>
+            <a href="#" class="hover:text-white transition">Leaderboard</a>
+            <a href="#" class="hover:text-white transition">How it works</a>
+        </nav>
+        <button class="bg-panel border border-panel hover:bg-gray-700 text-white py-1.5 px-4 rounded shadow transition text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 11V7a2 2 0 114 0v4a2 2 0 11-4 0z"/></svg>
+            Sign in with Lichess
+        </button>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 lg:p-8 flex flex-col lg:flex-row gap-8">
+        
+        <!-- Left Panel: Control & Logic -->
+        <div class="w-full lg:w-5/12 flex flex-col gap-6">
+            
+            <div class="bg-panel rounded-lg p-6 shadow-md border border-panel">
+                <h1 class="text-2xl text-white font-bold mb-2">Win for free. Pay for the lesson.</h1>
+                <p class="text-sm mb-6 leading-relaxed">Your brain learns best when the stakes are real. Set your price and play against the Lichess engine. If you win, the game is on us. You only pay when you lose.</p>
+                
+                <h3 class="text-white font-semibold mb-3">1. Set Your Price</h3>
+                <div class="grid grid-cols-4 gap-3 mb-6">
+                    <label class="stake-radio cursor-pointer">
+                        <input type="radio" name="stake" value="2" class="hidden" />
+                        <div class="border-2 border-panel rounded py-2 text-center font-bold text-lg hover:border-gray-500 transition text-gray-300">$2</div>
+                    </label>
+                    <label class="stake-radio cursor-pointer">
+                        <input type="radio" name="stake" value="5" class="hidden" checked />
+                        <div class="border-2 border-panel rounded py-2 text-center font-bold text-lg hover:border-gray-500 transition text-gray-300">$5</div>
+                    </label>
+                    <label class="stake-radio cursor-pointer">
+                        <input type="radio" name="stake" value="10" class="hidden" />
+                        <div class="border-2 border-panel rounded py-2 text-center font-bold text-lg hover:border-gray-500 transition text-gray-300">$10</div>
+                    </label>
+                    <label class="stake-radio cursor-pointer">
+                        <input type="radio" name="stake" value="25" class="hidden" />
+                        <div class="border-2 border-panel rounded py-2 text-center font-bold text-lg hover:border-gray-500 transition text-gray-300">$25</div>
+                    </label>
+                </div>
+
+                <div class="flex gap-4 mb-6">
+                    <button id="startBtn" class="flex-1 bg-accent text-white font-bold text-lg py-3 rounded shadow-lg hover:shadow-xl transition">
+                        Start Game
+                    </button>
+                    <button id="resignBtn" class="bg-red-900/40 text-red-400 font-bold px-4 rounded shadow transition hover:bg-red-900/60 disabled:opacity-50" disabled>
+                        Resign
+                    </button>
+                </div>
+
+                <div class="p-4 bg-panel-darker rounded border border-panel text-sm">
+                    <div class="flex justify-between mb-1"><span>Current stake:</span> <strong id="displayStake" class="text-white">$5.00</strong></div>
+                    <div class="flex justify-between mb-1"><span>If you win:</span> <strong class="text-accent">Free game ($0)</strong></div>
+                    <div class="flex justify-between"><span>If you lose:</span> <strong class="text-red-400">You pay $5.00</strong></div>
+                </div>
+            </div>
+
+            <!-- API Console -->
+            <div class="bg-panel rounded-lg shadow-md border border-panel flex flex-col flex-grow min-h-[200px]">
+                <div class="bg-panel-darker px-4 py-2 border-b border-panel font-mono text-xs text-gray-400 flex justify-between">
+                    <span>Lichess API Live Console</span>
+                    <span class="text-accent flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-accent inline-block"></span> Connected</span>
+                </div>
+                <div id="apiLog" class="p-4 font-mono text-xs log-panel text-gray-400 flex-grow bg-black/20">
+                    <div>System ready. Choose your stake and start the game. Integrated: Lichess Cloud Eval API.</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Panel: Chessboard -->
+        <div class="w-full lg:w-7/12 flex flex-col items-center">
+            
+            <div class="w-full max-w-[550px]">
+                <!-- Opponent Info -->
+                <div class="flex justify-between items-center bg-panel px-4 py-3 rounded-t-lg border-b border-panel">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded bg-gray-700 flex items-center justify-center text-xl">🤖</div>
+                        <div>
+                            <div class="text-white font-bold flex items-center gap-2">Lichess Cloud Engine <span class="bg-yellow-600/30 text-yellow-500 text-[10px] px-1 rounded uppercase">Bot</span></div>
+                            <div class="text-xs">Rating: Lichess Master DB</div>
+                        </div>
+                    </div>
+                    <div id="engineStatus" class="text-xs px-2 py-1 rounded bg-black/30">Waiting...</div>
+                </div>
+
+                <!-- The Board -->
+                <div id="board" class="w-full shadow-2xl relative"></div>
+
+                <!-- Player Info -->
+                <div class="flex justify-between items-center bg-panel px-4 py-3 rounded-b-lg border-t border-panel">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded bg-accent flex items-center justify-center text-white text-xl">👤</div>
+                        <div>
+                            <div class="text-white font-bold">You (Player)</div>
+                            <div class="text-xs">Pending</div>
+                        </div>
+                    </div>
+                    <div id="playerStatus" class="font-bold text-accent">Your turn</div>
+                </div>
+            </div>
+            
+        </div>
+
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    <script>
+        // App State
+        let board = null;
+        let game = new Chess();
+        let matchActive = false;
+        let stakeAmount = 5;
+
+        // UI Elements
+        const apiLog = document.getElementById('apiLog');
+        const startBtn = document.getElementById('startBtn');
+        const resignBtn = document.getElementById('resignBtn');
+        const displayStake = document.getElementById('displayStake');
+        const engineStatus = document.getElementById('engineStatus');
+        const playerStatus = document.getElementById('playerStatus');
+
+        // Setup Stake Radio logic
+        document.querySelectorAll('input[name="stake"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                stakeAmount = parseInt(e.target.value);
+                displayStake.innerText = `$${stakeAmount.toFixed(2)}`;
+                log(`Stake updated to: $${stakeAmount}`);
+            });
+        });
+
+        // Logger Helper
+        function log(msg, isError=false) {
+            const time = new Date().toLocaleTimeString();
+            const color = isError ? 'text-red-400' : 'text-gray-300';
+            apiLog.innerHTML += `<div class="mb-1"><span class="text-gray-600">[${time}]</span> <span class="${color}">${msg}</span></div>`;
+            apiLog.scrollTop = apiLog.scrollHeight;
+        }
+
+        // Lichess Cloud Eval API Fetcher
+        async function fetchLichessMove(fen) {
+            engineStatus.innerText = "Calculating (Lichess Cloud API)...";
+            log(`GET api/cloud-eval?fen=${encodeURIComponent(fen)}`);
+            
+            try {
+                const res = await fetch('https://lichess.org/api/cloud-eval?fen=' + encodeURIComponent(fen));
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.pvs && data.pvs.length > 0) {
+                        const bestUci = data.pvs[0].moves.split(' ')[0];
+                        log(`<span class="text-accent">Lichess API Success: found move ${bestUci} (Depth: ${data.depth})</span>`);
+                        return bestUci;
+                    } else {
+                        log('Position not found in Lichess cache. Looking for a fallback move.', true);
+                    }
+                } else {
+                    log(`API Error: No cloud evaluation (Code: ${res.status})`, true);
+                }
+            } catch (err) {
+                log('Network error while connecting to Lichess API.', true);
+            }
+
+            // Fallback engine for unknown positions
+            log('Using fallback local move generator.');
+            const moves = game.moves({ verbose: true });
+            if (moves.length > 0) {
+                const randomMove = moves[Math.floor(Math.random() * moves.length)];
+                return randomMove.from + randomMove.to + (randomMove.promotion ? randomMove.promotion : '');
+            }
+            return null;
+        }
+
+        // Make engine move
+        async function makeEngineMove() {
+            if (game.game_over()) {
+                handleGameOver();
+                return;
+            }
+
+            const fen = game.fen();
+            const uciMove = await fetchLichessMove(fen);
+            
+            if (uciMove) {
+                const from = uciMove.substring(0, 2);
+                const to = uciMove.substring(2, 4);
+                const promotion = uciMove.length > 4 ? uciMove.substring(4, 5) : undefined;
+                
+                game.move({ from, to, promotion });
+                board.position(game.fen());
+                
+                engineStatus.innerText = "Waiting for player...";
+                playerStatus.innerText = "Your turn";
+                
+                if (game.game_over()) handleGameOver();
+            }
+        }
+
+        // Board interaction logic
+        function onDragStart(source, piece, position, orientation) {
+            if (!matchActive) return false;
+            if (game.game_over()) return false;
+            // Allow only White (Player) to move
+            if (piece.search(/^b/) !== -1) return false;
+        }
+
+        function onDrop(source, target) {
+            // Check move validity
+            const move = game.move({
+                from: source,
+                to: target,
+                promotion: 'q' // Always promote to queen for simplicity in frontend
+            });
+
+            if (move === null) return 'snapback'; // Invalid move
+
+            playerStatus.innerText = "Waiting for Lichess Engine...";
+            
+            // Call Lichess engine
+            window.setTimeout(makeEngineMove, 400);
+        }
+
+        function onSnapEnd() {
+            board.position(game.fen());
+        }
+
+        function handleGameOver() {
+            matchActive = false;
+            resignBtn.disabled = true;
+            startBtn.disabled = false;
+            startBtn.innerText = "Play Again";
+
+            if (game.in_checkmate()) {
+                if (game.turn() === 'w') { // Black (Engine) checkmated
+                    log(`Game Over! You lost $${stakeAmount}.`, true);
+                    alert(`Checkmate! You lose $${stakeAmount}. The amount goes to your virtual teacher.`);
+                } else { // Player won
+                    log(`<span class="text-accent font-bold">Checkmate! You win! The game is FREE!</span>`);
+                    alert(`Congratulations! You defeated the engine. This lesson costs you nothing!`);
+                }
+            } else if (game.in_draw() || game.in_stalemate() || game.in_threefold_repetition()) {
+                log(`Game Over! Draw.`);
+                alert(`Draw! The game is canceled, no stake is deducted.`);
+            }
+        }
+
+        // Initialize Board
+        const config = {
+            draggable: true,
+            position: 'start',
+            onDragStart: onDragStart,
+            onDrop: onDrop,
+            onSnapEnd: onSnapEnd,
+            pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+        };
+        board = Chessboard('board', config);
+
+        // Control Buttons
+        startBtn.addEventListener('click', () => {
+            game.reset();
+            board.start();
+            matchActive = true;
+            startBtn.disabled = true;
+            resignBtn.disabled = false;
+            startBtn.innerText = "Game in progress...";
+            playerStatus.innerText = "Your turn";
+            log(`---- NEW GAME STARTED (Stake: $${stakeAmount}) ----`);
+        });
+
+        resignBtn.addEventListener('click', () => {
+            if (confirm(`Are you sure you want to resign and pay $${stakeAmount}?`)) {
+                matchActive = false;
+                startBtn.disabled = false;
+                resignBtn.disabled = true;
+                startBtn.innerText = "Play Again";
+                log(`Resigned. Lost $${stakeAmount}.`, true);
+                alert(`You resigned. The fee of $${stakeAmount} has been charged.`);
+            }
+        });
+        
+        // Window Resize fix for chessboard
+        window.addEventListener('resize', () => board.resize());
+
+    </script>
+</body>
+</html>
