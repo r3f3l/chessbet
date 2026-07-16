@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StakeChess | Win or Learn.</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chessboard.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
     <style>
         /* Lichess dark mode palette */
@@ -50,12 +52,22 @@
             height: 120px;
             overflow-y: auto;
         }
+        
+        /* Fixed board sizing to prevent layout collapse */
+        #board-container {
+            width: 100%;
+            max-width: 440px;
+            aspect-ratio: 1 / 1;
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between">
 
+    <!-- Top Navigation Header -->
     <header class="bg-[#161512] py-4 px-8 flex justify-between items-center max-w-7xl mx-auto w-full">
+        <!-- Logo -->
         <div class="flex items-center gap-2 cursor-pointer">
+            <!-- Knight Chess Piece SVG -->
             <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M19 22H5V20C5 20 5 16 9 15C9 15 7.5 14 7.5 11C7.5 8 9.5 5 12 5C14.5 5 16.5 8 16.5 11C16.5 14 15 15 15 15C19 16 19 20 19 20V22Z" />
                 <path d="M12 2V5" />
@@ -64,9 +76,352 @@
             <span class="text-xl font-semibold text-white tracking-tight">StakeChess</span>
         </div>
         
+        <!-- Navigation Links -->
         <nav class="flex items-center gap-8 text-sm font-normal text-gray-300">
             <a href="#" class="hover:text-white transition">Play</a>
             <a href="#" class="hover:text-white transition">Teachers</a>
             <a href="#" class="hover:text-white transition">Leaderboard</a>
             <a href="#" class="hover:text-white transition">Learn</a>
-            <a href="#" class="text-white hover
+            <a href="#" class="text-white hover:text-gray-300 transition pl-4 border-l border-gray-700">Sign in</a>
+        </nav>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="flex-grow w-full max-w-7xl mx-auto px-6 py-4 flex flex-col justify-center">
+        
+        <!-- Hero Titles -->
+        <div class="text-center mb-10 mt-6">
+            <h1 class="text-5xl md:text-6xl font-bold text-white tracking-tight mb-3">Win or Learn.</h1>
+            <p class="text-lg md:text-xl text-gray-400 font-light">Your brain learns best when the stakes are real.</p>
+        </div>
+
+        <!-- 3-Column Interactive Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start mb-12">
+            
+            <!-- Column 1: Chessboard (Left) -->
+            <div class="lg:col-span-5 flex flex-col justify-center items-center w-full">
+                <div id="board-container">
+                    <!-- Chess Board Element -->
+                    <div id="board" style="width: 100%;" class="shadow-2xl rounded overflow-hidden border border-[#363431]"></div>
+                    
+                    <!-- Player status indicators below board -->
+                    <div class="flex justify-between items-center mt-2 px-1 text-xs text-gray-400">
+                        <span id="player-indicator" class="flex items-center gap-1.5 text-accent">
+                            <span class="w-2 h-2 rounded-full bg-accent"></span> Your Turn (White)
+                        </span>
+                        <span id="opponent-indicator" class="flex items-center gap-1.5">
+                            Lichess Cloud Bot (Black)
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: How It Works (Middle) -->
+            <div class="lg:col-span-4 bg-[#262421]/40 border border-[#363431] rounded-xl p-6 md:p-8 flex flex-col justify-center lg:h-[440px]">
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1"><span class="text-amber-500 mr-1">1.</span> Set Your Price.</h3>
+                        <p class="text-sm text-gray-400 leading-relaxed">You decide how much a lesson is worth. Choose your stakes per game on the right.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1"><span class="text-amber-500 mr-1">2.</span> Play a Master.</h3>
+                        <p class="text-sm text-gray-400 leading-relaxed">Get matched instantly with verified, highly certified coaches and master bots.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1"><span class="text-amber-500 mr-1">3.</span> Win or Learn.</h3>
+                        <p class="text-sm text-gray-400 leading-relaxed">If you win, the game is 100% free. If you lose, you pay your custom lesson fee directly to the tutor. Emotion drives mastery.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 3: Set Your Stake & Match Selector (Right) -->
+            <div class="lg:col-span-3 bg-[#1e1d1a] border border-[#363431] rounded-xl p-6 flex flex-col justify-between lg:h-[440px] shadow-lg">
+                <div>
+                    <h4 class="text-xs font-semibold text-gray-400 tracking-wider uppercase mb-4 text-center">Set Your Stake & Match.</h4>
+                    
+                    <div class="space-y-3">
+                        <!-- Card 1: Beginner Tutors -->
+                        <div id="stake-2" onclick="setStake(2, 'stake-2')" class="gold-card rounded-lg p-3 cursor-pointer transition flex flex-col">
+                            <span class="text-sm font-bold tracking-tight">BEGINNER TUTORS</span>
+                            <span class="text-xs opacity-80 mt-0.5">($2 per game)</span>
+                        </div>
+
+                        <!-- Card 2: Club Players -->
+                        <div id="stake-5" onclick="setStake(5, 'stake-5')" class="inactive-card rounded-lg p-3 cursor-pointer transition flex flex-col">
+                            <span class="text-sm font-bold tracking-tight">CLUB PLAYERS</span>
+                            <span class="text-xs opacity-80 mt-0.5">($5 per game)</span>
+                        </div>
+
+                        <!-- Card 3: FIDE Masters -->
+                        <div id="stake-10" onclick="setStake(10, 'stake-10')" class="inactive-card rounded-lg p-3 cursor-pointer transition flex flex-col">
+                            <span class="text-sm font-bold tracking-tight">FIDE MASTERS</span>
+                            <span class="text-xs opacity-80 mt-0.5">($10 per game)</span>
+                        </div>
+
+                        <!-- Card 4: GMs & IMs -->
+                        <div id="stake-25" onclick="setStake(25, 'stake-25')" class="inactive-card rounded-lg p-3 cursor-pointer transition flex flex-col">
+                            <span class="text-sm font-bold tracking-tight">GMs & IMs</span>
+                            <span class="text-xs opacity-80 mt-0.5">($25 per game)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Stake Button -->
+                <button onclick="customStakePrompt()" class="w-full bg-accent hover:bg-opacity-90 text-white font-bold py-3.5 px-4 rounded-lg flex items-center justify-center gap-2 shadow-lg transition mt-4">
+                    <span>CUSTOM STAKE</span>
+                    <!-- Gear SVG Icon -->
+                    <svg class="w-4 h-4 text-white/90" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.532 1.532 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.532 1.532 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Live API & Game Logs -->
+        <div class="bg-[#1e1d1a] border border-[#363431] rounded-xl p-4 mb-12 max-w-4xl mx-auto w-full">
+            <div class="flex justify-between items-center border-b border-[#363431] pb-2 mb-2 font-mono text-xs text-gray-400">
+                <span class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-accent animate-pulse"></span> Lichess Cloud Eval API Connection
+                </span>
+                <span id="active-stake-display" class="text-amber-400 font-bold">Active Stake: $2.00</span>
+            </div>
+            <div id="apiLog" class="font-mono text-xs text-gray-400 log-panel space-y-1">
+                <div>[SYSTEM] StakeChess system loaded successfully. Choose your opponent level to begin.</div>
+                <div>[SYSTEM] Standard Lichess Cloud engine backup model enabled in case of database misses.</div>
+            </div>
+        </div>
+
+        <!-- Bottom Feature Highlights -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto text-center border-t border-[#363431]/60 pt-10 pb-6 w-full">
+            
+            <!-- Highlight 1 -->
+            <div class="flex flex-col items-center">
+                <div class="w-12 h-12 text-[#b58863] mb-4 flex items-center justify-center">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879-.659c1.546-1.16 3.694-1.16 5.24 0l.88.659m-5.24-4.364c1.546-1.16 3.694-1.16 5.24 0l.88.659m-5.24 4.364h2.182M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-white font-bold text-base uppercase tracking-wider mb-1">STAKE AND PLAY</h3>
+                <p class="text-xs text-gray-400 max-w-xs leading-relaxed">Play against a master. Lose and pay your stake, win and learn completely for free.</p>
+            </div>
+
+            <!-- Highlight 2 -->
+            <div class="flex flex-col items-center">
+                <div class="w-12 h-12 text-[#b58863] mb-4 flex items-center justify-center">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9l3 3m0 0l3-3m-3 3L1.5 12" />
+                    </svg>
+                </div>
+                <h3 class="text-white font-bold text-base uppercase tracking-wider mb-1">REAL-TIME ANALYSIS</h3>
+                <p class="text-xs text-gray-400 max-w-xs leading-relaxed">Every mistake is captured. Receive deep engine analytics immediately after the match concludes.</p>
+            </div>
+
+            <!-- Highlight 3 -->
+            <div class="flex flex-col items-center">
+                <div class="w-12 h-12 text-[#b58863] mb-4 flex items-center justify-center">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-white font-bold text-base uppercase tracking-wider mb-1">IMPROVE FAST</h3>
+                <p class="text-xs text-gray-400 max-w-xs leading-relaxed">Skin in the game raises focus. Your brain remembers and adapts instantly under genuine stakes.</p>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#161512] text-center py-6 text-xs text-gray-500 border-t border-[#363431]/20">
+        <p>&copy; 2026 StakeChess. Powered by Lichess Open API. Built for high-performance chess improvement.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    
+    <script>
+        // Global variables
+        let board = null;
+        let game = new Chess();
+        let currentStake = 2;
+        let gameActive = true;
+
+        // Log helper
+        function log(message, isError = false) {
+            const apiLog = document.getElementById('apiLog');
+            if (!apiLog) return;
+            const time = new Date().toLocaleTimeString();
+            const colorClass = isError ? 'text-red-400' : 'text-gray-300';
+            apiLog.innerHTML += `<div class="mb-1"><span class="text-gray-600">[${time}]</span> <span class="${colorClass}">${message}</span></div>`;
+            apiLog.scrollTop = apiLog.scrollHeight;
+        }
+
+        // Change Stake Levels dynamically
+        function setStake(amount, elementId) {
+            currentStake = amount;
+            const display = document.getElementById('active-stake-display');
+            if (display) display.innerText = `Active Stake: $${amount.toFixed(2)}`;
+            
+            // Re-style selection cards
+            document.querySelectorAll('[id^="stake-"]').forEach(el => {
+                el.className = 'inactive-card rounded-lg p-3 cursor-pointer transition flex flex-col';
+            });
+            document.getElementById(elementId).className = 'gold-card rounded-lg p-3 cursor-pointer transition flex flex-col';
+            
+            log(`STAKE UPDATE: Changed stake value to $${amount}.00.`);
+            resetGame();
+        }
+
+        // Custom Stake Popup
+        function customStakePrompt() {
+            const val = prompt("Enter your custom stake per game ($):", currentStake);
+            if (val && !isNaN(val) && parseFloat(val) > 0) {
+                const amount = parseFloat(val);
+                currentStake = amount;
+                const display = document.getElementById('active-stake-display');
+                if (display) display.innerText = `Active Stake: $${amount.toFixed(2)}`;
+                
+                // Set all pre-defined cards to inactive since we are on a custom stake
+                document.querySelectorAll('[id^="stake-"]').forEach(el => {
+                    el.className = 'inactive-card rounded-lg p-3 cursor-pointer transition flex flex-col';
+                });
+                
+                log(`STAKE UPDATE: Created custom game stake of $${amount.toFixed(2)}.`);
+                resetGame();
+            }
+        }
+
+        // Fetch Move from Lichess Cloud API
+        async function fetchLichessMove(fen) {
+            document.getElementById('opponent-indicator').innerText = "Calculating (Lichess Cloud API)...";
+            log(`API REQUEST: GET https://lichess.org/api/cloud-eval?fen=${encodeURIComponent(fen)}`);
+            
+            try {
+                const res = await fetch(`https://lichess.org/api/cloud-eval?fen=${encodeURIComponent(fen)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.pvs && data.pvs.length > 0) {
+                        const uciMove = data.pvs[0].moves.split(' ')[0];
+                        log(`API SUCCESS: Lichess Cloud response move "${uciMove}" at depth ${data.depth}.`);
+                        return uciMove;
+                    }
+                } else if (res.status === 404) {
+                    log(`API WARN (404): Position not in Lichess database. Instantly switching to local engine backup...`);
+                } else {
+                    log(`API ERROR (${res.status}): Engine request failed. Reverting to local fallback.`, true);
+                }
+            } catch (err) {
+                log(`API NETWORK ERROR: Connection failed. Reverting to local fallback.`, true);
+            }
+
+            // Fallback move generator
+            const moves = game.moves({ verbose: true });
+            if (moves.length > 0) {
+                const randomMove = moves[Math.floor(Math.random() * moves.length)];
+                return randomMove.from + randomMove.to + (randomMove.promotion ? randomMove.promotion : '');
+            }
+            return null;
+        }
+
+        // Process Bot Move
+        async function makeBotMove() {
+            if (game.game_over()) {
+                handleGameOver();
+                return;
+            }
+
+            const uciMove = await fetchLichessMove(game.fen());
+            if (uciMove) {
+                const from = uciMove.substring(0, 2);
+                const to = uciMove.substring(2, 4);
+                const promotion = uciMove.length > 4 ? uciMove.substring(4, 5) : undefined;
+
+                game.move({ from, to, promotion });
+                if(board) board.position(game.fen());
+                
+                document.getElementById('opponent-indicator').innerText = "Lichess Cloud Bot (Black)";
+                document.getElementById('player-indicator').className = "flex items-center gap-1.5 text-accent";
+                
+                if (game.game_over()) {
+                    handleGameOver();
+                }
+            }
+        }
+
+        // Drag/Drop Rules
+        function onDragStart(source, piece, position, orientation) {
+            if (!gameActive || game.game_over()) return false;
+            // Only allow dragging white pieces
+            if (piece.search(/^b/) !== -1) return false;
+        }
+
+        function onDrop(source, target) {
+            const move = game.move({
+                from: source,
+                to: target,
+                promotion: 'q' 
+            });
+
+            // Invalid move
+            if (move === null) return 'snapback';
+
+            document.getElementById('player-indicator').className = "flex items-center gap-1.5 text-gray-500";
+            window.setTimeout(makeBotMove, 400);
+        }
+
+        function onSnapEnd() {
+            if(board) board.position(game.fen());
+        }
+
+        // Handle game outcome & charge logic
+        function handleGameOver() {
+            gameActive = false;
+            if (game.in_checkmate()) {
+                if (game.turn() === 'w') {
+                    // Bot won
+                    log(`GAME OVER: Black (Bot) wins by Checkmate. Stake of $${currentStake.toFixed(2)} charged for the lesson.`, true);
+                    alert(`Checkmate! You lost this game. Your stake of $${currentStake.toFixed(2)} has been charged as a lesson fee.`);
+                } else {
+                    // Player won
+                    log(`GAME OVER: White (You) won by Checkmate! The lesson is entirely FREE.`, false);
+                    alert(`Congratulations! You won the match! No stake charged—your lesson is free!`);
+                }
+            } else {
+                log(`GAME OVER: Match ended in a draw/stalemate. No stake charged.`);
+                alert("Game ended in a draw! No stakes charged.");
+            }
+        }
+
+        // Reset game to start
+        function resetGame() {
+            game.reset();
+            if(board) board.start();
+            gameActive = true;
+            document.getElementById('player-indicator').className = "flex items-center gap-1.5 text-accent";
+            document.getElementById('opponent-indicator').innerText = "Lichess Cloud Bot (Black)";
+            log(`[GAME] Board reset. New match active.`);
+        }
+
+        // Render the board AFTER all HTML and CSS is fully loaded
+        window.addEventListener('load', function() {
+            const config = {
+                draggable: true,
+                position: 'start',
+                onDragStart: onDragStart,
+                onDrop: onDrop,
+                onSnapEnd: onSnapEnd,
+                pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+            };
+            board = Chessboard('board', config);
+            
+            // Adjust board resizing automatically
+            window.addEventListener('resize', () => {
+                if(board) board.resize();
+            });
+        });
+    </script>
+</body>
+</html>
