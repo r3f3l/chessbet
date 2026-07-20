@@ -229,11 +229,30 @@
             font-size: 1rem;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
         }
 
         .btn-primary:hover {
             background-color: var(--accent-gold-hover);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
         }
 
         .hero-balance {
@@ -271,7 +290,7 @@
             color: var(--text-muted);
         }
 
-        /* --- Grids & Cards --- */
+        /* --- Store Grids & Cards --- */
         .grid-4 {
             display: grid;
             grid-template-columns: repeat(1, 1fr);
@@ -279,13 +298,8 @@
             margin-bottom: 24px;
         }
 
-        @media (min-width: 640px) {
-            .grid-4 { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (min-width: 1024px) {
-            .grid-4 { grid-template-columns: repeat(4, 1fr); }
-        }
+        @media (min-width: 640px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .grid-4 { grid-template-columns: repeat(4, 1fr); } }
 
         .card {
             background-color: var(--bg-card);
@@ -313,30 +327,11 @@
         }
 
         .card-title { font-size: 1.4rem; margin-bottom: 8px; }
-        .card-desc {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 24px;
-            flex-grow: 1;
-        }
+        .card-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; flex-grow: 1; }
 
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .price {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent-gold);
-        }
-
-        .price span {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; }
+        .price { font-size: 1.5rem; font-weight: 700; color: var(--accent-gold); }
+        .price span { font-size: 0.8rem; color: var(--text-muted); font-weight: 400; }
 
         .grid-3 {
             display: grid;
@@ -344,32 +339,197 @@
             gap: 20px;
         }
 
-        @media (min-width: 768px) {
-            .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        @media (min-width: 768px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+
+        .info-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; }
+        .info-card i { color: var(--text-muted); margin-bottom: 12px; font-size: 1.2rem; }
+        .info-card h4 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 4px; }
+        .info-card p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* --- Arena Section Styles --- */
+        .arena-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
         }
 
-        .info-card {
+        .arena-tab {
+            background: none;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .arena-tab.active {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .arena-tab-badge {
+            background-color: var(--accent-gold);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .arena-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .arena-item {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 20px;
+            padding: 16px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: border-color 0.2s;
+        }
+        
+        @media (min-width: 768px) {
+            .arena-item {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                gap: 24px;
+            }
         }
 
-        .info-card i {
+        .arena-item:hover {
+            border-color: rgba(226, 179, 74, 0.4);
+        }
+
+        .match-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 2;
+        }
+
+        .match-player {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            flex: 1;
+        }
+        
+        .match-player i {
             color: var(--text-muted);
-            margin-bottom: 12px;
             font-size: 1.2rem;
+            background: rgba(255,255,255,0.05);
+            padding: 8px;
+            border-radius: 50%;
+        }
+        
+        .match-player .coach-avatar {
+            width: 32px;
+            height: 32px;
+            background-color: rgba(226, 179, 74, 0.2);
+            color: var(--accent-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
         }
 
-        .info-card h4 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
-            margin-bottom: 4px;
+        .player-rating {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 400;
+            margin-left: 6px;
         }
 
-        .info-card p {
+        .match-vs {
             color: var(--text-muted);
             font-size: 0.9rem;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .match-meta {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .match-meta-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .meta-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stake-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .match-action {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .live-indicator {
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+        
+        .waiting-indicator {
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .arena-content-pane {
+            display: none;
+        }
+        
+        .arena-content-pane.active {
+            display: flex;
         }
 
         /* --- Coaches Section --- */
@@ -389,13 +549,7 @@
             padding: 24px;
         }
 
-        .coach-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-        }
-
+        .coach-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
         .coach-profile { display: flex; gap: 16px; }
         .avatar {
             width: 48px;
@@ -429,66 +583,17 @@
             min-height: 65px;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .stat-box { background-color: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; }
+        .stat-label { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        .stat-value { font-size: 1.2rem; font-weight: 700; color: var(--accent-gold); }
+        .stat-sub { font-size: 0.75rem; color: var(--text-muted); font-weight: 400; }
 
-        .stat-box {
-            background-color: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
-        }
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+        .tag { background-color: rgba(255, 255, 255, 0.05); padding: 4px 12px; border-radius: 16px; font-size: 0.8rem; color: var(--text-main); }
 
-        .stat-label {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .stat-value {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--accent-gold);
-        }
-
-        .stat-sub {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
-
-        .tag {
-            background-color: rgba(255, 255, 255, 0.05);
-            padding: 4px 12px;
-            border-radius: 16px;
-            font-size: 0.8rem;
-            color: var(--text-main);
-        }
-
-        .coach-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn-challenge {
-            flex-grow: 1;
-            justify-content: center;
-        }
-
+        .coach-actions { display: flex; gap: 12px; }
+        .btn-challenge { flex-grow: 1; }
         .btn-link {
             background-color: transparent;
             border: 1px solid var(--border-color);
@@ -500,10 +605,7 @@
             align-items: center;
             justify-content: center;
         }
-
-        .btn-link:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
+        .btn-link:hover { background-color: rgba(255, 255, 255, 0.05); }
         
         /* --- Placeholder Pages Styling --- */
         .placeholder-view {
@@ -568,7 +670,7 @@
     <!-- Main Content Area -->
     <main class="container">
         
-        <!-- PAGE 1: STORE (Hero + Games) -->
+        <!-- PAGE 1: STORE -->
         <div id="view-store" class="page-view active">
             <section>
                 <div class="panel">
@@ -610,7 +712,6 @@
                             <button class="btn-primary btn-action-buy">Buy game</button>
                         </div>
                     </div>
-
                     <div class="card">
                         <div class="card-header">
                             <span class="card-icon">🔥</span>
@@ -623,7 +724,6 @@
                             <button class="btn-primary btn-action-buy">Buy game</button>
                         </div>
                     </div>
-
                     <div class="card">
                         <div class="card-header">
                             <span class="card-icon">🎯</span>
@@ -636,7 +736,6 @@
                             <button class="btn-primary btn-action-buy">Buy game</button>
                         </div>
                     </div>
-
                     <div class="card">
                         <div class="card-header">
                             <span class="card-icon">👑</span>
@@ -671,7 +770,182 @@
             </section>
         </div>
 
-        <!-- PAGE 2: COACHES -->
+        <!-- PAGE 2: ARENA -->
+        <div id="view-arena" class="page-view">
+            <section>
+                <div class="section-header">
+                    <h2 class="section-title">Arena Lobby</h2>
+                    <p class="section-subtitle">Watch live duels or pick up an open challenge.</p>
+                </div>
+
+                <div class="arena-tabs">
+                    <button class="arena-tab active" data-arena-pane="live">
+                        Live Matches <span class="arena-tab-badge">2</span>
+                    </button>
+                    <button class="arena-tab" data-arena-pane="open">
+                        Open Challenges <span class="arena-tab-badge">3</span>
+                    </button>
+                </div>
+
+                <!-- Live Matches Pane -->
+                <div class="arena-content-pane arena-list active" id="pane-live">
+                    
+                    <!-- Match 1 -->
+                    <div class="arena-item">
+                        <div class="match-info">
+                            <div class="match-player">
+                                <i class="fa-solid fa-user"></i> 
+                                <span>pawn_pusher99 <span class="player-rating">1340</span></span>
+                            </div>
+                            <div class="match-vs">vs</div>
+                            <div class="match-player">
+                                <div class="coach-avatar">R</div> 
+                                <span>r3f3l <span class="player-rating">1812</span></span>
+                            </div>
+                        </div>
+                        <div class="match-meta">
+                            <div class="match-meta-item">
+                                <span class="meta-label">Control</span>
+                                <span class="time-badge">15+10</span>
+                            </div>
+                            <div class="match-meta-item">
+                                <span class="meta-label">Stake</span>
+                                <span class="stake-value">$15.00</span>
+                            </div>
+                        </div>
+                        <div class="match-action">
+                            <span class="live-indicator"><i class="fa-solid fa-circle"></i> Live</span>
+                            <button class="btn-secondary" onclick="alert('Opening Lichess TV spectator view...')">
+                                <i class="fa-solid fa-eye"></i> Watch
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Match 2 -->
+                    <div class="arena-item">
+                        <div class="match-info">
+                            <div class="match-player">
+                                <i class="fa-solid fa-user"></i> 
+                                <span>knight_rider <span class="player-rating">1620</span></span>
+                            </div>
+                            <div class="match-vs">vs</div>
+                            <div class="match-player">
+                                <div class="coach-avatar">A</div> 
+                                <span>Anna Chess <span class="player-rating">1750</span></span>
+                            </div>
+                        </div>
+                        <div class="match-meta">
+                            <div class="match-meta-item">
+                                <span class="meta-label">Control</span>
+                                <span class="time-badge">5+10</span>
+                            </div>
+                            <div class="match-meta-item">
+                                <span class="meta-label">Stake</span>
+                                <span class="stake-value">$5.00</span>
+                            </div>
+                        </div>
+                        <div class="match-action">
+                            <span class="live-indicator"><i class="fa-solid fa-circle"></i> Live</span>
+                            <button class="btn-secondary" onclick="alert('Opening Lichess TV spectator view...')">
+                                <i class="fa-solid fa-eye"></i> Watch
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Open Challenges Pane -->
+                <div class="arena-content-pane arena-list" id="pane-open">
+                    
+                    <!-- Challenge 1 -->
+                    <div class="arena-item">
+                        <div class="match-info">
+                            <div class="match-player" style="flex: none; width: auto; padding-right: 20px;">
+                                <i class="fa-solid fa-user"></i> 
+                                <span>grandmaster_wannabe <span class="player-rating">1950</span></span>
+                            </div>
+                            <div class="waiting-indicator">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Waiting for a coach...
+                            </div>
+                        </div>
+                        <div class="match-meta">
+                            <div class="match-meta-item">
+                                <span class="meta-label">Control</span>
+                                <span class="time-badge">30+15</span>
+                            </div>
+                            <div class="match-meta-item">
+                                <span class="meta-label">Stake</span>
+                                <span class="stake-value">$30.00</span>
+                            </div>
+                        </div>
+                        <div class="match-action">
+                            <button class="btn-primary" onclick="alert('Challenge accepted! Opening Lichess integration...')">
+                                <i class="fa-solid fa-check"></i> Accept Challenge
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 2 -->
+                    <div class="arena-item">
+                        <div class="match-info">
+                            <div class="match-player" style="flex: none; width: auto; padding-right: 20px;">
+                                <i class="fa-solid fa-user"></i> 
+                                <span>blitz_king <span class="player-rating">1200</span></span>
+                            </div>
+                            <div class="waiting-indicator">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Waiting for a coach...
+                            </div>
+                        </div>
+                        <div class="match-meta">
+                            <div class="match-meta-item">
+                                <span class="meta-label">Control</span>
+                                <span class="time-badge">5+10</span>
+                            </div>
+                            <div class="match-meta-item">
+                                <span class="meta-label">Stake</span>
+                                <span class="stake-value">$5.00</span>
+                            </div>
+                        </div>
+                        <div class="match-action">
+                            <button class="btn-primary" onclick="alert('Challenge accepted! Opening Lichess integration...')">
+                                <i class="fa-solid fa-check"></i> Accept Challenge
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 3 -->
+                    <div class="arena-item">
+                        <div class="match-info">
+                            <div class="match-player" style="flex: none; width: auto; padding-right: 20px;">
+                                <i class="fa-solid fa-user"></i> 
+                                <span>checkmate_mate <span class="player-rating">1430</span></span>
+                            </div>
+                            <div class="waiting-indicator">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Waiting for a coach...
+                            </div>
+                        </div>
+                        <div class="match-meta">
+                            <div class="match-meta-item">
+                                <span class="meta-label">Control</span>
+                                <span class="time-badge">1+0</span>
+                            </div>
+                            <div class="match-meta-item">
+                                <span class="meta-label">Stake</span>
+                                <span class="stake-value">$1.00</span>
+                            </div>
+                        </div>
+                        <div class="match-action">
+                            <button class="btn-primary" onclick="alert('Challenge accepted! Opening Lichess integration...')">
+                                <i class="fa-solid fa-check"></i> Accept Challenge
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+        </div>
+
+        <!-- PAGE 3: COACHES -->
         <div id="view-coaches" class="page-view">
             <section>
                 <div class="section-header">
@@ -782,15 +1056,6 @@
             </section>
         </div>
 
-        <!-- PAGE 3: ARENA (Placeholder) -->
-        <div id="view-arena" class="page-view">
-            <section class="placeholder-view">
-                <i class="fa-solid fa-chess-board"></i>
-                <h2>Arena</h2>
-                <p>Welcome to the Arena. Here you will see active live matches and upcoming community tournaments. Currently in development.</p>
-            </section>
-        </div>
-
         <!-- PAGE 4: MY GAMES (Placeholder) -->
         <div id="view-mygames" class="page-view">
             <section class="placeholder-view">
@@ -808,7 +1073,7 @@
                 <p>Current balance: <strong>$24.00</strong></p>
                 <br>
                 <button class="btn-primary btn-action-topup"><i class="fa-solid fa-credit-card"></i> Deposit Funds</button>
-                <button class="btn-primary" style="background: transparent; border: 1px solid var(--border-color); color: white; margin-left: 10px;" onclick="alert('Withdrawal requires minimum $50 balance.')">Withdraw</button>
+                <button class="btn-secondary" style="margin-left: 10px;" onclick="alert('Withdrawal requires minimum $50 balance.')">Withdraw</button>
             </section>
         </div>
 
@@ -856,7 +1121,26 @@
                 });
             });
 
-            // 2. Specific Button Actions
+            // 2. Arena Internal Tabs Logic
+            const arenaTabs = document.querySelectorAll('.arena-tab');
+            const arenaPanes = document.querySelectorAll('.arena-content-pane');
+
+            arenaTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active from all tabs and panes
+                    arenaTabs.forEach(t => t.classList.remove('active'));
+                    arenaPanes.forEach(p => p.classList.remove('active'));
+
+                    // Add active to clicked tab
+                    tab.classList.add('active');
+
+                    // Show corresponding pane
+                    const targetPaneId = `pane-${tab.getAttribute('data-arena-pane')}`;
+                    document.getElementById(targetPaneId).classList.add('active');
+                });
+            });
+
+            // 3. Specific Button Actions
             const browseBtn = document.getElementById('btn-browse-challenges');
             if (browseBtn) {
                 browseBtn.addEventListener('click', () => {
