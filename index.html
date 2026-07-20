@@ -190,38 +190,6 @@
         }
 
         /* --- Hero Section --- */
-        .hero-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-        }
-
-        @media (min-width: 992px) {
-            .hero-panel {
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-            }
-            .hero-content {
-                flex: 1;
-                max-width: 55%;
-            }
-            .hero-image {
-                flex: 1;
-                display: flex;
-                justify-content: flex-end;
-            }
-        }
-
-        .hero-image img {
-            width: 100%;
-            max-width: 450px;
-            border-radius: 16px;
-            object-fit: cover;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-        }
-
         .hero-tag {
             display: inline-flex;
             align-items: center;
@@ -238,6 +206,7 @@
             font-size: 3.5rem;
             line-height: 1.1;
             margin-bottom: 20px;
+            max-width: 600px;
         }
 
         .hero-title span {
@@ -247,6 +216,7 @@
         .hero-desc {
             color: var(--text-muted);
             font-size: 1.1rem;
+            max-width: 600px;
             margin-bottom: 32px;
             line-height: 1.6;
         }
@@ -662,6 +632,15 @@
             margin: 0 auto;
         }
 
+        /* Game Embedded Iframe Container */
+        .game-container {
+            width: 100%;
+            height: 600px;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #23221f;
+        }
+
         footer {
             text-align: center;
             padding: 40px 0;
@@ -704,27 +683,22 @@
         <!-- PAGE 1: LESSONS (Landing Page) -->
         <div id="view-lessons" class="page-view active">
             <section>
-                <div class="panel hero-panel">
-                    <div class="hero-content">
-                        <div class="hero-tag">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Coaching through the thrill of duels
-                        </div>
-                        <h1 class="hero-title">
-                            Play a coach.<br>
-                            <span>Win — and get your money back.</span>
-                        </h1>
-                        <p class="hero-desc">
-                            Buy a lesson in your preferred time control. A strong coach accepts the lesson. If you beat the coach — your stake is refunded. If you lose — the coach earns compensation for their time.
-                        </p>
-                        <button class="btn-primary" onclick="document.getElementById('lesson-grid').scrollIntoView({behavior: 'smooth'})">
-                            <i class="fa-solid fa-swords"></i> Browse lessons
-                        </button>
-                        <div class="hero-balance">
-                            Balance: <span>$24.00</span> <span class="text-link" data-target="wallet">Top up</span>
-                        </div>
+                <div class="panel">
+                    <div class="hero-tag">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Coaching through the thrill of duels
                     </div>
-                    <div class="hero-image">
-                        <img src="ja na plazy.jpg" alt="Founder relaxing on the beach with a chess board">
+                    <h1 class="hero-title">
+                        Play a coach.<br>
+                        <span>Win — and get your money back.</span>
+                    </h1>
+                    <p class="hero-desc">
+                        Buy a lesson in your preferred time control. A strong coach accepts the lesson. If you beat the coach — your stake is refunded. If you draw or lose — the coach earns compensation for their time.
+                    </p>
+                    <button class="btn-primary" onclick="document.getElementById('lesson-grid').scrollIntoView({behavior: 'smooth'})">
+                        <i class="fa-solid fa-swords"></i> Browse lessons
+                    </button>
+                    <div class="hero-balance">
+                        Balance: <span>$24.00</span> <span class="text-link" data-target="wallet">Top up</span>
                     </div>
                 </div>
             </section>
@@ -800,7 +774,7 @@
                     <div class="info-card">
                         <i class="fa-solid fa-sack-dollar"></i>
                         <h4>Settle by result</h4>
-                        <p>Win = refund. Lose = payout to the coach.</p>
+                        <p>Win = refund. Draw/Lose = payout to the coach.</p>
                     </div>
                 </div>
             </section>
@@ -961,7 +935,7 @@
                         </div>
                         <div class="match-action">
                             <span class="live-indicator"><i class="fa-solid fa-circle"></i> Live</span>
-                            <button class="btn-secondary" onclick="alert('Opening Lichess TV spectator view...')">
+                            <button class="btn-secondary" data-target="game">
                                 <i class="fa-solid fa-eye"></i> Watch
                             </button>
                         </div>
@@ -991,7 +965,7 @@
                         </div>
                         <div class="match-action">
                             <span class="live-indicator"><i class="fa-solid fa-circle"></i> Live</span>
-                            <button class="btn-secondary" onclick="alert('Opening Lichess TV spectator view...')">
+                            <button class="btn-secondary" data-target="game">
                                 <i class="fa-solid fa-eye"></i> Watch
                             </button>
                         </div>
@@ -1022,7 +996,7 @@
                             </div>
                         </div>
                         <div class="match-action">
-                            <button class="btn-primary" onclick="alert('Lesson accepted! Opening Lichess integration...')">
+                            <button class="btn-primary" data-target="game">
                                 <i class="fa-solid fa-check"></i> Accept Lesson
                             </button>
                         </div>
@@ -1049,7 +1023,7 @@
                             </div>
                         </div>
                         <div class="match-action">
-                            <button class="btn-primary" onclick="alert('Lesson accepted! Opening Lichess integration...')">
+                            <button class="btn-primary" data-target="game">
                                 <i class="fa-solid fa-check"></i> Accept Lesson
                             </button>
                         </div>
@@ -1076,7 +1050,7 @@
                             </div>
                         </div>
                         <div class="match-action">
-                            <button class="btn-primary" onclick="alert('Lesson accepted! Opening Lichess integration...')">
+                            <button class="btn-primary" data-target="game">
                                 <i class="fa-solid fa-check"></i> Accept Lesson
                             </button>
                         </div>
@@ -1087,7 +1061,29 @@
             </section>
         </div>
 
-        <!-- PAGE 4: MY LESSONS (Placeholder) -->
+        <!-- PAGE 4: GAME VIEW -->
+        <div id="view-game" class="page-view">
+            <section>
+                <div class="section-header" style="display: flex; align-items: center; gap: 24px;">
+                    <button class="btn-secondary" data-target="arena">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Arena
+                    </button>
+                    <div>
+                        <h2 class="section-title" style="margin-bottom: 4px; font-size: 1.5rem;">Live Lesson Match</h2>
+                        <p class="section-subtitle">Gambit Integrated Player vs Lichess Platform</p>
+                    </div>
+                </div>
+
+                <div class="panel" style="display: flex; justify-content: center; padding: 20px; max-width: 800px; margin: 0 auto;">
+                    <div class="game-container">
+                        <!-- Embedded Lichess TV to simulate an active game -->
+                        <iframe src="https://lichess.org/tv/frame?theme=brown&bg=dark" style="width: 100%; height: 100%;" allowtransparency="true" frameborder="0"></iframe>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- PAGE 5: MY LESSONS (Placeholder) -->
         <div id="view-mylessons" class="page-view">
             <section class="placeholder-view">
                 <i class="fa-regular fa-clipboard"></i>
@@ -1096,7 +1092,7 @@
             </section>
         </div>
 
-        <!-- PAGE 5: WALLET (Placeholder) -->
+        <!-- PAGE 6: WALLET (Placeholder) -->
         <div id="view-wallet" class="page-view">
             <section class="placeholder-view">
                 <i class="fa-solid fa-vault"></i>
@@ -1118,39 +1114,46 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             // 1. Navigation Logic (SPA Routing)
-            const navTriggers = document.querySelectorAll('[data-target]');
-            const views = document.querySelectorAll('.page-view');
-            const navLinks = document.querySelectorAll('.nav-link');
+            // Re-query triggers inside a function to allow dynamic binding if needed,
+            // but since all HTML is loaded up front, we can bind once.
+            function bindNavigation() {
+                const navTriggers = document.querySelectorAll('[data-target]');
+                const views = document.querySelectorAll('.page-view');
+                const navLinks = document.querySelectorAll('.nav-link');
 
-            function switchView(targetId) {
-                // Hide all views
-                views.forEach(view => view.classList.remove('active'));
-                
-                // Show target view
-                const activeView = document.getElementById(`view-${targetId}`);
-                if (activeView) activeView.classList.add('active');
-
-                // Update active state on main navbar links
-                navLinks.forEach(link => {
-                    if (link.getAttribute('data-target') === targetId) {
-                        link.classList.add('active');
-                    } else {
-                        link.classList.remove('active');
-                    }
+                navTriggers.forEach(trigger => {
+                    // Remove existing listeners to prevent duplicates if re-binding
+                    trigger.replaceWith(trigger.cloneNode(true));
                 });
 
-                // Scroll to top
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                document.querySelectorAll('[data-target]').forEach(trigger => {
+                    trigger.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetId = trigger.getAttribute('data-target');
+                        
+                        // Hide all views
+                        views.forEach(view => view.classList.remove('active'));
+                        
+                        // Show target view
+                        const activeView = document.getElementById(`view-${targetId}`);
+                        if (activeView) activeView.classList.add('active');
+
+                        // Update active state on main navbar links
+                        navLinks.forEach(link => {
+                            if (link.getAttribute('data-target') === targetId) {
+                                link.classList.add('active');
+                            } else {
+                                link.classList.remove('active');
+                            }
+                        });
+
+                        // Scroll to top
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                });
             }
 
-            // Bind click events to anything with data-target
-            navTriggers.forEach(trigger => {
-                trigger.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const target = trigger.getAttribute('data-target');
-                    switchView(target);
-                });
-            });
+            bindNavigation();
 
             // 2. Arena Internal Tabs Logic
             const arenaTabs = document.querySelectorAll('.arena-tab');
