@@ -129,7 +129,7 @@
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
 
         .wallet-btn {
@@ -139,6 +139,7 @@
             padding: 6px 14px;
             border-radius: 20px;
             font-weight: 600;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -152,14 +153,26 @@
             color: var(--accent-gold);
         }
 
-        .logout-btn {
+        .icon-btn {
             color: var(--text-muted);
             background: none;
             font-size: 1.1rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .logout-btn:hover {
+        .icon-btn:hover {
+            color: var(--text-main);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .icon-btn.logout:hover {
             color: #ff5252;
+            background-color: rgba(255, 82, 82, 0.1);
         }
 
         /* --- SPA Pages System --- */
@@ -713,15 +726,26 @@
                 <span class="nav-link" data-target="coaches"><i class="fa-solid fa-user-group"></i> Coaches</span>
                 <span class="nav-link" data-target="arena"><i class="fa-solid fa-swords"></i> Arena</span>
                 <span class="nav-link" data-target="mylessons"><i class="fa-regular fa-clipboard"></i> My Lessons</span>
-                <span class="nav-link" data-target="wallet"><i class="fa-solid fa-wallet"></i> Wallet</span>
             </nav>
             <div class="nav-actions">
+                
+                <!-- Extra Nav Actions -->
+                <button class="btn-secondary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="alert('Opening login modal...')">
+                    Log in
+                </button>
+                <button class="wallet-btn" onclick="alert('Redirecting to Lichess OAuth to link account...')">
+                    <i class="fa-solid fa-link"></i> Link Lichess
+                </button>
                 <button class="wallet-btn" data-target="wallet">
                     <i class="fa-solid fa-wallet"></i> $24.00
                 </button>
-                <button class="logout-btn" onclick="alert('Logging out...')">
+                <button class="icon-btn" onclick="alert('Opening settings menu...')">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+                <button class="icon-btn logout" onclick="alert('Logging out...')">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 </button>
+                
             </div>
         </div>
     </header>
@@ -1237,19 +1261,21 @@
         document.addEventListener("DOMContentLoaded", () => {
             // 1. Navigation Logic (SPA Routing)
             function bindNavigation() {
-                const navTriggers = document.querySelectorAll('[data-target]');
                 const views = document.querySelectorAll('.page-view');
                 const navLinks = document.querySelectorAll('.nav-link');
 
-                navTriggers.forEach(trigger => {
-                    trigger.replaceWith(trigger.cloneNode(true));
-                });
-
                 document.querySelectorAll('[data-target]').forEach(trigger => {
-                    trigger.addEventListener('click', (e) => {
+                    // Always clear existing listener to prevent doubles during re-binding
+                    const newTrigger = trigger.cloneNode(true);
+                    trigger.replaceWith(newTrigger);
+
+                    newTrigger.addEventListener('click', (e) => {
                         e.preventDefault();
-                        const targetId = trigger.getAttribute('data-target');
+                        const targetNode = e.currentTarget;
+                        const targetId = targetNode.getAttribute('data-target');
                         
+                        if (!targetId) return;
+
                         // Hide all views
                         views.forEach(view => view.classList.remove('active'));
                         
