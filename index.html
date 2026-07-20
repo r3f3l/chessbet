@@ -532,7 +532,7 @@
             display: flex;
         }
 
-        /* --- Coaches Section --- */
+        /* --- Lessons Section (formerly Coaches) --- */
         .coach-grid {
             display: grid;
             grid-template-columns: repeat(1, 1fr);
@@ -593,7 +593,7 @@
         .tag { background-color: rgba(255, 255, 255, 0.05); padding: 4px 12px; border-radius: 16px; font-size: 0.8rem; color: var(--text-main); }
 
         .coach-actions { display: flex; gap: 12px; }
-        .btn-challenge { flex-grow: 1; }
+        .btn-lesson { flex-grow: 1; }
         .btn-link {
             background-color: transparent;
             border: 1px solid var(--border-color);
@@ -652,8 +652,8 @@
             <nav class="nav-links">
                 <span class="nav-link active" data-target="store"><i class="fa-solid fa-store"></i> Store</span>
                 <span class="nav-link" data-target="arena"><i class="fa-solid fa-swords"></i> Arena</span>
-                <span class="nav-link" data-target="coaches"><i class="fa-solid fa-user-group"></i> Coaches</span>
-                <span class="nav-link" data-target="mygames"><i class="fa-regular fa-clipboard"></i> My Games</span>
+                <span class="nav-link" data-target="lessons"><i class="fa-solid fa-user-group"></i> Lessons</span>
+                <span class="nav-link" data-target="mylessons"><i class="fa-regular fa-clipboard"></i> My Lessons</span>
                 <span class="nav-link" data-target="wallet"><i class="fa-solid fa-wallet"></i> Wallet</span>
             </nav>
             <div class="nav-actions">
@@ -682,10 +682,10 @@
                         <span>Win — and get your money back.</span>
                     </h1>
                     <p class="hero-desc">
-                        Buy a game in your preferred time control. A strong coach accepts the challenge. If you beat the coach — your stake is refunded. If you lose — the coach earns compensation for their time.
+                        Buy a lesson in your preferred time control. A strong coach accepts the lesson. If you beat the coach — your stake is refunded. If you lose — the coach earns compensation for their time.
                     </p>
-                    <button class="btn-primary" id="btn-browse-challenges">
-                        <i class="fa-solid fa-swords"></i> Browse challenges
+                    <button class="btn-primary" id="btn-browse-lessons">
+                        <i class="fa-solid fa-swords"></i> Browse lessons
                     </button>
                     <div class="hero-balance">
                         Balance: <span>$24.00</span> <span class="text-link" data-target="wallet">Top up</span>
@@ -695,7 +695,7 @@
 
             <section>
                 <div class="section-header">
-                    <h2 class="section-title">Choose a game</h2>
+                    <h2 class="section-title">Choose a lesson</h2>
                     <p class="section-subtitle">Four time controls — from lightning to classic.</p>
                 </div>
 
@@ -706,10 +706,10 @@
                             <span class="time-badge">1+0</span>
                         </div>
                         <h3 class="card-title">Bullet</h3>
-                        <p class="card-desc">Lightning-fast game — reflexes and intuition.</p>
+                        <p class="card-desc">Lightning-fast lesson — reflexes and intuition.</p>
                         <div class="card-footer">
-                            <div class="price">$1.00 <span>/ game</span></div>
-                            <button class="btn-primary btn-action-buy">Buy game</button>
+                            <div class="price">$1.00 <span>/ lesson</span></div>
+                            <button class="btn-primary btn-action-buy">Buy lesson</button>
                         </div>
                     </div>
                     <div class="card">
@@ -720,8 +720,8 @@
                         <h3 class="card-title">Blitz</h3>
                         <p class="card-desc">Adrenaline-fueled battle under time pressure.</p>
                         <div class="card-footer">
-                            <div class="price">$5.00 <span>/ game</span></div>
-                            <button class="btn-primary btn-action-buy">Buy game</button>
+                            <div class="price">$5.00 <span>/ lesson</span></div>
+                            <button class="btn-primary btn-action-buy">Buy lesson</button>
                         </div>
                     </div>
                     <div class="card">
@@ -732,8 +732,8 @@
                         <h3 class="card-title">Rapid</h3>
                         <p class="card-desc">Time for deeper analysis and learning.</p>
                         <div class="card-footer">
-                            <div class="price">$15.00 <span>/ game</span></div>
-                            <button class="btn-primary btn-action-buy">Buy game</button>
+                            <div class="price">$15.00 <span>/ lesson</span></div>
+                            <button class="btn-primary btn-action-buy">Buy lesson</button>
                         </div>
                     </div>
                     <div class="card">
@@ -744,8 +744,8 @@
                         <h3 class="card-title">Classical</h3>
                         <p class="card-desc">The classic — deep strategy and mastery.</p>
                         <div class="card-footer">
-                            <div class="price">$30.00 <span>/ game</span></div>
-                            <button class="btn-primary btn-action-buy">Buy game</button>
+                            <div class="price">$30.00 <span>/ lesson</span></div>
+                            <button class="btn-primary btn-action-buy">Buy lesson</button>
                         </div>
                     </div>
                 </div>
@@ -753,7 +753,7 @@
                 <div class="grid-3">
                     <div class="info-card">
                         <i class="fa-solid fa-chess-pawn"></i>
-                        <h4>You buy a game</h4>
+                        <h4>You buy a lesson</h4>
                         <p>The stake funds the platform wallet.</p>
                     </div>
                     <div class="info-card">
@@ -775,7 +775,7 @@
             <section>
                 <div class="section-header">
                     <h2 class="section-title">Arena Lobby</h2>
-                    <p class="section-subtitle">Watch live duels or pick up an open challenge.</p>
+                    <p class="section-subtitle">Watch live duels or pick up an open lesson.</p>
                 </div>
 
                 <div class="arena-tabs">
@@ -783,7 +783,7 @@
                         Live Matches <span class="arena-tab-badge">2</span>
                     </button>
                     <button class="arena-tab" data-arena-pane="open">
-                        Open Challenges <span class="arena-tab-badge">3</span>
+                        Open Lessons <span class="arena-tab-badge">3</span>
                     </button>
                 </div>
 
@@ -853,10 +853,10 @@
                     </div>
                 </div>
 
-                <!-- Open Challenges Pane -->
+                <!-- Open Lessons Pane -->
                 <div class="arena-content-pane arena-list" id="pane-open">
                     
-                    <!-- Challenge 1 -->
+                    <!-- Lesson 1 -->
                     <div class="arena-item">
                         <div class="match-info">
                             <div class="match-player" style="flex: none; width: auto; padding-right: 20px;">
@@ -878,13 +878,13 @@
                             </div>
                         </div>
                         <div class="match-action">
-                            <button class="btn-primary" onclick="alert('Challenge accepted! Opening Lichess integration...')">
-                                <i class="fa-solid fa-check"></i> Accept Challenge
+                            <button class="btn-primary" onclick="alert('Lesson accepted! Opening Lichess integration...')">
+                                <i class="fa-solid fa-check"></i> Accept Lesson
                             </button>
                         </div>
                     </div>
 
-                    <!-- Challenge 2 -->
+                    <!-- Lesson 2 -->
                     <div class="arena-item">
                         <div class="match-info">
                             <div class="match-player" style="flex: none; width: auto; padding-right: 20px;">
@@ -906,13 +906,13 @@
                             </div>
                         </div>
                         <div class="match-action">
-                            <button class="btn-primary" onclick="alert('Challenge accepted! Opening Lichess integration...')">
-                                <i class="fa-solid fa-check"></i> Accept Challenge
+                            <button class="btn-primary" onclick="alert('Lesson accepted! Opening Lichess integration...')">
+                                <i class="fa-solid fa-check"></i> Accept Lesson
                             </button>
                         </div>
                     </div>
 
-                    <!-- Challenge 3 -->
+                    <!-- Lesson 3 -->
                     <div class="arena-item">
                         <div class="match-info">
                             <div class="match-player" style="flex: none; width: auto; padding-right: 20px;">
@@ -934,8 +934,8 @@
                             </div>
                         </div>
                         <div class="match-action">
-                            <button class="btn-primary" onclick="alert('Challenge accepted! Opening Lichess integration...')">
-                                <i class="fa-solid fa-check"></i> Accept Challenge
+                            <button class="btn-primary" onclick="alert('Lesson accepted! Opening Lichess integration...')">
+                                <i class="fa-solid fa-check"></i> Accept Lesson
                             </button>
                         </div>
                     </div>
@@ -945,12 +945,12 @@
             </section>
         </div>
 
-        <!-- PAGE 3: COACHES -->
-        <div id="view-coaches" class="page-view">
+        <!-- PAGE 3: LESSONS -->
+        <div id="view-lessons" class="page-view">
             <section>
                 <div class="section-header">
-                    <h2 class="section-title">Coaches</h2>
-                    <p class="section-subtitle">Browse our coaches and challenge them to a game.</p>
+                    <h2 class="section-title">Lessons</h2>
+                    <p class="section-subtitle">Browse our coaches and request a lesson.</p>
                 </div>
 
                 <div class="coach-grid">
@@ -965,7 +965,7 @@
                             </div>
                             <span class="status-badge">Available</span>
                         </div>
-                        <p class="coach-bio">Passionate Rapid player focused on positional play and endgame technique. Always ready for a challenge.</p>
+                        <p class="coach-bio">Passionate Rapid player focused on positional play and endgame technique. Always ready for a lesson.</p>
                         <div class="stats-grid">
                             <div class="stat-box">
                                 <div class="stat-label"><i class="fa-regular fa-star"></i> Rating</div>
@@ -982,7 +982,7 @@
                             <span class="tag">Endgames</span>
                         </div>
                         <div class="coach-actions">
-                            <button class="btn-primary btn-challenge btn-action-challenge"><i class="fa-solid fa-swords"></i> Challenge</button>
+                            <button class="btn-primary btn-lesson btn-action-lesson"><i class="fa-solid fa-swords"></i> Lesson</button>
                             <button class="btn-link" onclick="alert('Opening Lichess profile...')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
                         </div>
                     </div>
@@ -1015,7 +1015,7 @@
                             <span class="tag">Opening Theory</span>
                         </div>
                         <div class="coach-actions">
-                            <button class="btn-primary btn-challenge btn-action-challenge"><i class="fa-solid fa-swords"></i> Challenge</button>
+                            <button class="btn-primary btn-lesson btn-action-lesson"><i class="fa-solid fa-swords"></i> Lesson</button>
                             <button class="btn-link" onclick="alert('Opening Lichess profile...')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
                         </div>
                     </div>
@@ -1048,7 +1048,7 @@
                             <span class="tag">Tactics</span>
                         </div>
                         <div class="coach-actions">
-                            <button class="btn-primary btn-challenge btn-action-challenge"><i class="fa-solid fa-swords"></i> Challenge</button>
+                            <button class="btn-primary btn-lesson btn-action-lesson"><i class="fa-solid fa-swords"></i> Lesson</button>
                             <button class="btn-link" onclick="alert('Opening Lichess profile...')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
                         </div>
                     </div>
@@ -1056,16 +1056,16 @@
             </section>
         </div>
 
-        <!-- PAGE 4: MY GAMES (Placeholder) -->
-        <div id="view-mygames" class="page-view">
+        <!-- PAGE 4: MY LESSONS -->
+        <div id="view-mylessons" class="page-view">
             <section class="placeholder-view">
                 <i class="fa-regular fa-clipboard"></i>
-                <h2>My Games</h2>
+                <h2>My Lessons</h2>
                 <p>Track your past coaching sessions, review PGNs from your duels, and manage active disputes regarding refunds.</p>
             </section>
         </div>
 
-        <!-- PAGE 5: WALLET (Placeholder) -->
+        <!-- PAGE 5: WALLET -->
         <div id="view-wallet" class="page-view">
             <section class="placeholder-view">
                 <i class="fa-solid fa-vault"></i>
@@ -1141,23 +1141,23 @@
             });
 
             // 3. Specific Button Actions
-            const browseBtn = document.getElementById('btn-browse-challenges');
+            const browseBtn = document.getElementById('btn-browse-lessons');
             if (browseBtn) {
                 browseBtn.addEventListener('click', () => {
-                    switchView('coaches');
+                    switchView('lessons');
                 });
             }
 
-            // Mock functionality for buy/challenge/topup
+            // Mock functionality for buy/lesson/topup
             document.querySelectorAll('.btn-action-buy').forEach(btn => {
                 btn.addEventListener('click', () => {
                     alert('Order confirmed! The stake has been reserved from your wallet. Waiting for a coach to accept...');
                 });
             });
 
-            document.querySelectorAll('.btn-action-challenge').forEach(btn => {
+            document.querySelectorAll('.btn-action-lesson').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    alert('Challenge request sent directly to the coach! You will be notified when they accept.');
+                    alert('Lesson request sent directly to the coach! You will be notified when they accept.');
                 });
             });
 
