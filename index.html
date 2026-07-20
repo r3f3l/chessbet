@@ -37,7 +37,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        h1, h2, h3 {
+        h1, h2, h3, h4 {
             font-family: 'Playfair Display', serif;
             font-weight: 700;
         }
@@ -85,6 +85,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            cursor: pointer;
         }
 
         .logo i {
@@ -111,6 +112,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            cursor: pointer;
         }
 
         .nav-link:hover {
@@ -140,6 +142,10 @@
             align-items: center;
             gap: 8px;
         }
+        
+        .wallet-btn:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
 
         .wallet-btn i {
             color: var(--accent-gold);
@@ -149,6 +155,25 @@
             color: var(--text-muted);
             background: none;
             font-size: 1.1rem;
+        }
+
+        .logout-btn:hover {
+            color: #ff5252;
+        }
+
+        /* --- SPA Pages System --- */
+        .page-view {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* --- Main Content Wrappers --- */
@@ -222,12 +247,17 @@
             font-weight: 600;
         }
 
-        .hero-balance a {
+        .text-link {
             color: var(--accent-gold);
             margin-left: 8px;
+            cursor: pointer;
+        }
+        
+        .text-link:hover {
+            text-decoration: underline;
         }
 
-        /* --- Store Section --- */
+        /* --- Sections Shared --- */
         .section-header {
             margin-bottom: 32px;
         }
@@ -241,6 +271,7 @@
             color: var(--text-muted);
         }
 
+        /* --- Grids & Cards --- */
         .grid-4 {
             display: grid;
             grid-template-columns: repeat(1, 1fr);
@@ -272,10 +303,7 @@
             margin-bottom: 16px;
         }
 
-        .card-icon {
-            font-size: 1.5rem;
-        }
-
+        .card-icon { font-size: 1.5rem; }
         .time-badge {
             background-color: rgba(255, 255, 255, 0.1);
             padding: 4px 10px;
@@ -284,11 +312,7 @@
             color: var(--text-muted);
         }
 
-        .card-title {
-            font-size: 1.4rem;
-            margin-bottom: 8px;
-        }
-
+        .card-title { font-size: 1.4rem; margin-bottom: 8px; }
         .card-desc {
             color: var(--text-muted);
             font-size: 0.9rem;
@@ -355,13 +379,8 @@
             gap: 24px;
         }
 
-        @media (min-width: 768px) {
-            .coach-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (min-width: 1024px) {
-            .coach-grid { grid-template-columns: repeat(3, 1fr); }
-        }
+        @media (min-width: 768px) { .coach-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .coach-grid { grid-template-columns: repeat(3, 1fr); } }
 
         .coach-card {
             background-color: var(--bg-card);
@@ -377,11 +396,7 @@
             margin-bottom: 20px;
         }
 
-        .coach-profile {
-            display: flex;
-            gap: 16px;
-        }
-
+        .coach-profile { display: flex; gap: 16px; }
         .avatar {
             width: 48px;
             height: 48px;
@@ -395,16 +410,8 @@
             font-size: 1.2rem;
         }
 
-        .coach-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-        }
-
-        .coach-title {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
+        .coach-name { font-size: 1.2rem; }
+        .coach-title { color: var(--text-muted); font-size: 0.85rem; }
         .status-badge {
             background-color: var(--status-green-bg);
             color: #4ade80;
@@ -497,12 +504,38 @@
         .btn-link:hover {
             background-color: rgba(255, 255, 255, 0.05);
         }
+        
+        /* --- Placeholder Pages Styling --- */
+        .placeholder-view {
+            text-align: center;
+            padding: 100px 0;
+        }
+        
+        .placeholder-view i {
+            font-size: 4rem;
+            color: var(--border-color);
+            margin-bottom: 24px;
+        }
+        
+        .placeholder-view h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+        
+        .placeholder-view p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
 
         footer {
             text-align: center;
             padding: 40px 0;
             color: var(--text-muted);
             font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
         }
     </style>
 </head>
@@ -511,253 +544,346 @@
     <!-- Header / Navbar -->
     <header>
         <div class="container navbar">
-            <div class="logo">
+            <div class="logo" data-target="store">
                 <i class="fa-solid fa-chess-knight"></i> Gambit.
             </div>
             <nav class="nav-links">
-                <a href="#" class="nav-link"><i class="fa-solid fa-store"></i> Store</a>
-                <a href="#" class="nav-link"><i class="fa-solid fa-swords"></i> Arena</a>
-                <a href="#" class="nav-link active"><i class="fa-solid fa-user-group"></i> Coaches</a>
-                <a href="#" class="nav-link"><i class="fa-regular fa-clipboard"></i> My Games</a>
-                <a href="#" class="nav-link"><i class="fa-solid fa-wallet"></i> Wallet</a>
+                <span class="nav-link active" data-target="store"><i class="fa-solid fa-store"></i> Store</span>
+                <span class="nav-link" data-target="arena"><i class="fa-solid fa-swords"></i> Arena</span>
+                <span class="nav-link" data-target="coaches"><i class="fa-solid fa-user-group"></i> Coaches</span>
+                <span class="nav-link" data-target="mygames"><i class="fa-regular fa-clipboard"></i> My Games</span>
+                <span class="nav-link" data-target="wallet"><i class="fa-solid fa-wallet"></i> Wallet</span>
             </nav>
             <div class="nav-actions">
-                <button class="wallet-btn">
+                <button class="wallet-btn" data-target="wallet">
                     <i class="fa-solid fa-wallet"></i> $24.00
                 </button>
-                <button class="logout-btn">
+                <button class="logout-btn" onclick="alert('Logging out...')">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Main Content Area -->
     <main class="container">
         
-        <!-- Screen 1: Hero Section -->
-        <section>
-            <div class="panel">
-                <div class="hero-tag">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Coaching through the thrill of duels
-                </div>
-                <h1 class="hero-title">
-                    Play a coach.<br>
-                    <span>Win — and get your money back.</span>
-                </h1>
-                <p class="hero-desc">
-                    Buy a game in your preferred time control. A strong coach accepts the challenge. If you beat the coach — your stake is refunded. If you lose — the coach earns compensation for their time.
-                </p>
-                <button class="btn-primary">
-                    <i class="fa-solid fa-swords"></i> Browse challenges
-                </button>
-                <div class="hero-balance">
-                    Balance: <span>$24.00</span> <a href="#">Top up</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Screen 2: Choose a game -->
-        <section>
-            <div class="section-header">
-                <h2 class="section-title">Choose a game</h2>
-                <p class="section-subtitle">Four time controls — from lightning to classic.</p>
-            </div>
-
-            <div class="grid-4">
-                <!-- Bullet -->
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-icon">⚡</span>
-                        <span class="time-badge">1+0</span>
+        <!-- PAGE 1: STORE (Hero + Games) -->
+        <div id="view-store" class="page-view active">
+            <section>
+                <div class="panel">
+                    <div class="hero-tag">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Coaching through the thrill of duels
                     </div>
-                    <h3 class="card-title">Bullet</h3>
-                    <p class="card-desc">Lightning-fast game — reflexes and intuition.</p>
-                    <div class="card-footer">
-                        <div class="price">$1.00 <span>/ game</span></div>
-                        <button class="btn-primary">Buy game</button>
+                    <h1 class="hero-title">
+                        Play a coach.<br>
+                        <span>Win — and get your money back.</span>
+                    </h1>
+                    <p class="hero-desc">
+                        Buy a game in your preferred time control. A strong coach accepts the challenge. If you beat the coach — your stake is refunded. If you lose — the coach earns compensation for their time.
+                    </p>
+                    <button class="btn-primary" id="btn-browse-challenges">
+                        <i class="fa-solid fa-swords"></i> Browse challenges
+                    </button>
+                    <div class="hero-balance">
+                        Balance: <span>$24.00</span> <span class="text-link" data-target="wallet">Top up</span>
                     </div>
                 </div>
+            </section>
 
-                <!-- Blitz -->
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-icon">🔥</span>
-                        <span class="time-badge">5+10</span>
+            <section>
+                <div class="section-header">
+                    <h2 class="section-title">Choose a game</h2>
+                    <p class="section-subtitle">Four time controls — from lightning to classic.</p>
+                </div>
+
+                <div class="grid-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-icon">⚡</span>
+                            <span class="time-badge">1+0</span>
+                        </div>
+                        <h3 class="card-title">Bullet</h3>
+                        <p class="card-desc">Lightning-fast game — reflexes and intuition.</p>
+                        <div class="card-footer">
+                            <div class="price">$1.00 <span>/ game</span></div>
+                            <button class="btn-primary btn-action-buy">Buy game</button>
+                        </div>
                     </div>
-                    <h3 class="card-title">Blitz</h3>
-                    <p class="card-desc">Adrenaline-fueled battle under time pressure.</p>
-                    <div class="card-footer">
-                        <div class="price">$5.00 <span>/ game</span></div>
-                        <button class="btn-primary">Buy game</button>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-icon">🔥</span>
+                            <span class="time-badge">5+10</span>
+                        </div>
+                        <h3 class="card-title">Blitz</h3>
+                        <p class="card-desc">Adrenaline-fueled battle under time pressure.</p>
+                        <div class="card-footer">
+                            <div class="price">$5.00 <span>/ game</span></div>
+                            <button class="btn-primary btn-action-buy">Buy game</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-icon">🎯</span>
+                            <span class="time-badge">15+10</span>
+                        </div>
+                        <h3 class="card-title">Rapid</h3>
+                        <p class="card-desc">Time for deeper analysis and learning.</p>
+                        <div class="card-footer">
+                            <div class="price">$15.00 <span>/ game</span></div>
+                            <button class="btn-primary btn-action-buy">Buy game</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-icon">👑</span>
+                            <span class="time-badge">30+15</span>
+                        </div>
+                        <h3 class="card-title">Classical</h3>
+                        <p class="card-desc">The classic — deep strategy and mastery.</p>
+                        <div class="card-footer">
+                            <div class="price">$30.00 <span>/ game</span></div>
+                            <button class="btn-primary btn-action-buy">Buy game</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Rapid -->
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-icon">🎯</span>
-                        <span class="time-badge">15+10</span>
+                <div class="grid-3">
+                    <div class="info-card">
+                        <i class="fa-solid fa-chess-pawn"></i>
+                        <h4>You buy a game</h4>
+                        <p>The stake funds the platform wallet.</p>
                     </div>
-                    <h3 class="card-title">Rapid</h3>
-                    <p class="card-desc">Time for deeper analysis and learning.</p>
-                    <div class="card-footer">
-                        <div class="price">$15.00 <span>/ game</span></div>
-                        <button class="btn-primary">Buy game</button>
+                    <div class="info-card">
+                        <i class="fa-solid fa-swords"></i>
+                        <h4>A coach accepts</h4>
+                        <p>You play on Lichess in the chosen time control.</p>
                     </div>
-                </div>
-
-                <!-- Classical -->
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-icon">👑</span>
-                        <span class="time-badge">30+15</span>
-                    </div>
-                    <h3 class="card-title">Classical</h3>
-                    <p class="card-desc">The classic — deep strategy and mastery.</p>
-                    <div class="card-footer">
-                        <div class="price">$30.00 <span>/ game</span></div>
-                        <button class="btn-primary">Buy game</button>
+                    <div class="info-card">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                        <h4>Settle by result</h4>
+                        <p>Win = refund. Lose = payout to the coach.</p>
                     </div>
                 </div>
-            </div>
+            </section>
+        </div>
 
-            <div class="grid-3">
-                <div class="info-card">
-                    <i class="fa-solid fa-chess-pawn"></i>
-                    <h4>You buy a game</h4>
-                    <p>The stake funds the platform wallet.</p>
+        <!-- PAGE 2: COACHES -->
+        <div id="view-coaches" class="page-view">
+            <section>
+                <div class="section-header">
+                    <h2 class="section-title">Coaches</h2>
+                    <p class="section-subtitle">Browse our coaches and challenge them to a game.</p>
                 </div>
-                <div class="info-card">
-                    <i class="fa-solid fa-swords"></i>
-                    <h4>A coach accepts</h4>
-                    <p>You play on Lichess in the chosen time control.</p>
-                </div>
-                <div class="info-card">
-                    <i class="fa-solid fa-sack-dollar"></i>
-                    <h4>Settle by result</h4>
-                    <p>Win = refund. Lose = payout to the coach.</p>
-                </div>
-            </div>
-        </section>
 
-        <!-- Screen 3: Coaches -->
-        <section>
-            <div class="section-header">
-                <h2 class="section-title">Coaches</h2>
-                <p class="section-subtitle">Browse our coaches and challenge them to a game.</p>
-            </div>
-
-            <div class="coach-grid">
-                <!-- Coach 1 -->
-                <div class="coach-card">
-                    <div class="coach-header">
-                        <div class="coach-profile">
-                            <div class="avatar">R</div>
-                            <div>
-                                <h3 class="coach-name">r3f3l</h3>
-                                <div class="coach-title">Rapid Specialist</div>
+                <div class="coach-grid">
+                    <div class="coach-card">
+                        <div class="coach-header">
+                            <div class="coach-profile">
+                                <div class="avatar">R</div>
+                                <div>
+                                    <h3 class="coach-name">r3f3l</h3>
+                                    <div class="coach-title">Rapid Specialist</div>
+                                </div>
+                            </div>
+                            <span class="status-badge">Available</span>
+                        </div>
+                        <p class="coach-bio">Passionate Rapid player focused on positional play and endgame technique. Always ready for a challenge.</p>
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <div class="stat-label"><i class="fa-regular fa-star"></i> Rating</div>
+                                <div class="stat-value">1812.51 <span class="stat-sub"><br>Rapid</span></div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label"><i class="fa-solid fa-arrow-trend-up"></i> Percentile</div>
+                                <div class="stat-value">83.4% <span class="stat-sub"><br>of Rapid players</span></div>
                             </div>
                         </div>
-                        <span class="status-badge">Available</span>
-                    </div>
-                    <p class="coach-bio">Passionate Rapid player focused on positional play and endgame technique. Always ready for a challenge.</p>
-                    <div class="stats-grid">
-                        <div class="stat-box">
-                            <div class="stat-label"><i class="fa-regular fa-star"></i> Rating</div>
-                            <div class="stat-value">1812.51 <span class="stat-sub"><br>Rapid</span></div>
+                        <div class="tags">
+                            <span class="tag">Rapid</span>
+                            <span class="tag">Positional Play</span>
+                            <span class="tag">Endgames</span>
                         </div>
-                        <div class="stat-box">
-                            <div class="stat-label"><i class="fa-solid fa-arrow-trend-up"></i> Percentile</div>
-                            <div class="stat-value">83.4% <span class="stat-sub"><br>of Rapid players</span></div>
+                        <div class="coach-actions">
+                            <button class="btn-primary btn-challenge btn-action-challenge"><i class="fa-solid fa-swords"></i> Challenge</button>
+                            <button class="btn-link" onclick="alert('Opening Lichess profile...')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
                         </div>
                     </div>
-                    <div class="tags">
-                        <span class="tag">Rapid</span>
-                        <span class="tag">Positional Play</span>
-                        <span class="tag">Endgames</span>
-                    </div>
-                    <div class="coach-actions">
-                        <button class="btn-primary btn-challenge"><i class="fa-solid fa-swords"></i> Challenge</button>
-                        <button class="btn-link"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
-                    </div>
-                </div>
 
-                <!-- Coach 2 -->
-                <div class="coach-card">
-                    <div class="coach-header">
-                        <div class="coach-profile">
-                            <div class="avatar">D</div>
-                            <div>
-                                <h3 class="coach-name">Dr. Nyerstein</h3>
-                                <div class="coach-title">Classical Strategist</div>
+                    <div class="coach-card">
+                        <div class="coach-header">
+                            <div class="coach-profile">
+                                <div class="avatar">D</div>
+                                <div>
+                                    <h3 class="coach-name">Dr. Nyerstein</h3>
+                                    <div class="coach-title">Classical Strategist</div>
+                                </div>
+                            </div>
+                            <span class="status-badge">Available</span>
+                        </div>
+                        <p class="coach-bio">Classical chess enthusiast with a love for sharp tactical lines and deep preparation.</p>
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <div class="stat-label"><i class="fa-regular fa-star"></i> Rating</div>
+                                <div class="stat-value">2104 <span class="stat-sub"><br>Classical</span></div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label"><i class="fa-solid fa-arrow-trend-up"></i> Percentile</div>
+                                <div class="stat-value">94.2% <span class="stat-sub"><br>of Classical players</span></div>
                             </div>
                         </div>
-                        <span class="status-badge">Available</span>
-                    </div>
-                    <p class="coach-bio">Classical chess enthusiast with a love for sharp tactical lines and deep preparation.</p>
-                    <div class="stats-grid">
-                        <div class="stat-box">
-                            <div class="stat-label"><i class="fa-regular fa-star"></i> Rating</div>
-                            <div class="stat-value">2104 <span class="stat-sub"><br>Classical</span></div>
+                        <div class="tags">
+                            <span class="tag">Classical</span>
+                            <span class="tag">Tactics</span>
+                            <span class="tag">Opening Theory</span>
                         </div>
-                        <div class="stat-box">
-                            <div class="stat-label"><i class="fa-solid fa-arrow-trend-up"></i> Percentile</div>
-                            <div class="stat-value">94.2% <span class="stat-sub"><br>of Classical players</span></div>
+                        <div class="coach-actions">
+                            <button class="btn-primary btn-challenge btn-action-challenge"><i class="fa-solid fa-swords"></i> Challenge</button>
+                            <button class="btn-link" onclick="alert('Opening Lichess profile...')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
                         </div>
                     </div>
-                    <div class="tags">
-                        <span class="tag">Classical</span>
-                        <span class="tag">Tactics</span>
-                        <span class="tag">Opening Theory</span>
-                    </div>
-                    <div class="coach-actions">
-                        <button class="btn-primary btn-challenge"><i class="fa-solid fa-swords"></i> Challenge</button>
-                        <button class="btn-link"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
-                    </div>
-                </div>
 
-                <!-- Coach 3 -->
-                <div class="coach-card">
-                    <div class="coach-header">
-                        <div class="coach-profile">
-                            <div class="avatar">A</div>
-                            <div>
-                                <h3 class="coach-name">Anna Chess</h3>
-                                <div class="coach-title">Blitz Tactician</div>
+                    <div class="coach-card">
+                        <div class="coach-header">
+                            <div class="coach-profile">
+                                <div class="avatar">A</div>
+                                <div>
+                                    <h3 class="coach-name">Anna Chess</h3>
+                                    <div class="coach-title">Blitz Tactician</div>
+                                </div>
+                            </div>
+                            <span class="status-badge">Available</span>
+                        </div>
+                        <p class="coach-bio">Blitz specialist who thrives in fast-paced games. Great at helping you improve your intuition.</p>
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <div class="stat-label"><i class="fa-regular fa-star"></i> Rating</div>
+                                <div class="stat-value">1750 <span class="stat-sub"><br>Blitz</span></div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label"><i class="fa-solid fa-arrow-trend-up"></i> Percentile</div>
+                                <div class="stat-value">78.5% <span class="stat-sub"><br>of Blitz players</span></div>
                             </div>
                         </div>
-                        <span class="status-badge">Available</span>
-                    </div>
-                    <p class="coach-bio">Blitz specialist who thrives in fast-paced games. Great at helping you improve your intuition.</p>
-                    <div class="stats-grid">
-                        <div class="stat-box">
-                            <div class="stat-label"><i class="fa-regular fa-star"></i> Rating</div>
-                            <div class="stat-value">1750 <span class="stat-sub"><br>Blitz</span></div>
+                        <div class="tags">
+                            <span class="tag">Blitz</span>
+                            <span class="tag">Bullet</span>
+                            <span class="tag">Tactics</span>
                         </div>
-                        <div class="stat-box">
-                            <div class="stat-label"><i class="fa-solid fa-arrow-trend-up"></i> Percentile</div>
-                            <div class="stat-value">78.5% <span class="stat-sub"><br>of Blitz players</span></div>
+                        <div class="coach-actions">
+                            <button class="btn-primary btn-challenge btn-action-challenge"><i class="fa-solid fa-swords"></i> Challenge</button>
+                            <button class="btn-link" onclick="alert('Opening Lichess profile...')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
                         </div>
-                    </div>
-                    <div class="tags">
-                        <span class="tag">Blitz</span>
-                        <span class="tag">Bullet</span>
-                        <span class="tag">Tactics</span>
-                    </div>
-                    <div class="coach-actions">
-                        <button class="btn-primary btn-challenge"><i class="fa-solid fa-swords"></i> Challenge</button>
-                        <button class="btn-link"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
+
+        <!-- PAGE 3: ARENA (Placeholder) -->
+        <div id="view-arena" class="page-view">
+            <section class="placeholder-view">
+                <i class="fa-solid fa-chess-board"></i>
+                <h2>Arena</h2>
+                <p>Welcome to the Arena. Here you will see active live matches and upcoming community tournaments. Currently in development.</p>
+            </section>
+        </div>
+
+        <!-- PAGE 4: MY GAMES (Placeholder) -->
+        <div id="view-mygames" class="page-view">
+            <section class="placeholder-view">
+                <i class="fa-regular fa-clipboard"></i>
+                <h2>My Games</h2>
+                <p>Track your past coaching sessions, review PGNs from your duels, and manage active disputes regarding refunds.</p>
+            </section>
+        </div>
+
+        <!-- PAGE 5: WALLET (Placeholder) -->
+        <div id="view-wallet" class="page-view">
+            <section class="placeholder-view">
+                <i class="fa-solid fa-vault"></i>
+                <h2>Wallet Dashboard</h2>
+                <p>Current balance: <strong>$24.00</strong></p>
+                <br>
+                <button class="btn-primary btn-action-topup"><i class="fa-solid fa-credit-card"></i> Deposit Funds</button>
+                <button class="btn-primary" style="background: transparent; border: 1px solid var(--border-color); color: white; margin-left: 10px;" onclick="alert('Withdrawal requires minimum $50 balance.')">Withdraw</button>
+            </section>
+        </div>
 
     </main>
 
     <footer>
         Gambit · Chess coaching through the thrill of duels ♟
     </footer>
+
+    <!-- INTERACTIVITY SCRIPT -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // 1. Navigation Logic (SPA Routing)
+            const navTriggers = document.querySelectorAll('[data-target]');
+            const views = document.querySelectorAll('.page-view');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            function switchView(targetId) {
+                // Hide all views
+                views.forEach(view => view.classList.remove('active'));
+                
+                // Show target view
+                const activeView = document.getElementById(`view-${targetId}`);
+                if (activeView) activeView.classList.add('active');
+
+                // Update active state on main navbar links
+                navLinks.forEach(link => {
+                    if (link.getAttribute('data-target') === targetId) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Bind click events to anything with data-target
+            navTriggers.forEach(trigger => {
+                trigger.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = trigger.getAttribute('data-target');
+                    switchView(target);
+                });
+            });
+
+            // 2. Specific Button Actions
+            const browseBtn = document.getElementById('btn-browse-challenges');
+            if (browseBtn) {
+                browseBtn.addEventListener('click', () => {
+                    switchView('coaches');
+                });
+            }
+
+            // Mock functionality for buy/challenge/topup
+            document.querySelectorAll('.btn-action-buy').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    alert('Order confirmed! The stake has been reserved from your wallet. Waiting for a coach to accept...');
+                });
+            });
+
+            document.querySelectorAll('.btn-action-challenge').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    alert('Challenge request sent directly to the coach! You will be notified when they accept.');
+                });
+            });
+
+            document.querySelectorAll('.btn-action-topup').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    alert('Redirecting to Stripe payment gateway to process your top-up...');
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>
