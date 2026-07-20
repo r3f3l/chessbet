@@ -36,6 +36,13 @@
             color: var(--text-main);
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
+            padding-bottom: 70px; /* Miejsce na mobilne menu */
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding-bottom: 0; /* Reset na desktopie */
+            }
         }
 
         h1, h2, h3, h4 {
@@ -62,7 +69,7 @@
             padding: 0 20px;
         }
 
-        /* --- Navbar --- */
+        /* --- Navbar (Top) --- */
         header {
             border-bottom: 1px solid var(--border-color);
             position: sticky;
@@ -129,7 +136,13 @@
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .nav-actions {
+                gap: 12px;
+            }
         }
 
         .wallet-btn {
@@ -175,6 +188,53 @@
             background-color: rgba(255, 82, 82, 0.1);
         }
 
+        /* --- Mobile Bottom Nav --- */
+        .mobile-nav {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-panel);
+            border-top: 1px solid var(--border-color);
+            z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        @media (min-width: 768px) {
+            .mobile-nav {
+                display: none;
+            }
+        }
+
+        .mobile-nav-link {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .mobile-nav-link i {
+            font-size: 1.2rem;
+        }
+
+        .mobile-nav-link.active {
+            color: var(--accent-gold);
+        }
+
+        /* Helpers */
+        @media (max-width: 767px) {
+            .d-none-mobile {
+                display: none !important;
+            }
+        }
+
         /* --- SPA Pages System --- */
         .page-view {
             display: none;
@@ -192,14 +252,22 @@
 
         /* --- Main Content Wrappers --- */
         section {
-            padding: 60px 0;
+            padding: 40px 0;
+        }
+        
+        @media (min-width: 768px) {
+            section { padding: 60px 0; }
         }
 
         .panel {
             background-color: var(--bg-panel);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 40px;
+            padding: 24px;
+        }
+        
+        @media (min-width: 768px) {
+            .panel { padding: 40px; }
         }
 
         /* --- Hero Section --- */
@@ -216,10 +284,14 @@
         }
 
         .hero-title {
-            font-size: 3.5rem;
+            font-size: 2.5rem;
             line-height: 1.1;
             margin-bottom: 20px;
             max-width: 600px;
+        }
+        
+        @media (min-width: 768px) {
+            .hero-title { font-size: 3.5rem; }
         }
 
         .hero-title span {
@@ -228,10 +300,14 @@
 
         .hero-desc {
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1rem;
             max-width: 600px;
             margin-bottom: 32px;
             line-height: 1.6;
+        }
+        
+        @media (min-width: 768px) {
+            .hero-desc { font-size: 1.1rem; }
         }
 
         .btn-primary {
@@ -697,10 +773,14 @@
         /* Game Embedded Iframe Container */
         .game-container {
             width: 100%;
-            height: 600px;
+            height: 400px; /* Dla mniejszych urządzeń */
             border-radius: 12px;
             overflow: hidden;
             background-color: #23221f;
+        }
+        
+        @media (min-width: 768px) {
+            .game-container { height: 600px; }
         }
 
         footer {
@@ -721,34 +801,51 @@
             <div class="logo" data-target="lessons">
                 <i class="fa-solid fa-chess-knight"></i> Gambit.
             </div>
+            
+            <!-- Desktop Main Menu -->
             <nav class="nav-links">
                 <span class="nav-link active" data-target="lessons"><i class="fa-solid fa-graduation-cap"></i> Lessons</span>
                 <span class="nav-link" data-target="coaches"><i class="fa-solid fa-user-group"></i> Coaches</span>
                 <span class="nav-link" data-target="arena"><i class="fa-solid fa-swords"></i> Arena</span>
                 <span class="nav-link" data-target="mylessons"><i class="fa-regular fa-clipboard"></i> My Lessons</span>
             </nav>
+
             <div class="nav-actions">
-                
-                <!-- Extra Nav Actions -->
-                <button class="btn-secondary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="alert('Opening login modal...')">
+                <!-- Action Menu Elements -->
+                <button class="btn-secondary d-none-mobile" style="padding: 6px 14px; font-size: 0.85rem;" onclick="alert('Opening login modal...')">
                     Log in
                 </button>
-                <button class="wallet-btn" onclick="alert('Redirecting to Lichess OAuth to link account...')">
+                <button class="wallet-btn d-none-mobile" onclick="alert('Redirecting to Lichess OAuth to link account...')">
                     <i class="fa-solid fa-link"></i> Link Lichess
                 </button>
                 <button class="wallet-btn" data-target="wallet">
-                    <i class="fa-solid fa-wallet"></i> $24.00
+                    <i class="fa-solid fa-wallet"></i> <span class="d-none-mobile">$24.00</span>
                 </button>
                 <button class="icon-btn" onclick="alert('Opening settings menu...')">
                     <i class="fa-solid fa-gear"></i>
                 </button>
-                <button class="icon-btn logout" onclick="alert('Logging out...')">
+                <button class="icon-btn logout d-none-mobile" onclick="alert('Logging out...')">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 </button>
-                
             </div>
         </div>
     </header>
+
+    <!-- Mobile Bottom Menu -->
+    <nav class="mobile-nav">
+        <span class="mobile-nav-link active" data-target="lessons">
+            <i class="fa-solid fa-graduation-cap"></i><span>Lessons</span>
+        </span>
+        <span class="mobile-nav-link" data-target="coaches">
+            <i class="fa-solid fa-user-group"></i><span>Coaches</span>
+        </span>
+        <span class="mobile-nav-link" data-target="arena">
+            <i class="fa-solid fa-swords"></i><span>Arena</span>
+        </span>
+        <span class="mobile-nav-link" data-target="mylessons">
+            <i class="fa-regular fa-clipboard"></i><span>My Lessons</span>
+        </span>
+    </nav>
 
     <!-- Main Content Area -->
     <main class="container">
@@ -1259,46 +1356,46 @@
     <!-- INTERACTIVITY SCRIPT -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // 1. Navigation Logic (SPA Routing)
-            function bindNavigation() {
-                const views = document.querySelectorAll('.page-view');
-                const navLinks = document.querySelectorAll('.nav-link');
+            
+            // 1. Navigation Logic (SPA Routing via Event Delegation)
+            document.body.addEventListener('click', (e) => {
+                const targetElement = e.target.closest('[data-target]');
+                if (!targetElement) return;
 
-                document.querySelectorAll('[data-target]').forEach(trigger => {
-                    // Always clear existing listener to prevent doubles during re-binding
-                    const newTrigger = trigger.cloneNode(true);
-                    trigger.replaceWith(newTrigger);
+                const targetId = targetElement.getAttribute('data-target');
+                const targetView = document.getElementById(`view-${targetId}`);
 
-                    newTrigger.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const targetNode = e.currentTarget;
-                        const targetId = targetNode.getAttribute('data-target');
-                        
-                        if (!targetId) return;
-
-                        // Hide all views
-                        views.forEach(view => view.classList.remove('active'));
-                        
-                        // Show target view
-                        const activeView = document.getElementById(`view-${targetId}`);
-                        if (activeView) activeView.classList.add('active');
-
-                        // Update active state on main navbar links
-                        navLinks.forEach(link => {
-                            if (link.getAttribute('data-target') === targetId) {
-                                link.classList.add('active');
-                            } else {
-                                link.classList.remove('active');
-                            }
-                        });
-
-                        // Scroll to top
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (targetView) {
+                    // Hide all page views
+                    document.querySelectorAll('.page-view').forEach(view => {
+                        view.classList.remove('active');
                     });
-                });
-            }
+                    
+                    // Show target view
+                    targetView.classList.add('active');
 
-            bindNavigation();
+                    // Update active state in desktop navbar
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        if (link.getAttribute('data-target') === targetId) {
+                            link.classList.add('active');
+                        } else {
+                            link.classList.remove('active');
+                        }
+                    });
+
+                    // Update active state in mobile bottom nav
+                    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                        if (link.getAttribute('data-target') === targetId) {
+                            link.classList.add('active');
+                        } else {
+                            link.classList.remove('active');
+                        }
+                    });
+
+                    // Scroll to top automatically
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
 
             // 2. Arena Internal Tabs Logic
             const arenaTabs = document.querySelectorAll('.arena-tab');
