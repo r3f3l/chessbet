@@ -27,6 +27,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            scroll-behavior: smooth;
         }
 
         body {
@@ -189,6 +190,38 @@
         }
 
         /* --- Hero Section --- */
+        .hero-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        @media (min-width: 992px) {
+            .hero-panel {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .hero-content {
+                flex: 1;
+                max-width: 55%;
+            }
+            .hero-image {
+                flex: 1;
+                display: flex;
+                justify-content: flex-end;
+            }
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 450px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+
         .hero-tag {
             display: inline-flex;
             align-items: center;
@@ -205,7 +238,6 @@
             font-size: 3.5rem;
             line-height: 1.1;
             margin-bottom: 20px;
-            max-width: 600px;
         }
 
         .hero-title span {
@@ -215,7 +247,6 @@
         .hero-desc {
             color: var(--text-muted);
             font-size: 1.1rem;
-            max-width: 600px;
             margin-bottom: 32px;
             line-height: 1.6;
         }
@@ -290,7 +321,7 @@
             color: var(--text-muted);
         }
 
-        /* --- Store Grids & Cards --- */
+        /* --- Lessons Grids & Cards --- */
         .grid-4 {
             display: grid;
             grid-template-columns: repeat(1, 1fr);
@@ -532,7 +563,7 @@
             display: flex;
         }
 
-        /* --- Lessons Section (formerly Coaches) --- */
+        /* --- Coaches Section --- */
         .coach-grid {
             display: grid;
             grid-template-columns: repeat(1, 1fr);
@@ -646,13 +677,13 @@
     <!-- Header / Navbar -->
     <header>
         <div class="container navbar">
-            <div class="logo" data-target="store">
+            <div class="logo" data-target="lessons">
                 <i class="fa-solid fa-chess-knight"></i> Gambit.
             </div>
             <nav class="nav-links">
-                <span class="nav-link active" data-target="store"><i class="fa-solid fa-store"></i> Store</span>
+                <span class="nav-link active" data-target="lessons"><i class="fa-solid fa-graduation-cap"></i> Lessons</span>
+                <span class="nav-link" data-target="coaches"><i class="fa-solid fa-user-group"></i> Coaches</span>
                 <span class="nav-link" data-target="arena"><i class="fa-solid fa-swords"></i> Arena</span>
-                <span class="nav-link" data-target="lessons"><i class="fa-solid fa-user-group"></i> Lessons</span>
                 <span class="nav-link" data-target="mylessons"><i class="fa-regular fa-clipboard"></i> My Lessons</span>
                 <span class="nav-link" data-target="wallet"><i class="fa-solid fa-wallet"></i> Wallet</span>
             </nav>
@@ -670,30 +701,35 @@
     <!-- Main Content Area -->
     <main class="container">
         
-        <!-- PAGE 1: STORE -->
-        <div id="view-store" class="page-view active">
+        <!-- PAGE 1: LESSONS (Landing Page) -->
+        <div id="view-lessons" class="page-view active">
             <section>
-                <div class="panel">
-                    <div class="hero-tag">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Coaching through the thrill of duels
+                <div class="panel hero-panel">
+                    <div class="hero-content">
+                        <div class="hero-tag">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Coaching through the thrill of duels
+                        </div>
+                        <h1 class="hero-title">
+                            Play a coach.<br>
+                            <span>Win — and get your money back.</span>
+                        </h1>
+                        <p class="hero-desc">
+                            Buy a lesson in your preferred time control. A strong coach accepts the lesson. If you beat the coach — your stake is refunded. If you lose — the coach earns compensation for their time.
+                        </p>
+                        <button class="btn-primary" onclick="document.getElementById('lesson-grid').scrollIntoView({behavior: 'smooth'})">
+                            <i class="fa-solid fa-swords"></i> Browse lessons
+                        </button>
+                        <div class="hero-balance">
+                            Balance: <span>$24.00</span> <span class="text-link" data-target="wallet">Top up</span>
+                        </div>
                     </div>
-                    <h1 class="hero-title">
-                        Play a coach.<br>
-                        <span>Win — and get your money back.</span>
-                    </h1>
-                    <p class="hero-desc">
-                        Buy a lesson in your preferred time control. A strong coach accepts the lesson. If you beat the coach — your stake is refunded. If you lose — the coach earns compensation for their time.
-                    </p>
-                    <button class="btn-primary" id="btn-browse-lessons">
-                        <i class="fa-solid fa-swords"></i> Browse lessons
-                    </button>
-                    <div class="hero-balance">
-                        Balance: <span>$24.00</span> <span class="text-link" data-target="wallet">Top up</span>
+                    <div class="hero-image">
+                        <img src="ja na plazy.jpg" alt="Founder relaxing on the beach with a chess board">
                     </div>
                 </div>
             </section>
 
-            <section>
+            <section id="lesson-grid">
                 <div class="section-header">
                     <h2 class="section-title">Choose a lesson</h2>
                     <p class="section-subtitle">Four time controls — from lightning to classic.</p>
@@ -770,186 +806,11 @@
             </section>
         </div>
 
-        <!-- PAGE 2: ARENA -->
-        <div id="view-arena" class="page-view">
+        <!-- PAGE 2: COACHES -->
+        <div id="view-coaches" class="page-view">
             <section>
                 <div class="section-header">
-                    <h2 class="section-title">Arena Lobby</h2>
-                    <p class="section-subtitle">Watch live duels or pick up an open lesson.</p>
-                </div>
-
-                <div class="arena-tabs">
-                    <button class="arena-tab active" data-arena-pane="live">
-                        Live Matches <span class="arena-tab-badge">2</span>
-                    </button>
-                    <button class="arena-tab" data-arena-pane="open">
-                        Open Lessons <span class="arena-tab-badge">3</span>
-                    </button>
-                </div>
-
-                <!-- Live Matches Pane -->
-                <div class="arena-content-pane arena-list active" id="pane-live">
-                    
-                    <!-- Match 1 -->
-                    <div class="arena-item">
-                        <div class="match-info">
-                            <div class="match-player">
-                                <i class="fa-solid fa-user"></i> 
-                                <span>pawn_pusher99 <span class="player-rating">1340</span></span>
-                            </div>
-                            <div class="match-vs">vs</div>
-                            <div class="match-player">
-                                <div class="coach-avatar">R</div> 
-                                <span>r3f3l <span class="player-rating">1812</span></span>
-                            </div>
-                        </div>
-                        <div class="match-meta">
-                            <div class="match-meta-item">
-                                <span class="meta-label">Control</span>
-                                <span class="time-badge">15+10</span>
-                            </div>
-                            <div class="match-meta-item">
-                                <span class="meta-label">Stake</span>
-                                <span class="stake-value">$15.00</span>
-                            </div>
-                        </div>
-                        <div class="match-action">
-                            <span class="live-indicator"><i class="fa-solid fa-circle"></i> Live</span>
-                            <button class="btn-secondary" onclick="alert('Opening Lichess TV spectator view...')">
-                                <i class="fa-solid fa-eye"></i> Watch
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Match 2 -->
-                    <div class="arena-item">
-                        <div class="match-info">
-                            <div class="match-player">
-                                <i class="fa-solid fa-user"></i> 
-                                <span>knight_rider <span class="player-rating">1620</span></span>
-                            </div>
-                            <div class="match-vs">vs</div>
-                            <div class="match-player">
-                                <div class="coach-avatar">A</div> 
-                                <span>Anna Chess <span class="player-rating">1750</span></span>
-                            </div>
-                        </div>
-                        <div class="match-meta">
-                            <div class="match-meta-item">
-                                <span class="meta-label">Control</span>
-                                <span class="time-badge">5+10</span>
-                            </div>
-                            <div class="match-meta-item">
-                                <span class="meta-label">Stake</span>
-                                <span class="stake-value">$5.00</span>
-                            </div>
-                        </div>
-                        <div class="match-action">
-                            <span class="live-indicator"><i class="fa-solid fa-circle"></i> Live</span>
-                            <button class="btn-secondary" onclick="alert('Opening Lichess TV spectator view...')">
-                                <i class="fa-solid fa-eye"></i> Watch
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Open Lessons Pane -->
-                <div class="arena-content-pane arena-list" id="pane-open">
-                    
-                    <!-- Lesson 1 -->
-                    <div class="arena-item">
-                        <div class="match-info">
-                            <div class="match-player" style="flex: none; width: auto; padding-right: 20px;">
-                                <i class="fa-solid fa-user"></i> 
-                                <span>grandmaster_wannabe <span class="player-rating">1950</span></span>
-                            </div>
-                            <div class="waiting-indicator">
-                                <i class="fa-solid fa-spinner fa-spin"></i> Waiting for a coach...
-                            </div>
-                        </div>
-                        <div class="match-meta">
-                            <div class="match-meta-item">
-                                <span class="meta-label">Control</span>
-                                <span class="time-badge">30+15</span>
-                            </div>
-                            <div class="match-meta-item">
-                                <span class="meta-label">Stake</span>
-                                <span class="stake-value">$30.00</span>
-                            </div>
-                        </div>
-                        <div class="match-action">
-                            <button class="btn-primary" onclick="alert('Lesson accepted! Opening Lichess integration...')">
-                                <i class="fa-solid fa-check"></i> Accept Lesson
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Lesson 2 -->
-                    <div class="arena-item">
-                        <div class="match-info">
-                            <div class="match-player" style="flex: none; width: auto; padding-right: 20px;">
-                                <i class="fa-solid fa-user"></i> 
-                                <span>blitz_king <span class="player-rating">1200</span></span>
-                            </div>
-                            <div class="waiting-indicator">
-                                <i class="fa-solid fa-spinner fa-spin"></i> Waiting for a coach...
-                            </div>
-                        </div>
-                        <div class="match-meta">
-                            <div class="match-meta-item">
-                                <span class="meta-label">Control</span>
-                                <span class="time-badge">5+10</span>
-                            </div>
-                            <div class="match-meta-item">
-                                <span class="meta-label">Stake</span>
-                                <span class="stake-value">$5.00</span>
-                            </div>
-                        </div>
-                        <div class="match-action">
-                            <button class="btn-primary" onclick="alert('Lesson accepted! Opening Lichess integration...')">
-                                <i class="fa-solid fa-check"></i> Accept Lesson
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Lesson 3 -->
-                    <div class="arena-item">
-                        <div class="match-info">
-                            <div class="match-player" style="flex: none; width: auto; padding-right: 20px;">
-                                <i class="fa-solid fa-user"></i> 
-                                <span>checkmate_mate <span class="player-rating">1430</span></span>
-                            </div>
-                            <div class="waiting-indicator">
-                                <i class="fa-solid fa-spinner fa-spin"></i> Waiting for a coach...
-                            </div>
-                        </div>
-                        <div class="match-meta">
-                            <div class="match-meta-item">
-                                <span class="meta-label">Control</span>
-                                <span class="time-badge">1+0</span>
-                            </div>
-                            <div class="match-meta-item">
-                                <span class="meta-label">Stake</span>
-                                <span class="stake-value">$1.00</span>
-                            </div>
-                        </div>
-                        <div class="match-action">
-                            <button class="btn-primary" onclick="alert('Lesson accepted! Opening Lichess integration...')">
-                                <i class="fa-solid fa-check"></i> Accept Lesson
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
-
-            </section>
-        </div>
-
-        <!-- PAGE 3: LESSONS -->
-        <div id="view-lessons" class="page-view">
-            <section>
-                <div class="section-header">
-                    <h2 class="section-title">Lessons</h2>
+                    <h2 class="section-title">Coaches</h2>
                     <p class="section-subtitle">Browse our coaches and request a lesson.</p>
                 </div>
 
@@ -1056,7 +917,177 @@
             </section>
         </div>
 
-        <!-- PAGE 4: MY LESSONS -->
+        <!-- PAGE 3: ARENA -->
+        <div id="view-arena" class="page-view">
+            <section>
+                <div class="section-header">
+                    <h2 class="section-title">Arena Lobby</h2>
+                    <p class="section-subtitle">Watch live duels or pick up an open lesson.</p>
+                </div>
+
+                <div class="arena-tabs">
+                    <button class="arena-tab active" data-arena-pane="live">
+                        Live Matches <span class="arena-tab-badge">2</span>
+                    </button>
+                    <button class="arena-tab" data-arena-pane="open">
+                        Open Lessons <span class="arena-tab-badge">3</span>
+                    </button>
+                </div>
+
+                <!-- Live Matches Pane -->
+                <div class="arena-content-pane arena-list active" id="pane-live">
+                    
+                    <div class="arena-item">
+                        <div class="match-info">
+                            <div class="match-player">
+                                <i class="fa-solid fa-user"></i> 
+                                <span>pawn_pusher99 <span class="player-rating">1340</span></span>
+                            </div>
+                            <div class="match-vs">vs</div>
+                            <div class="match-player">
+                                <div class="coach-avatar">R</div> 
+                                <span>r3f3l <span class="player-rating">1812</span></span>
+                            </div>
+                        </div>
+                        <div class="match-meta">
+                            <div class="match-meta-item">
+                                <span class="meta-label">Control</span>
+                                <span class="time-badge">15+10</span>
+                            </div>
+                            <div class="match-meta-item">
+                                <span class="meta-label">Stake</span>
+                                <span class="stake-value">$15.00</span>
+                            </div>
+                        </div>
+                        <div class="match-action">
+                            <span class="live-indicator"><i class="fa-solid fa-circle"></i> Live</span>
+                            <button class="btn-secondary" onclick="alert('Opening Lichess TV spectator view...')">
+                                <i class="fa-solid fa-eye"></i> Watch
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="arena-item">
+                        <div class="match-info">
+                            <div class="match-player">
+                                <i class="fa-solid fa-user"></i> 
+                                <span>knight_rider <span class="player-rating">1620</span></span>
+                            </div>
+                            <div class="match-vs">vs</div>
+                            <div class="match-player">
+                                <div class="coach-avatar">A</div> 
+                                <span>Anna Chess <span class="player-rating">1750</span></span>
+                            </div>
+                        </div>
+                        <div class="match-meta">
+                            <div class="match-meta-item">
+                                <span class="meta-label">Control</span>
+                                <span class="time-badge">5+10</span>
+                            </div>
+                            <div class="match-meta-item">
+                                <span class="meta-label">Stake</span>
+                                <span class="stake-value">$5.00</span>
+                            </div>
+                        </div>
+                        <div class="match-action">
+                            <span class="live-indicator"><i class="fa-solid fa-circle"></i> Live</span>
+                            <button class="btn-secondary" onclick="alert('Opening Lichess TV spectator view...')">
+                                <i class="fa-solid fa-eye"></i> Watch
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Open Lessons Pane -->
+                <div class="arena-content-pane arena-list" id="pane-open">
+                    
+                    <div class="arena-item">
+                        <div class="match-info">
+                            <div class="match-player" style="flex: none; width: auto; padding-right: 20px;">
+                                <i class="fa-solid fa-user"></i> 
+                                <span>grandmaster_wannabe <span class="player-rating">1950</span></span>
+                            </div>
+                            <div class="waiting-indicator">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Waiting for a coach...
+                            </div>
+                        </div>
+                        <div class="match-meta">
+                            <div class="match-meta-item">
+                                <span class="meta-label">Control</span>
+                                <span class="time-badge">30+15</span>
+                            </div>
+                            <div class="match-meta-item">
+                                <span class="meta-label">Stake</span>
+                                <span class="stake-value">$30.00</span>
+                            </div>
+                        </div>
+                        <div class="match-action">
+                            <button class="btn-primary" onclick="alert('Lesson accepted! Opening Lichess integration...')">
+                                <i class="fa-solid fa-check"></i> Accept Lesson
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="arena-item">
+                        <div class="match-info">
+                            <div class="match-player" style="flex: none; width: auto; padding-right: 20px;">
+                                <i class="fa-solid fa-user"></i> 
+                                <span>blitz_king <span class="player-rating">1200</span></span>
+                            </div>
+                            <div class="waiting-indicator">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Waiting for a coach...
+                            </div>
+                        </div>
+                        <div class="match-meta">
+                            <div class="match-meta-item">
+                                <span class="meta-label">Control</span>
+                                <span class="time-badge">5+10</span>
+                            </div>
+                            <div class="match-meta-item">
+                                <span class="meta-label">Stake</span>
+                                <span class="stake-value">$5.00</span>
+                            </div>
+                        </div>
+                        <div class="match-action">
+                            <button class="btn-primary" onclick="alert('Lesson accepted! Opening Lichess integration...')">
+                                <i class="fa-solid fa-check"></i> Accept Lesson
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="arena-item">
+                        <div class="match-info">
+                            <div class="match-player" style="flex: none; width: auto; padding-right: 20px;">
+                                <i class="fa-solid fa-user"></i> 
+                                <span>checkmate_mate <span class="player-rating">1430</span></span>
+                            </div>
+                            <div class="waiting-indicator">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Waiting for a coach...
+                            </div>
+                        </div>
+                        <div class="match-meta">
+                            <div class="match-meta-item">
+                                <span class="meta-label">Control</span>
+                                <span class="time-badge">1+0</span>
+                            </div>
+                            <div class="match-meta-item">
+                                <span class="meta-label">Stake</span>
+                                <span class="stake-value">$1.00</span>
+                            </div>
+                        </div>
+                        <div class="match-action">
+                            <button class="btn-primary" onclick="alert('Lesson accepted! Opening Lichess integration...')">
+                                <i class="fa-solid fa-check"></i> Accept Lesson
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+        </div>
+
+        <!-- PAGE 4: MY LESSONS (Placeholder) -->
         <div id="view-mylessons" class="page-view">
             <section class="placeholder-view">
                 <i class="fa-regular fa-clipboard"></i>
@@ -1065,7 +1096,7 @@
             </section>
         </div>
 
-        <!-- PAGE 5: WALLET -->
+        <!-- PAGE 5: WALLET (Placeholder) -->
         <div id="view-wallet" class="page-view">
             <section class="placeholder-view">
                 <i class="fa-solid fa-vault"></i>
@@ -1141,13 +1172,6 @@
             });
 
             // 3. Specific Button Actions
-            const browseBtn = document.getElementById('btn-browse-lessons');
-            if (browseBtn) {
-                browseBtn.addEventListener('click', () => {
-                    switchView('lessons');
-                });
-            }
-
             // Mock functionality for buy/lesson/topup
             document.querySelectorAll('.btn-action-buy').forEach(btn => {
                 btn.addEventListener('click', () => {
