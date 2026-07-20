@@ -13,62 +13,128 @@
             --bg-dark: #121110;
             --bg-panel: #1b1a18;
             --bg-card: #23221f;
-            --bg-card-hover: #2a2926;
             --text-main: #f5f5f5;
             --text-muted: #a1a09d;
             --accent-gold: #e2b34a;
             --accent-gold-hover: #cfa13e;
             --border-color: #302f2b;
-            --status-green: #2e7d32;
             --status-green-bg: #1b3b22;
         }
 
-        /* ... (pozostałe style CSS bez zmian, zaktualizowany widok Settings poniżej) ... */
+        * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); padding-bottom: 70px; }
+        @media (min-width: 768px) { body { padding-bottom: 0; } }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        header { border-bottom: 1px solid var(--border-color); position: sticky; top: 0; background: rgba(18, 17, 16, 0.95); z-index: 100; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; height: 70px; }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; cursor: pointer; color: var(--accent-gold); }
+
+        .nav-links { display: none; gap: 20px; }
+        @media (min-width: 768px) { .nav-links { display: flex; } }
+        .nav-link { cursor: pointer; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
+        .nav-link.active { color: var(--accent-gold); }
+
+        .nav-actions { display: flex; align-items: center; gap: 12px; }
+        .icon-btn { color: var(--text-muted); background: none; font-size: 1.1rem; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .icon-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
+
+        .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-panel); border-top: 1px solid var(--border-color); z-index: 1000; }
+        @media (min-width: 768px) { .mobile-nav { display: none; } }
+        .mobile-nav-link { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0; color: var(--text-muted); font-size: 0.7rem; cursor: pointer; }
+        .mobile-nav-link.active { color: var(--accent-gold); }
+
+        .page-view { display: none; }
+        .page-view.active { display: block; }
+
+        .panel { background-color: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 16px; padding: 40px; margin-top: 40px; }
+        .btn-primary { background-color: var(--accent-gold); color: #000; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .btn-secondary { background: transparent; color: white; border: 1px solid var(--border-color); padding: 12px 24px; border-radius: 8px; cursor: pointer; }
+
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+        .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; }
+        .price-breakdown { list-style: none; margin: 20px 0; font-size: 0.85rem; }
+        .price-breakdown li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-color); }
         
-        .settings-list {
-            list-style: none;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .settings-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin-bottom: 12px;
-        }
-        .settings-item i { font-size: 1.2rem; color: var(--accent-gold); }
+        .settings-item { display: flex; justify-content: space-between; padding: 20px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 12px; }
     </style>
 </head>
 <body>
-    <!-- ... (Nagłówek i reszta strony) ... -->
-    
-    <!-- PAGE: SETTINGS (Nowy widok) -->
-    <div id="view-settings" class="page-view">
-        <section>
-            <div class="section-header">
-                <h2 class="section-title">Settings</h2>
-            </div>
-            <div class="settings-list">
-                <div class="settings-item">
-                    <span><i class="fa-solid fa-user"></i> Profile Details</span>
-                    <button class="btn-secondary">Edit</button>
-                </div>
-                <div class="settings-item">
-                    <span><i class="fa-solid fa-bell"></i> Notifications</span>
-                    <input type="checkbox" checked>
-                </div>
-                <div class="settings-item">
-                    <span><i class="fa-solid fa-shield-halved"></i> Privacy</span>
-                    <button class="btn-secondary">Manage</button>
-                </div>
-            </div>
-        </section>
-    </div>
 
-    <!-- ... (skrypty nawigacyjne) ... -->
+    <header>
+        <div class="container navbar">
+            <div class="logo" data-target="lessons">Gambit.</div>
+            <nav class="nav-links">
+                <span class="nav-link active" data-target="lessons">Lessons</span>
+                <span class="nav-link" data-target="coaches">Coaches</span>
+                <span class="nav-link" data-target="arena">Arena</span>
+            </nav>
+            <div class="nav-actions">
+                <button class="icon-btn" data-target="settings"><i class="fa-solid fa-gear"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <nav class="mobile-nav">
+        <span class="mobile-nav-link active" data-target="lessons"><i class="fa-solid fa-graduation-cap"></i><span>Lessons</span></span>
+        <span class="mobile-nav-link" data-target="coaches"><i class="fa-solid fa-user-group"></i><span>Coaches</span></span>
+        <span class="mobile-nav-link" data-target="arena"><i class="fa-solid fa-swords"></i><span>Arena</span></span>
+        <span class="mobile-nav-link" data-target="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></span>
+    </nav>
+
+    <main class="container">
+        <div id="view-lessons" class="page-view active">
+            <section class="panel">
+                <h1>Play a coach. Win money back.</h1>
+                <p>If you win — your stake is refunded. If you draw or lose — the coach earns compensation.</p>
+                <button class="btn-primary" style="margin-top:20px" onclick="document.getElementById('lesson-grid').scrollIntoView()">Browse lessons</button>
+            </section>
+            <section id="lesson-grid" class="grid-4">
+                <div class="card">
+                    <h3>Bullet</h3>
+                    <ul class="price-breakdown">
+                        <li>Stake <span>$1.00</span></li>
+                        <li>Platform Fee <span>$0.00</span></li>
+                    </ul>
+                    <button class="btn-primary">Buy $1.00</button>
+                </div>
+                <div class="card">
+                    <h3>Classical</h3>
+                    <ul class="price-breakdown">
+                        <li>Stake <span>$30.00</span></li>
+                        <li>Fee <span>$0.10</span></li>
+                        <li>Donation <span>$0.05</span></li>
+                    </ul>
+                    <button class="btn-primary">Buy $30.15</button>
+                </div>
+            </section>
+        </div>
+
+        <div id="view-coaches" class="page-view"><section class="panel"><h2>Coaches List</h2></section></div>
+        <div id="view-arena" class="page-view"><section class="panel"><h2>Arena</h2><button class="btn-primary" data-target="game">Watch Game</button></section></div>
+        <div id="view-game" class="page-view"><section class="panel"><button class="btn-secondary" data-target="arena">Back</button><h3>Live Match</h3></section></div>
+        <div id="view-settings" class="page-view">
+            <section class="panel">
+                <h2>Settings</h2>
+                <div class="settings-item">Profile <button class="btn-secondary">Edit</button></div>
+                <div class="settings-item">Notifications <input type="checkbox"></div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        document.body.addEventListener('click', (e) => {
+            const targetEl = e.target.closest('[data-target]');
+            if (!targetEl) return;
+            const targetId = targetEl.getAttribute('data-target');
+            document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+            document.getElementById(`view-${targetId}`).classList.add('active');
+            
+            document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(l => {
+                l.classList.toggle('active', l.getAttribute('data-target') === targetId);
+            });
+        });
+    </script>
 </body>
 </html>
